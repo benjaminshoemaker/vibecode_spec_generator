@@ -13,9 +13,9 @@ export const step4Config: StepConfig = {
   generationPrompt: `Using the information in the prompt_plan & spec attached here, write a minimal AGENTS.md file to include in the repository so that agents like Codex & Claude Code can interact well. Make sure it includes a description of what each file is (prompt_plan.md, spec.md, idea.md, idea_one_pager.md), as well as what will live in /designs/. Include the following section verbatim:
 
 ## Repository docs
-- 'idea_one_pager.md' — Captures Problem, Audience, Platform, Core Flow, MVP Features; Non‑Goals optional. 
-- 'dev_spec.md' — Minimal functional and technical specification consistent with prior docs, including a concise **Definition of Done**. 
-- 'prompt_plan.md' — Agent‑Ready Planner with per‑step prompts, expected artifacts, tests, rollback notes, idempotency notes, and a TODO checklist using Markdown checkboxes. This file drives the agent workflow.  
+- 'ONE_PAGER.md' — Captures Problem, Audience, Platform, Core Flow, MVP Features; Non‑Goals optional. 
+- 'DEV_SPEC.md' — Minimal functional and technical specification consistent with prior docs, including a concise **Definition of Done**. 
+- 'PROMPT_PLAN.md' — Agent‑Ready Planner with per‑step prompts, expected artifacts, tests, rollback notes, idempotency notes, and a TODO checklist using Markdown checkboxes. This file drives the agent workflow.  
 - 'AGENTS.md' — This file. 
 
 **UI Implementation Guidance:**
