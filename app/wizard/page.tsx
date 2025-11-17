@@ -7,6 +7,7 @@ import { step2Config } from "./steps/step2-config";
 import { step3Config } from "./steps/step3-config";
 import { step4Config } from "./steps/step4-config";
 import { StepConfig } from "@/app/types";
+import { sampleDocs } from "./utils/sampleDocs";
 
 const stepConfigs: StepConfig[] = [
   step1Config,
@@ -16,15 +17,21 @@ const stepConfigs: StepConfig[] = [
 ];
 
 const stepKeyMap = ["onePager", "devSpec", "checklist", "agentsMd"] as const;
-const stepNames = ["One-Pager", "Dev Spec", "Checklist", "AGENTS.md"];
+const stepNames = ["One Pager", "Dev Spec", "Prompt Plan", "AGENTS.md"];
 
 export default function WizardPage() {
-  const { currentStep, setCurrentStep, steps, isGenerating, resetWizard } = useWizardStore();
+  const { currentStep, setCurrentStep, steps, isGenerating, resetWizard, updateStepDoc, approveStep } = useWizardStore();
 
   const currentConfig = stepConfigs[currentStep - 1];
   const currentStepKey = stepKeyMap[currentStep - 1];
 
   const handleStepClick = (stepNumber: number) => {
+    // Clear chat history when navigating forward to a new step
+    if (stepNumber > currentStep) {
+      const { updateStepChat } = useWizardStore.getState();
+      const targetStepKey = stepKeyMap[stepNumber - 1];
+      updateStepChat(targetStepKey, []);
+    }
     setCurrentStep(stepNumber);
   };
 
@@ -50,11 +57,22 @@ export default function WizardPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${stepName.toLowerCase().replace(/\s+/g, '-')}.md`;
+    a.download = `${stepName.toUpperCase().replace(/\s+/g, '_')}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleLoadSampleDocs = () => {
+    // Load sample documents into the wizard state
+    updateStepDoc('onePager', sampleDocs.onePager);
+    approveStep('onePager');
+    updateStepDoc('devSpec', sampleDocs.devSpec);
+    approveStep('devSpec');
+    updateStepDoc('checklist', sampleDocs.promptPlan);
+    approveStep('checklist');
+    setCurrentStep(1);
   };
 
   return (
@@ -64,12 +82,20 @@ export default function WizardPage() {
         <div className="text-sm font-medium text-gray-600">
           Step {currentStep} / 4
         </div>
-        <button
-          onClick={resetWizard}
-          className="bg-white border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-600 hover:bg-gray-50 transition-colors"
-        >
-          Start Over
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleLoadSampleDocs}
+            className="bg-blue-600 border border-blue-600 px-4 py-2 rounded-md text-sm text-white hover:bg-blue-700 transition-colors"
+          >
+            Load Sample Docs
+          </button>
+          <button
+            onClick={resetWizard}
+            className="bg-white border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            Start Over
+          </button>
+        </div>
       </div>
 
       {/* Main Container */}

@@ -8,6 +8,7 @@ interface ChatInterfaceProps {
   initialMessages: Message[];
   onMessagesChange: (messages: Message[]) => void;
   documentInputs?: Record<string, string>;
+  initialGreeting?: string;
 }
 
 export default function ChatInterface({
@@ -15,6 +16,7 @@ export default function ChatInterface({
   initialMessages,
   onMessagesChange,
   documentInputs,
+  initialGreeting,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -33,6 +35,18 @@ export default function ChatInterface({
   useEffect(() => {
     onMessagesChange(messages);
   }, [messages, onMessagesChange]);
+
+  // Send initial greeting if provided and chat is empty
+  useEffect(() => {
+    if (initialGreeting && initialMessages.length === 0 && messages.length === 0) {
+      const greetingMessage: Message = {
+        id: Date.now().toString(),
+        role: "assistant",
+        content: initialGreeting,
+      };
+      setMessages([greetingMessage]);
+    }
+  }, [initialGreeting, initialMessages.length]); // Only run on mount
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

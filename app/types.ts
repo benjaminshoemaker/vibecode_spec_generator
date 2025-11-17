@@ -25,6 +25,7 @@ export interface WizardState {
   updateStepDoc: (stepKey: keyof WizardState["steps"], doc: string) => void;
   approveStep: (stepKey: keyof WizardState["steps"]) => void;
   resetWizard: () => void;
+  loadSampleDocs: () => void;
 }
 
 export interface StepConfig {
@@ -35,4 +36,6 @@ export interface StepConfig {
   generateButtonText: string;
   approveButtonText: string;
   documentInputs: string[];
+  initialGreeting?: string;
+  generationPrompt?: string;
 }

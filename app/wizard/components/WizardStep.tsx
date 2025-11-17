@@ -59,6 +59,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
           chatHistory: stepData.chatHistory,
           stepName: config.stepName,
           documentInputs,
+          generationPrompt: config.generationPrompt,
         }),
       });
 
@@ -120,6 +121,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
             initialMessages={stepData.chatHistory}
             onMessagesChange={handleMessagesChange}
             documentInputs={documentInputsForChat}
+            initialGreeting={config.initialGreeting}
           />
         </div>
       </div>
