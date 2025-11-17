@@ -2,7 +2,7 @@ import { StepConfig } from "@/app/types";
 
 export const step1Config: StepConfig = {
   stepNumber: 1,
-  stepName: "One-Pager",
+  stepName: "One Pager",
   userInstructions:
     "Tell the Assistant about your app idea. It will ask you questions to refine your one-pager. Whenever you feel ready, you can click on 'Generate One-Pager' and it will generate a draft for your review.",
   systemPrompt: `Ask the user one question at a time so that you can develop a one-pager for this idea. Each question should build on the previous ones, and the end goal is a one-pager description of the idea that could be passed to a product manager. We need to gather at least the following:
@@ -16,4 +16,6 @@ The user will provide an initial description of their app. Evaluate that, and th
   generateButtonText: "Generate One-Pager",
   approveButtonText: "Approve Draft & Save",
   documentInputs: [], // No previous documents for step 1
+  initialGreeting: "Hello! Tell me about your product idea, and I'll ask you questions to refine it. Whenever you feel like we've gone over enough detail, click 'Generate One-Pager'.",
+  generationPrompt: "Now that we’ve wrapped up the brainstorming process, can you compile our findings into a clean, comprehensive one-pager? Include the problem, audience, ideal customer, platform, and flow information, such that we could start talking with product & engineering leadership about how this could be built.",
 };

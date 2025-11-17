@@ -61,6 +61,32 @@ export const useWizardStore = create<WizardState>()(
             agentsMd: { ...initialStepData },
           },
         }),
+      loadSampleDocs: () =>
+        set({
+          currentStep: 1,
+          steps: {
+            onePager: {
+              chatHistory: [],
+              generatedDoc: null,
+              approved: false,
+            },
+            devSpec: {
+              chatHistory: [],
+              generatedDoc: null,
+              approved: false,
+            },
+            checklist: {
+              chatHistory: [],
+              generatedDoc: null,
+              approved: false,
+            },
+            agentsMd: {
+              chatHistory: [],
+              generatedDoc: null,
+              approved: false,
+            },
+          },
+        }),
     }),
     {
       name: "wizard-storage",

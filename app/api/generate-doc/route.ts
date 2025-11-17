@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { chatHistory, stepName, documentInputs } = await req.json();
+    const { chatHistory, stepName, documentInputs, generationPrompt: customPrompt } = await req.json();
 
     if (!chatHistory || !Array.isArray(chatHistory)) {
       return new Response("Invalid chat history format", { status: 400 });
@@ -15,32 +15,37 @@ export async function POST(req: Request) {
       return new Response("Step name is required", { status: 400 });
     }
 
-    // Build context from previous documents
+    // Build generation prompt - ALWAYS use chat history as primary source
     let generationPrompt = "";
 
+    // Prepend custom generation prompt if provided
+    if (customPrompt) {
+      generationPrompt = customPrompt + "\n\n";
+    }
+
+    // Format conversation history
+    const conversationHistory = chatHistory
+      .map((msg: any) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+      .join("\n\n");
+
+    // Add previous documents as additional context if available
     if (documentInputs && Object.keys(documentInputs).length > 0) {
-      // For steps with previous documents, use ONLY documents as context
-      let documentContext = `Based on the following documents, generate a comprehensive ${stepName} document in markdown format. The document should be well-structured, professional, and expand upon the information provided.\n\nPrevious documents:\n`;
+      let documentContext = "You also have access to these previously generated documents for context:\n\n";
 
       for (const [key, value] of Object.entries(documentInputs)) {
-        documentContext += `\n### ${key}:\n${value}\n`;
+        documentContext += `### ${key}:\n${value}\n\n`;
       }
 
-      documentContext += `\n\nUsing the information from the documents above, generate the ${stepName} document now in markdown format:`;
-      generationPrompt = documentContext;
-    } else {
-      // For first step, use chat history since there are no previous documents
-      const conversationHistory = chatHistory
-        .map((msg: any) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
-        .join("\n\n");
+      generationPrompt += documentContext;
+    }
 
-      generationPrompt = `Based on the conversation history below, generate a comprehensive ${stepName} document in markdown format. The document should be well-structured, professional, and include all relevant details discussed in the conversation.
+    // Always use conversation history as the primary source
+    generationPrompt += `Based on the conversation history below, generate a comprehensive ${stepName} document in markdown format. The document should be well-structured, professional, and include all relevant details discussed in the conversation.
 
 Conversation history:
 ${conversationHistory}
 
 Please generate the ${stepName} document now in markdown format:`;
-    }
 
     // Log the request details
     console.log("\n" + "=".repeat(80));
