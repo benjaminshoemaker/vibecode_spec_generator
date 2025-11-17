@@ -273,5 +273,154 @@ Purpose
 If you want I can:
 - Produce the first LLM invocation outputs for Prompt 2 (monorepo scaffold) now as a concrete code artifact.
 - Or produce the OpenAPI spec from Prompt 6 next.
-Which prompt should I generate first (or should I start by producing the design assets from Prompt 1)?`
+Which prompt should I generate first (or should I start by producing the design assets from Prompt 1)?`,
+
+  agentsMd: `# AGENTS.md
+
+Purpose
+- This file orients automated agents (Codex, Claude Code, etc.) to the repo structure, primary planning/spec docs, and the expectations for automated work.
+- Keep this file minimal, readable, and authoritative. If something here conflicts with upstream docs, stop and ask a human.
+
+Key files (short descriptions)
+- prompt_plan.md — Agent‑Ready planner that drives the automated workflow. It contains per-step prompts, expected artifacts, tests, rollback notes, idempotency notes, and a TODO checklist using Markdown checkboxes. Agents must update this file as tasks are completed.
+- spec.md — A concise functional and technical specification for the project (may be a short spec). If the repo uses a developer-focused spec, it might be named dev_spec.md; see below.
+- dev_spec.md — Developer specification translating product decisions into implementation-ready details: architecture, API contracts, data model, infra notes, testing plan, and a Definition of Done. If present, treat this as the canonical developer spec.
+- idea.md — Informal notes, brainstorming, or longer-form idea dump. Useful for context but not authoritative for implementation.
+- idea_one_pager.md — One-page product summary capturing Problem, Audience, Platform, Core Flow, MVP features and optional Non‑Goals. Use this to validate product intent before coding.
+- /designs/ — Source of truth for UI implementation (see section below).
+
+Repository docs
+- 'idea_one_pager.md' — Captures Problem, Audience, Platform, Core Flow, MVP Features; Non‑Goals optional.
+- 'dev_spec.md' — Minimal functional and technical specification consistent with prior docs, including a concise **Definition of Done**.
+- 'prompt_plan.md' — Agent‑Ready Planner with per‑step prompts, expected artifacts, tests, rollback notes, idempotency notes, and a TODO checklist using Markdown checkboxes. This file drives the agent workflow.
+- 'AGENTS.md' — This file.
+
+**UI Implementation Guidance:**
+- **Always access files in '/designs/' and its subfolders whenever doing any UI changes or additions.**
+- Follow the designs contained in that folder as a guide for layout, styling, components, and user experience.
+- Reference specific design files when implementing UI features to ensure consistency with the intended design.
+
+### Agent responsibility
+- After completing any coding, refactor, or test step, **immediately update the corresponding TODO checklist item in 'prompt_plan.md'**.
+- Use the same Markdown checkbox format ('- [x]') to mark completion.
+- When creating new tasks or subtasks, add them directly under the appropriate section anchor in 'prompt_plan.md'.
+- Always commit changes to 'prompt_plan.md' alongside the code and tests that fulfill them.
+- Do not consider work "done" until the matching checklist item is checked and all related tests are green.
+- When a stage (plan step) is complete with green tests, update the README "Release notes" section with any user-facing impact (or explicitly state "No user-facing changes" if applicable).
+- Even when automated coverage exists, always suggest a feasible manual test path so the human can exercise the feature end-to-end.
+- After a plan step is finished, document its completion state with a short checklist. Include: step name & number, test results, 'prompt_plan.md' status, manual checks performed (mark as complete only after the human confirms they ran to their satisfaction), release notes status, and an inline commit summary string the human can copy & paste.
+
+#### Guardrails for agents
+- Make the smallest change that passes tests and improves the code.
+- Do not introduce new public APIs without updating 'spec.md' and relevant tests.
+- Do not duplicate templates or files to work around issues. Fix the original.
+- If a file cannot be opened or content is missing, say so explicitly and stop. Do not guess.
+- Respect privacy and logging policy: do not log secrets, prompts, completions, or PII.
+
+#### Deferred-work notation
+- When a task is intentionally paused, keep its checkbox unchecked and prepend '(Deferred)' to the TODO label in 'prompt_plan.md', followed by a short reason.
+- Apply the same '(Deferred)' tag to every downstream checklist item that depends on the paused work.
+- Remove the tag only after the work resumes; this keeps the outstanding scope visible without implying completion.
+
+#### When the prompt plan is fully satisfied
+- Once every Definition of Done task in 'prompt_plan.md' is either checked off or explicitly marked '(Deferred)', the plan is considered **complete**.
+- After that point, you no longer need to update prompt-plan TODOs or reference 'prompt_plan.md', 'spec.md', 'idea_one_pager.md', or other upstream docs to justify changes.
+- All other guardrails, testing requirements, and agent responsibilities in this file continue to apply unchanged.
+
+---
+
+## Testing policy (non‑negotiable)
+- Tests **MUST** cover the functionality being implemented.
+- **NEVER** ignore the output of the system or the tests — logs and messages often contain **CRITICAL** information.
+- **TEST OUTPUT MUST BE PRISTINE TO PASS.**
+- If logs are **supposed** to contain errors, capture and test it.
+- **NO EXCEPTIONS POLICY:** Under no circumstances should you mark any test type as "not applicable". Every project, regardless of size or complexity, **MUST** have unit tests, integration tests, **AND** end‑to‑end tests. If you believe a test type doesn't apply, you need the human to say exactly **"I AUTHORIZE YOU TO SKIP WRITING TESTS THIS TIME"**.
+
+### TDD (how we work)
+- Write tests **before** implementation.
+- Only write enough code to make the failing test pass.
+- Refactor continuously while keeping tests green.
+
+**TDD cycle**
+1. Write a failing test that defines a desired function or improvement.
+2. Run the test to confirm it fails as expected.
+3. Write minimal code to make the test pass.
+4. Run the test to confirm success.
+5. Refactor while keeping tests green.
+6. Repeat for each new feature or bugfix.
+
+---
+
+## Important checks
+- **NEVER** disable functionality to hide a failure. Fix root cause.
+- **NEVER** create duplicate templates or files. Fix the original.
+- **NEVER** claim something is "working" when any functionality is disabled or broken.
+- If you can't open a file or access something requested, say so. Do not assume contents.
+- **ALWAYS** identify and fix the root cause of template or compilation errors.
+- If git is initialized, ensure a '.gitignore' exists and contains at least:
+
+  .env
+  .env.local
+  .env.*
+
+  Ask the human whether additional patterns should be added, and suggest any that you think are important given the project.
+
+## When to ask for human input
+Ask the human if any of the following is true:
+- A test type appears "not applicable". Use the exact phrase request: **"I AUTHORIZE YOU TO SKIP WRITING TESTS THIS TIME"**.
+- Required anchors conflict or are missing from upstream docs.
+- You need new environment variables or secrets.
+- An external dependency or major architectural change is required.
+- Design files are missing, unsupported or oversized
+
+Minimal agent workflow (how to proceed)
+1. Read prompt_plan.md and idea_one_pager.md before writing code. If files are missing, stop and ask.
+2. Create failing tests that define the required behavior (unit, integration, E2E).
+3. Implement minimal code to satisfy tests.
+4. Run full test suite locally; fix until green.
+5. Update prompt_plan.md checklist entries and commit code + tests + prompt_plan.md together.
+6. Push branch with a short, descriptive name and a single-line commit summary. Example:
+   - Branch: feat/<short-description>
+   - Commit: feat: implement <short-description> — tests green
+7. Open a PR and include:
+   - Summary of change and linked prompt_plan step.
+   - Short manual test path for a human to verify end-to-end.
+   - Any relevant design file references from /designs/.
+   - If there are user-visible changes, update README release notes.
+
+What belongs in /designs/
+- Source design files (Figma, Sketch exports, Adobe files) and an index README.md describing file ownership and usage.
+- Exported assets used by the app (SVGs, optimized PNGs, icon sets) organized by resolution and purpose.
+- Style tokens and design system artifacts (colors, typographic scales, spacing, component specs).
+- Interaction and flow diagrams (screens, overlays, modals) and screenshots demonstrating expected states.
+- Component-level specs (naming, states, spacing) and any code snippets for implementation.
+- A manifest (designs/README.md) that maps features/screens to design files and contains any special instructions (e.g., responsive variants).
+- If designs are missing or incomplete, agents must stop and ask the human before implementing UI.
+
+Commit and branching conventions (minimal)
+- Branch names: feat/, fix/, chore/, test/ prefixes, e.g. feat/auth-login.
+- Commit message prefix should match branch type and be concise. Include "— tests green" when all tests pass locally.
+- Always include the prompt_plan.md checklist update in the same commit that implements the task.
+
+Failure handling and errors
+- If tests fail after your change: fix the root cause. Do not suppress tests.
+- If a design file referenced in a task is missing, explicitly report the missing file and halt.
+- If a required doc (prompt_plan.md, dev_spec.md/ spec.md, idea_one_pager.md) cannot be opened, say so and stop.
+
+If you need to pause work
+- Mark the relevant TODO in prompt_plan.md with '(Deferred)' and a short reason.
+- Mark all dependent checklist items as '(Deferred)' too.
+
+Contact / escalation
+- If the agent needs clarification or permission (e.g., skip tests), quote the exact phrase required by policy and ask the human.
+- For pull requests, include a human reviewer tag in the PR description.
+
+Quick checklist for agents before any PR
+- [ ] prompt_plan.md updated for the completed step
+- [ ] Tests added/updated and passing locally
+- [ ] README/release notes updated if user-facing
+- [ ] Design file references included for UI changes
+- [ ] Commit and branch follow conventions
+
+End of file.`
 };

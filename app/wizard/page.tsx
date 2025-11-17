@@ -8,6 +8,7 @@ import { step3Config } from "./steps/step3-config";
 import { step4Config } from "./steps/step4-config";
 import { StepConfig } from "@/app/types";
 import { sampleDocs } from "./utils/sampleDocs";
+import JSZip from "jszip";
 
 const stepConfigs: StepConfig[] = [
   step1Config,
@@ -17,7 +18,7 @@ const stepConfigs: StepConfig[] = [
 ];
 
 const stepKeyMap = ["onePager", "devSpec", "checklist", "agentsMd"] as const;
-const stepNames = ["One Pager", "Dev Spec", "Prompt Plan", "AGENTS.md"];
+const stepNames = ["One Pager", "Dev Spec", "Prompt Plan", "AGENTS"];
 
 export default function WizardPage() {
   const { currentStep, setCurrentStep, steps, isGenerating, resetWizard, updateStepDoc, approveStep } = useWizardStore();
@@ -72,7 +73,38 @@ export default function WizardPage() {
     approveStep('devSpec');
     updateStepDoc('checklist', sampleDocs.promptPlan);
     approveStep('checklist');
+    updateStepDoc('agentsMd', sampleDocs.agentsMd);
+    approveStep('agentsMd');
     setCurrentStep(1);
+  };
+
+  const handleDownloadAll = async () => {
+    const zip = new JSZip();
+    let hasDocuments = false;
+
+    // Add each generated document to the ZIP
+    stepNames.forEach((name, index) => {
+      const stepKey = stepKeyMap[index];
+      const stepData = steps[stepKey];
+      if (stepData.generatedDoc) {
+        const filename = `${name.toUpperCase().replace(/\s+/g, '_')}.md`;
+        zip.file(filename, stepData.generatedDoc);
+        hasDocuments = true;
+      }
+    });
+
+    // Only generate and download if there are documents
+    if (hasDocuments) {
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'GENERATED_DOCS.zip';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   };
 
   return (
@@ -115,6 +147,16 @@ export default function WizardPage() {
             <div className="text-sm font-semibold mb-4 text-gray-900">
               Saved Documents
             </div>
+
+            {/* Download All Button */}
+            <button
+              onClick={handleDownloadAll}
+              disabled={!Object.values(steps).some(step => step.generatedDoc !== null)}
+              className="w-full mb-4 px-3 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            >
+              <span>⬇</span>
+              Download All as ZIP
+            </button>
 
             {/* Document List */}
             <div className="flex flex-col gap-3 mb-5">
