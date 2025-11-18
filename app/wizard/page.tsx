@@ -25,6 +25,7 @@ export default function WizardPage() {
 
   const currentConfig = stepConfigs[currentStep - 1];
   const currentStepKey = stepKeyMap[currentStep - 1];
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const handleStepClick = (stepNumber: number) => {
     // Clear chat history when navigating forward to a new step
@@ -115,12 +116,14 @@ export default function WizardPage() {
           Step {currentStep} / 4
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={handleLoadSampleDocs}
-            className="bg-blue-600 border border-blue-600 px-4 py-2 rounded-md text-sm text-white hover:bg-blue-700 transition-colors"
-          >
-            Load Sample Docs
-          </button>
+          {isDevelopment && (
+            <button
+              onClick={handleLoadSampleDocs}
+              className="bg-blue-600 border border-blue-600 px-4 py-2 rounded-md text-sm text-white hover:bg-blue-700 transition-colors"
+            >
+              Load Sample Docs
+            </button>
+          )}
           <button
             onClick={resetWizard}
             className="bg-white border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-600 hover:bg-gray-50 transition-colors"
