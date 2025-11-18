@@ -18,11 +18,6 @@ export const step4Config: StepConfig = {
 - 'PROMPT_PLAN.md' — Agent‑Ready Planner with per‑step prompts, expected artifacts, tests, rollback notes, idempotency notes, and a TODO checklist using Markdown checkboxes. This file drives the agent workflow.  
 - 'AGENTS.md' — This file. 
 
-**UI Implementation Guidance:**
-- **Always access files in '/designs/' and its subfolders whenever doing any UI changes or additions.**
-- Follow the designs contained in that folder as a guide for layout, styling, components, and user experience.
-- Reference specific design files when implementing UI features to ensure consistency with the intended design.
-
 ### Agent responsibility
 - After completing any coding, refactor, or test step, **immediately update the corresponding TODO checklist item in 'prompt_plan.md'**.  
 - Use the same Markdown checkbox format ('- [x]') to mark completion.  
