@@ -1,7 +1,7 @@
 {
-  "name": "wizard-app",
+  "name": "vibe-scaffold",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Next.js application with a multi-step wizard interface that uses AI-powered chat to gather requirements and generate comprehensive technical specification documents.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,6 +16,7 @@
     "@ai-sdk/anthropic": "^2.0.44",
     "@ai-sdk/openai": "^2.0.67",
     "@ai-sdk/react": "^2.0.93",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

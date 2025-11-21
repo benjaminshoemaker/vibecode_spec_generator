@@ -1,6 +1,8 @@
-# VibeCODE Spec Generator
+# Vibe Scaffold
 
 A Next.js application with a multi-step wizard interface that uses AI-powered chat to gather requirements and generate comprehensive technical specification documents.
+
+Stop getting "close but not quite right" results from AI coding tools. Vibe Scaffold gives you a structured, step-by-step process to capture your vision and generate documentation that AI agents understand and can execute on iteratively. The app helps you refine your idea, turn it into full technical architecture, and create a step-by-step development plan. 
 
 ## Features
 
@@ -49,13 +51,23 @@ npm install
 Create a `.env.local` file in the root directory (or edit the existing one):
 
 ```bash
+# Required
 OPENAI_API_KEY=your_openai_api_key_here
 
 # Optional: override default model (gpt-4o)
 OPENAI_MODEL=gpt-4o
+
+# Optional: Google Analytics (for production)
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
 Replace `your_openai_api_key_here` with your actual OpenAI API key.
+
+**Google Analytics Setup (Optional):**
+1. Create a GA4 property at https://analytics.google.com/
+2. Get your measurement ID (format: `G-XXXXXXXXXX`)
+3. Add it to your `.env.local` file as `NEXT_PUBLIC_GA_ID`
+4. For production deployments (Vercel, etc.), add this as an environment variable
 
 ### 3. Run the Development Server
 

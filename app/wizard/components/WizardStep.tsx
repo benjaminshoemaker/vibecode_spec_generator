@@ -39,7 +39,6 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
     setError(null);
 
     try {
-      // Get previous documents if needed
       const documentInputs: Record<string, string> = {};
       if (config.documentInputs.length > 0) {
         for (const inputKey of config.documentInputs) {
@@ -52,9 +51,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
 
       const response = await fetch("/api/generate-doc", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chatHistory: stepData.chatHistory,
           stepName: config.stepName,
@@ -63,14 +60,10 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to generate document");
-      }
-
+      if (!response.ok) throw new Error("Failed to generate document");
       const data = await response.json();
       updateStepDoc(stepKey, data.document);
 
-      // Scroll to preview after generation
       setTimeout(() => {
         const previewElement = document.getElementById('preview-box');
         if (previewElement) {
@@ -78,9 +71,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
         }
       }, 100);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to generate document"
-      );
+      setError(err instanceof Error ? err.message : "Failed to generate document");
     } finally {
       setIsGenerating(false);
     }
@@ -90,14 +81,12 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
     approveStep(stepKey);
   };
 
-  // Listen for generate event from sidebar
   useEffect(() => {
     const handleTriggerGenerate = () => {
       if (stepData.chatHistory.length > 0 && !isGenerating) {
         handleGenerate();
       }
     };
-
     window.addEventListener('triggerGenerate', handleTriggerGenerate);
     return () => window.removeEventListener('triggerGenerate', handleTriggerGenerate);
   }, [stepData.chatHistory.length, isGenerating, handleGenerate]);
@@ -105,16 +94,16 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
   return (
     <>
       {/* Chat Box */}
-      <div className="bg-white rounded-lg border border-gray-200 h-[600px] flex flex-col">
-        <div className="px-4 py-4 border-b border-gray-200">
-          <div className="text-lg font-semibold text-gray-900 mb-2">
+      <div className="flex flex-col h-[500px] lg:h-[600px]">
+        <div className="px-6 py-4 border-b-2 border-stone-100 bg-stone-50/50">
+          <div className="text-lg font-black text-stone-800 mb-1">
             {config.stepName}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm font-medium text-stone-500">
             {config.userInstructions}
           </div>
         </div>
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-stone-50/30">
           <ChatInterface
             key={stepKey}
             systemPrompt={config.systemPrompt}
@@ -126,36 +115,27 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
         </div>
       </div>
 
-      {/* Loading Box - Shown while generating */}
+      {/* Loading Box */}
       {isGenerating && !stepData.generatedDoc && (
-        <div id="preview-box" className="bg-white rounded-lg border border-gray-200 p-6">
+        <div id="preview-box" className="border-t-4 border-stone-100 bg-white p-8">
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <div className="text-base font-semibold text-gray-900 mb-2">
-              Generating {config.stepName}...
+            <div className="text-6xl mb-6 animate-bounce">🪄</div>
+            <div className="text-xl font-black text-stone-800 mb-2">
+               Magic is happening...
             </div>
-            <div className="text-sm text-gray-600">
-              This may take a moment. Please wait.
+            <div className="text-stone-500 font-medium mb-8">
+              We're writing your {config.stepName} right now.
+            </div>
+            <div className="w-64 h-4 bg-stone-100 rounded-full overflow-hidden">
+               <div className="h-full bg-coral-400 w-1/2 animate-[slide_1s_linear_infinite] rounded-full"></div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Preview Box - Only shown after document is generated */}
+      {/* Preview Box */}
       {stepData.generatedDoc && (
-        <div id="preview-box" className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-base font-semibold text-gray-900">
-              Preview: {config.stepName}
-            </div>
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:opacity-50 transition-colors"
-            >
-              {isGenerating ? "Regenerating..." : "Regenerate"}
-            </button>
-          </div>
+        <div id="preview-box" className="border-t-4 border-stone-100 h-[600px] flex flex-col">
           <DocumentPreview
             content={stepData.generatedDoc}
             onRegenerate={handleGenerate}
@@ -164,8 +144,8 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600 text-sm">{error}</p>
+        <div className="bg-red-50 border-2 border-red-100 rounded-2xl p-6 m-6">
+          <p className="text-red-500 font-bold">Uh oh! {error}</p>
         </div>
       )}
     </>
