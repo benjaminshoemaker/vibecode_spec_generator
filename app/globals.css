@@ -3,25 +3,74 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fafaf9; /* Stone 50 */
+  --foreground: #44403c; /* Stone 700 */
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Friendly Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d6d3d1; /* Stone 300 */
+  border-radius: 9999px;
+  border: 3px solid #fafaf9; /* Match bg to create padding effect */
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}
+
+/* Markdown Styles - Soft & Friendly Override */
+.prose {
+  max-width: 65ch;
+  color: #57534e;
+}
+.prose h1, .prose h2, .prose h3 {
+  color: #292524;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.prose strong {
+  color: #1c1917;
+  font-weight: 700;
+}
+.prose a {
+  color: #f43f5e;
+  text-decoration: underline;
+  text-decoration-color: #fecdd3;
+  text-decoration-thickness: 2px;
+  transition: all 0.2s;
+}
+.prose a:hover {
+  background-color: #fff1f2;
+  text-decoration-color: #f43f5e;
+}
+.prose code {
+  color: #0d9488; /* Teal 600 */
+  background-color: #f0fdfa;
+  padding: 0.2em 0.5em;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+.prose pre {
+  background-color: #292524; /* Stone 800 */
+  color: #e7e5e4;
+  border-radius: 1rem;
+}
+.prose blockquote {
+  border-left-color: #fb7185; /* Coral 400 */
+  background-color: #fff1f2;
+  border-radius: 0 1rem 1rem 0;
+  padding: 1rem 1.5rem;
+  font-style: normal;
 }

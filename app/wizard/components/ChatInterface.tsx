@@ -24,29 +24,25 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom of chat container when messages change
   useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // Update parent component when messages change
   useEffect(() => {
     onMessagesChange(messages);
   }, [messages, onMessagesChange]);
 
-  // Send initial greeting if provided and chat is empty
   useEffect(() => {
     if (initialGreeting && initialMessages.length === 0 && messages.length === 0) {
-      const greetingMessage: Message = {
+      setMessages([{
         id: Date.now().toString(),
         role: "assistant",
         content: initialGreeting,
-      };
-      setMessages([greetingMessage]);
+      }]);
     }
-  }, [initialGreeting, initialMessages.length]); // Only run on mount
+  }, [initialGreeting, initialMessages.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,29 +62,18 @@ export default function ChatInterface({
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: updatedMessages.map((msg) => ({
-            role: msg.role,
-            content: msg.content,
-          })),
+          messages: updatedMessages.map((msg) => ({ role: msg.role, content: msg.content })),
           systemPrompt,
           documentInputs,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to get response");
-      }
-
+      if (!response.ok) throw new Error("Failed to get response");
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-
-      if (!reader) {
-        throw new Error("No response body");
-      }
+      if (!reader) throw new Error("No response body");
 
       let assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -96,102 +81,106 @@ export default function ChatInterface({
         content: "",
       };
 
-      // Add empty assistant message initially
       const messagesWithAssistant = [...updatedMessages, assistantMessage];
       setMessages(messagesWithAssistant);
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
         const chunk = decoder.decode(value);
-
-        // Update assistant message content
-        assistantMessage = {
-          ...assistantMessage,
-          content: assistantMessage.content + chunk,
-        };
-
-        // Update messages with new content
+        assistantMessage = { ...assistantMessage, content: assistantMessage.content + chunk };
         setMessages([...updatedMessages, assistantMessage]);
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      const errorMessage: Message = {
+      setMessages([...updatedMessages, {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Sorry, there was an error processing your request.",
-      };
-      setMessages([...updatedMessages, errorMessage]);
+        content: "Oops! Something went wrong. Mind trying again?",
+      }]);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Messages List */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+    <div className="flex flex-col h-full bg-stone-50/50">
+      {/* Chat History */}
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
         {messages.length === 0 && (
-          <div className="text-center text-gray-500 mt-8 text-sm">
-            Start by telling the assistant about your app idea...
+          <div className="flex flex-col items-center justify-center h-full text-center px-10">
+            <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mb-6 rotate-3">
+              <span className="text-4xl">👋</span>
+            </div>
+            <h3 className="text-2xl font-black text-stone-800 mb-2">Let's chat!</h3>
+            <p className="text-stone-500 font-medium max-w-xs">Tell me a bit about what you want to build, and I'll help you figure out the details.</p>
           </div>
         )}
+        
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${
-              message.role === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex gap-4 ${message.role === "user" ? "flex-row-reverse" : "flex-row"}`}
           >
-            <div
-              className={`max-w-[80%] rounded-lg px-4 py-3 text-sm leading-relaxed ${
-                message.role === "user"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-900"
-              }`}
-            >
+            {/* Avatar */}
+            <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-base font-bold ${
+              message.role === "user" 
+                ? "bg-coral-400 text-white" 
+                : "bg-teal-400 text-white"
+            }`}>
+              {message.role === "user" ? "Me" : "AI"}
+            </div>
+
+            {/* Bubble */}
+            <div className={`max-w-[85%] rounded-3xl px-6 py-4 text-base font-medium leading-relaxed ${
+              message.role === "user"
+                ? "bg-coral-400 text-white rounded-tr-none shadow-sm"
+                : "bg-white border-2 border-stone-100 text-stone-700 rounded-tl-none"
+            }`}>
               <div className="whitespace-pre-wrap">{message.content}</div>
             </div>
           </div>
         ))}
+
         {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-          <div className="flex justify-start">
-            <div className="max-w-[80%] rounded-lg px-4 py-2 bg-gray-200 text-gray-900">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
-                <div
-                  className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"
-                  style={{ animationDelay: "0.1s" }}
-                ></div>
-                <div
-                  className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"
-                  style={{ animationDelay: "0.2s" }}
-                ></div>
-              </div>
+          <div className="flex gap-4">
+            <div className="w-10 h-10 rounded-full bg-teal-400 flex items-center justify-center text-white font-bold">AI</div>
+            <div className="bg-white border-2 border-stone-100 rounded-3xl rounded-tl-none px-6 py-4 flex items-center gap-2">
+               <span className="w-2 h-2 bg-stone-300 rounded-full animate-bounce"></span>
+               <span className="w-2 h-2 bg-stone-300 rounded-full animate-bounce delay-75"></span>
+               <span className="w-2 h-2 bg-stone-300 rounded-full animate-bounce delay-150"></span>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Form */}
-      <div className="border-t border-gray-200 p-4 bg-white">
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Your message..."
-            className="flex-1 px-3 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            disabled={isLoading}
-          />
+      {/* Input Area */}
+      <div className="p-6 bg-white border-t-2 border-stone-100">
+        <form onSubmit={handleSubmit} className="relative flex gap-3 items-end">
+          <div className="flex-1 relative">
+             <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+                placeholder="Type your ideas here..."
+                className="w-full pl-6 pr-12 py-4 bg-stone-50 border-2 border-stone-100 rounded-3xl text-base font-medium text-stone-800 focus:outline-none focus:ring-4 focus:ring-coral-100 focus:border-coral-300 transition-all resize-none min-h-[64px] max-h-[140px] placeholder:text-stone-400"
+                rows={1}
+                disabled={isLoading}
+             />
+          </div>
+          
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="px-6 py-3 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            className="h-[64px] w-[64px] flex items-center justify-center bg-stone-800 hover:bg-black text-white rounded-full transition-all disabled:bg-stone-200 disabled:cursor-not-allowed transform active:scale-95"
           >
-            Send
+            <svg className="w-6 h-6 transform rotate-90 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
           </button>
         </form>
       </div>
