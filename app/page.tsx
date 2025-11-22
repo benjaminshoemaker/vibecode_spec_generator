@@ -1,115 +1,196 @@
-import Link from "next/link";
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import Footer from "./components/Footer";
 
 export default function LandingPage() {
+  // Blinking cursor effect for the hero
+  const [cursorVisible, setCursorVisible] = useState(true);
+  useEffect(() => {
+    const interval = setInterval(() => setCursorVisible(v => !v), 530);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-700">
+    <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans selection:bg-white selection:text-black flex flex-col">
+      
       {/* Navigation */}
-      <nav className="sticky top-4 z-50 max-w-6xl mx-auto px-4">
-        <div className="bg-white/90 backdrop-blur-md border-2 border-stone-100 rounded-full px-6 py-3 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-coral-400 rounded-full flex items-center justify-center text-white font-black text-xl rotate-3">V</div>
-            <span className="text-xl font-black text-stone-800 tracking-tight">Vibe Scaffold</span>
+      <nav className="fixed top-0 w-full z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2 font-mono text-sm font-bold tracking-tighter text-white">
+            <div className="w-4 h-4 bg-white flex items-center justify-center">
+              <div className="w-2 h-2 bg-zinc-950"></div>
+            </div>
+            VIBE_SCAFFOLD
           </div>
+          
           <div className="flex items-center gap-4">
-            <Link 
-              href="/wizard" 
-              className="text-stone-500 hover:text-stone-800 font-bold transition-colors"
-            >
+            <Link href="/wizard" className="text-xs font-mono text-zinc-400 hover:text-white transition-colors">
               Log In
             </Link>
             <Link 
               href="/wizard" 
-              className="bg-stone-800 hover:bg-stone-900 text-white px-6 py-2.5 rounded-full font-bold transition-transform hover:scale-105 active:scale-95"
+              className="bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-2"
             >
-              Get Started
+              Get Started <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <main className="pt-12 pb-24 px-4">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-block px-4 py-1.5 bg-teal-100 text-teal-700 rounded-full font-bold text-sm mb-8 rotate-1">
-            ✨ AI-Powered Spec Generator
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black text-stone-900 mb-8 leading-tight">
-            Turn your messy ideas into <br/>
-            <span className="text-coral-400 inline-block transform -rotate-1">crystal clear specs.</span>
-          </h1>
-          
-          <p className="text-xl text-stone-500 max-w-2xl mx-auto mb-12 font-medium">
-            A friendly 4-step wizard that helps you define, design, and plan your next big app idea without the headache.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-            <Link 
-              href="/wizard" 
-              className="px-8 py-4 bg-coral-400 hover:bg-coral-500 text-white text-lg font-bold rounded-2xl transition-all transform hover:-translate-y-1 hover:rotate-1 shadow-[0_8px_0_rgb(225,29,72)] hover:shadow-[0_4px_0_rgb(225,29,72)] active:shadow-none active:translate-y-2"
-            >
-              Start Building Now
-            </Link>
-            <a 
-              href="#how-it-works" 
-              className="px-8 py-4 bg-white text-stone-700 border-2 border-stone-200 hover:border-stone-300 text-lg font-bold rounded-2xl transition-colors"
-            >
-              See Example
-            </a>
-          </div>
+      <main className="pt-32 pb-24 flex-grow">
+        
+        {/* Hero Section */}
+        <div className="max-w-7xl mx-auto px-6 mb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Hero Text */}
+            <div className="lg:col-span-7">
+              <div className="inline-flex items-center gap-2 px-2 py-1 border border-zinc-800 bg-zinc-900/50 text-xs font-mono text-zinc-400 mb-8">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                AI-Powered Spec Generator
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight mb-8">
+                Turn your messy ideas into <br />
+                <span className="text-zinc-500">crystal clear specs.</span>
+                <span className={`${cursorVisible ? 'opacity-100' : 'opacity-0'} ml-1 text-white`}>_</span>
+              </h1>
+              
+              <p className="text-lg text-zinc-400 max-w-xl leading-relaxed mb-10">
+                Stop writing vague prompt iterations. Generate detailed technical specifications, architecture diagrams, and agent directives from a single structured conversation.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link 
+                  href="/wizard" 
+                  className="h-12 px-8 bg-white text-black font-bold flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors border border-transparent text-sm tracking-wide"
+                >
+                  <Terminal className="w-4 h-4" />
+                  Start Building Now
+                </Link>
+                <Link 
+                  href="#capabilities" 
+                  className="h-12 px-8 bg-transparent border border-zinc-700 text-white font-medium flex items-center justify-center gap-2 hover:border-zinc-500 hover:bg-zinc-900 transition-all text-sm tracking-wide"
+                >
+                  READ_DOCS
+                </Link>
+              </div>
+            </div>
 
-          {/* Visual */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="absolute inset-0 bg-teal-200 rounded-[3rem] rotate-2"></div>
-            <div className="relative bg-white border-4 border-stone-100 rounded-[3rem] p-8 md:p-12 shadow-sm">
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                 <div className="bg-stone-50 rounded-3xl p-6 text-left border-2 border-stone-100">
-                    <div className="flex gap-3 mb-4">
-                      <div className="w-8 h-8 rounded-full bg-stone-200"></div>
-                      <div className="bg-white p-3 rounded-2xl rounded-tl-none border-2 border-stone-100 text-sm font-medium text-stone-600">
-                        I want to build a plant watering app!
+            {/* Hero Visual - Abstract Interface */}
+            <div className="lg:col-span-5">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-r from-zinc-800/20 to-transparent opacity-50 blur-xl"></div>
+                <div className="relative bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800 bg-zinc-950">
+                    <div className="flex gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+                    </div>
+                    <div className="text-[10px] font-mono text-zinc-500 uppercase">spec_generator.exe</div>
+                  </div>
+                  <div className="p-6 font-mono text-xs">
+                    <div className="flex gap-4 mb-6">
+                      <div className="text-zinc-600 text-right select-none">
+                        01<br/>02<br/>03<br/>04<br/>05
+                      </div>
+                      <div className="text-zinc-300">
+                        <span className="text-purple-400">function</span> <span className="text-yellow-200">generateSpec</span>(input) {'{'}<br/>
+                        &nbsp;&nbsp;<span className="text-zinc-500">// Analysis in progress...</span><br/>
+                        &nbsp;&nbsp;<span className="text-blue-400">const</span> architecture = <span className="text-emerald-400">new</span> SystemDesign(input);<br/>
+                        &nbsp;&nbsp;<span className="text-blue-400">return</span> architecture.compile();<br/>
+                        {'}'}
                       </div>
                     </div>
-                    <div className="flex gap-3 flex-row-reverse">
-                      <div className="w-8 h-8 rounded-full bg-coral-400 flex items-center justify-center text-white text-xs font-bold">AI</div>
-                      <div className="bg-coral-50 p-3 rounded-2xl rounded-tr-none border-2 border-coral-100 text-sm font-medium text-coral-800">
-                        I love that! 🌿 Should it track individual plants or just general schedules?
+                    <div className="border-t border-zinc-800 pt-4 mt-4">
+                      <div className="flex items-center gap-2 text-emerald-400 mb-2">
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="font-bold">OUTPUT GENERATED</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-zinc-950 border border-zinc-800 p-2 text-zinc-500">ONE_PAGER.md</div>
+                        <div className="bg-zinc-950 border border-zinc-800 p-2 text-zinc-500">DEV_SPEC.md</div>
+                        <div className="bg-zinc-950 border border-zinc-800 p-2 text-zinc-500">PROMPT_PLAN.md</div>
+                        <div className="bg-zinc-950 border border-zinc-800 p-2 text-zinc-500">AGENTS.md</div>
                       </div>
                     </div>
-                 </div>
-                 <div className="text-left">
-                    <div className="inline-block p-3 bg-teal-100 rounded-2xl mb-4 text-teal-700 font-bold">
-                       Generated Output
-                    </div>
-                    <h3 className="text-2xl font-black text-stone-900 mb-2">Detailed Specs</h3>
-                    <p className="text-stone-500 font-medium">We automatically create professional documentation from your casual conversation.</p>
-                 </div>
-               </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Steps Grid */}
-        <div id="how-it-works" className="max-w-6xl mx-auto mt-32 px-4">
-          <h2 className="text-3xl font-black text-stone-900 text-center mb-16">How it works</h2>
-          <div className="grid md:grid-cols-4 gap-6">
+        {/* Divider */}
+        <div className="w-full border-t border-zinc-800"></div>
+
+        {/* Capabilities Section */}
+        <div id="capabilities" className="max-w-7xl mx-auto px-6 py-24">
+          <div className="flex items-end justify-between mb-16">
+            <div>
+              <h2 className="text-sm font-mono text-zinc-500 mb-2">=CAPABILITIES</h2>
+              <h3 className="text-3xl font-bold text-white">Reason over your requirements</h3>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-zinc-800">
             {[
-              { step: "1", title: "One Pager", desc: "The big idea", color: "bg-coral-100 text-coral-600" },
-              { step: "2", title: "Dev Spec", desc: "The nitty gritty", color: "bg-teal-100 text-teal-600" },
-              { step: "3", title: "Prompt Plan", desc: "The blueprint", color: "bg-blue-100 text-blue-600" },
-              { step: "4", title: "AGENTS.md", desc: "The robot manual", color: "bg-purple-100 text-purple-600" }
-            ].map((feature) => (
-              <div key={feature.step} className="bg-white p-6 rounded-3xl border-2 border-stone-100 hover:border-stone-200 transition-all cursor-default">
-                <div className={`w-12 h-12 ${feature.color} rounded-2xl flex items-center justify-center text-xl font-black mb-4 rotate-3`}>
-                  {feature.step}
+              { 
+                title: "Product Definition", 
+                desc: "Converts abstract ideas into concrete MVP requirements and user stories.",
+                icon: <Command className="w-5 h-5" />
+              },
+              { 
+                title: "Tech Architecture", 
+                desc: "Drafts complete schema designs, API routes, and security protocols.",
+                icon: <Cpu className="w-5 h-5" />
+              },
+              { 
+                title: "Development Plan", 
+                desc: "Breaks complexity into sequential, LLM-testable prompt chains.",
+                icon: <GitBranch className="w-5 h-5" />
+              },
+              { 
+                title: "Agent Directives", 
+                desc: "Generates system prompts (AGENTS.md) for autonomous coding agents.",
+                icon: <Layers className="w-5 h-5" />
+              }
+            ].map((item, i) => (
+              <div key={i} className="group p-8 border-r border-b border-zinc-800 bg-zinc-950 hover:bg-zinc-900 transition-colors relative">
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ArrowRight className="w-4 h-4 text-zinc-400" />
                 </div>
-                <h3 className="text-xl font-bold text-stone-900 mb-2">{feature.title}</h3>
-                <p className="text-stone-500 font-medium">{feature.desc}</p>
+                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6 text-white">
+                  {item.icon}
+                </div>
+                <h4 className="text-base font-bold text-white mb-3">{item.title}</h4>
+                <p className="text-sm text-zinc-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Call to Action */}
+        <div className="border-t border-zinc-800 bg-zinc-900 py-24">
+           <div className="max-w-3xl mx-auto px-6 text-center">
+             <h2 className="text-3xl font-bold text-white mb-6 tracking-tight">
+               Ready to draft?
+             </h2>
+             <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <Link 
+                  href="/wizard" 
+                  className="bg-white text-black px-10 py-4 font-bold text-sm uppercase tracking-wide hover:bg-zinc-200 transition-colors"
+                >
+                  Get started
+                </Link>
+             </div>
+           </div>
+        </div>
+
       </main>
 
       <Footer />
