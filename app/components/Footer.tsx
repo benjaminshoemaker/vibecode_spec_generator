@@ -76,12 +76,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/PRIVACY_POLICY.md" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="/terms" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/TERMS_OF_SERVICE.md" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Terms of Service
                 </a>
               </li>
