@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { WizardState, StepData, Message } from "./types";
+import { analytics } from "./utils/analytics";
 
 const initialStepData: StepData = {
   chatHistory: [],
@@ -51,8 +52,9 @@ export const useWizardStore = create<WizardState>()(
             },
           },
         })),
-      resetWizard: () =>
-        set({
+      resetWizard: () => {
+        analytics.trackWizardReset();
+        return set({
           currentStep: 1,
           steps: {
             onePager: { ...initialStepData },
@@ -60,7 +62,8 @@ export const useWizardStore = create<WizardState>()(
             checklist: { ...initialStepData },
             agentsMd: { ...initialStepData },
           },
-        }),
+        });
+      },
       loadSampleDocs: () =>
         set({
           currentStep: 1,

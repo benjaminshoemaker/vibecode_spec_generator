@@ -11,6 +11,8 @@ import { sampleDocs } from "./utils/sampleDocs";
 import JSZip from "jszip";
 import Footer from "../components/Footer";
 import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson } from 'lucide-react';
+import { analytics } from "@/app/utils/analytics";
+import { useEffect } from "react";
 
 const stepConfigs: StepConfig[] = [
   step1Config,
@@ -29,6 +31,11 @@ export default function WizardPage() {
   const currentStepKey = stepKeyMap[currentStep - 1];
   const isDevelopment = process.env.NODE_ENV === 'development';
 
+  // Track step views
+  useEffect(() => {
+    analytics.trackStepView(currentStep, stepNames[currentStep - 1]);
+  }, [currentStep]);
+
   const handleStepClick = (stepNumber: number) => {
     if (stepNumber > currentStep) {
       const { updateStepChat } = useWizardStore.getState();
@@ -45,6 +52,9 @@ export default function WizardPage() {
       const nextStepKey = stepKeyMap[currentStep];
       updateStepChat(nextStepKey, []);
       setCurrentStep(currentStep + 1);
+    } else {
+      // Track wizard completion when user finalizes the last step
+      analytics.trackWizardComplete();
     }
   };
 
@@ -61,6 +71,9 @@ export default function WizardPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Track individual document download
+    analytics.trackDocumentDownload(stepName);
   };
 
   const handleLoadSampleDocs = () => {
@@ -78,6 +91,7 @@ export default function WizardPage() {
   const handleDownloadAll = async () => {
     const zip = new JSZip();
     let hasDocuments = false;
+    let documentCount = 0;
     stepNames.forEach((name, index) => {
       const stepKey = stepKeyMap[index];
       const stepData = steps[stepKey];
@@ -85,6 +99,7 @@ export default function WizardPage() {
         const filename = `${name.toUpperCase().replace(/\s+/g, '_')}.md`;
         zip.file(filename, stepData.generatedDoc);
         hasDocuments = true;
+        documentCount++;
       }
     });
 
@@ -98,6 +113,9 @@ export default function WizardPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+
+      // Track bulk download
+      analytics.trackBulkDownload(documentCount);
     }
   };
 

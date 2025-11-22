@@ -6,6 +6,7 @@ import { useWizardStore } from "@/app/store";
 import ChatInterface from "./ChatInterface";
 import DocumentPreview from "./DocumentPreview";
 import { Terminal, Loader2 } from 'lucide-react';
+import { analytics } from "@/app/utils/analytics";
 
 interface WizardStepProps {
   config: StepConfig;
@@ -79,6 +80,9 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
 
       updateStepDoc(stepKey, generatedDoc);
 
+      // Track successful document generation
+      analytics.trackDocumentGenerate(config.stepName, true);
+
       setTimeout(() => {
         const previewElement = document.getElementById('preview-box');
         if (previewElement) {
@@ -87,6 +91,8 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       }, 100);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate document");
+      // Track failed document generation
+      analytics.trackDocumentGenerate(config.stepName, false);
     } finally {
       setIsGenerating(false);
     }
