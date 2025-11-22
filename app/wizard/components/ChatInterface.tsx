@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Message } from "@/app/types";
 import { Terminal, ArrowRight } from 'lucide-react';
+import { analytics } from "@/app/utils/analytics";
 
 interface ChatInterfaceProps {
   systemPrompt: string;
@@ -10,6 +11,7 @@ interface ChatInterfaceProps {
   onMessagesChange: (messages: Message[]) => void;
   documentInputs?: Record<string, string>;
   initialGreeting?: string;
+  stepName?: string;
 }
 
 export default function ChatInterface({
@@ -18,6 +20,7 @@ export default function ChatInterface({
   onMessagesChange,
   documentInputs,
   initialGreeting,
+  stepName,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -59,6 +62,11 @@ export default function ChatInterface({
     setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
+
+    // Track chat message submission
+    if (stepName) {
+      analytics.trackChatMessage(stepName);
+    }
 
     try {
       const response = await fetch("/api/chat", {

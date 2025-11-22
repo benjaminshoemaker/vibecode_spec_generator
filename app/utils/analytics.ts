@@ -65,4 +65,13 @@ export const analytics = {
       window.gtag('event', 'wizard_complete');
     }
   },
+
+  // Track chat message submission
+  trackChatMessage: (stepName: string) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'chat_message', {
+        step_name: stepName,
+      });
+    }
+  },
 };

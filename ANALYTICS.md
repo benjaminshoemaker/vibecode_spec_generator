@@ -17,7 +17,15 @@ Triggered when a user navigates to a different wizard step.
 - `step_number` - The step number (1-4)
 - `step_name` - The step name (ONE_PAGER, DEV_SPEC, PROMPT_PLAN, AGENTS_MD)
 
-### 2. Document Generation
+### 2. Chat Message Submission
+**Event Name:** `chat_message`
+
+Triggered when a user submits a chat message (via Enter key or clicking the arrow button).
+
+**Parameters:**
+- `step_name` - The name of the step where the message was sent
+
+### 3. Document Generation
 **Event Name:** `document_generate`
 
 Triggered when a user generates a document (success or failure).
@@ -26,7 +34,7 @@ Triggered when a user generates a document (success or failure).
 - `step_name` - The name of the step/document being generated
 - `success` - Boolean indicating if generation succeeded
 
-### 3. Individual Document Download
+### 4. Individual Document Download
 **Event Name:** `document_download`
 
 Triggered when a user downloads a single document.
@@ -35,7 +43,7 @@ Triggered when a user downloads a single document.
 - `step_name` - The name of the document downloaded
 - `download_type` - Always "individual"
 
-### 4. Bulk ZIP Download
+### 5. Bulk ZIP Download
 **Event Name:** `bulk_download`
 
 Triggered when a user downloads all documents as a ZIP file.
@@ -44,12 +52,12 @@ Triggered when a user downloads all documents as a ZIP file.
 - `document_count` - Number of documents included in the ZIP
 - `download_type` - Always "zip"
 
-### 5. Wizard Reset
+### 6. Wizard Reset
 **Event Name:** `wizard_reset`
 
 Triggered when a user clicks the RESET button.
 
-### 6. Wizard Completion
+### 7. Wizard Completion
 **Event Name:** `wizard_complete`
 
 Triggered when a user finalizes the last step (clicks FINALIZE on step 4).
@@ -65,7 +73,9 @@ Triggered when a user finalizes the last step (clicks FINALIZE on step 4).
 
 With these events, you can answer questions like:
 - Which wizard steps do users visit most?
+- How engaged are users with the chat feature? (messages per step)
 - How many documents are successfully generated vs. failed?
 - Which documents are downloaded most frequently?
 - How many users complete the entire wizard?
 - What's the drop-off rate between steps?
+- Which steps have the most user interaction?
