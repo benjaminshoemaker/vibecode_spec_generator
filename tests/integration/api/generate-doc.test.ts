@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { POST } from "@/app/api/generate-doc/route";
 
-// Mock the AI SDK
 vi.mock("ai", () => ({
-  generateText: vi.fn(async () => ({
-    text: "# Generated Document\n\nThis is a mocked document.",
+  streamText: vi.fn(() => ({
+    toTextStreamResponse: () =>
+      new Response("# Generated Document\n\nThis is a mocked document."),
   })),
 }));
 
@@ -81,7 +81,7 @@ describe("Generate Doc API Route", () => {
 
   describe("Prompt Generation", () => {
     it("should format conversation history correctly", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const chatHistory = [
         { role: "user", content: "I want to build a time tracker" },
@@ -99,7 +99,7 @@ describe("Generate Doc API Route", () => {
 
       await POST(req);
 
-      const calls = vi.mocked(generateText).mock.calls;
+      const calls = vi.mocked(streamText).mock.calls;
       const prompt = calls[0][0].prompt;
 
       expect(prompt).toContain("User: I want to build a time tracker");
@@ -108,7 +108,7 @@ describe("Generate Doc API Route", () => {
     });
 
     it("should include stepName in the prompt", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const req = new Request("http://localhost/api/generate-doc", {
         method: "POST",
@@ -120,7 +120,7 @@ describe("Generate Doc API Route", () => {
 
       await POST(req);
 
-      const calls = vi.mocked(generateText).mock.calls;
+      const calls = vi.mocked(streamText).mock.calls;
       const prompt = calls[0][0].prompt;
 
       expect(prompt).toContain("Dev Spec");
@@ -129,7 +129,7 @@ describe("Generate Doc API Route", () => {
     });
 
     it("should include custom generation prompt when provided", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const customPrompt =
         "Create a detailed technical specification with API contracts and data models.";
@@ -145,14 +145,14 @@ describe("Generate Doc API Route", () => {
 
       await POST(req);
 
-      const calls = vi.mocked(generateText).mock.calls;
+      const calls = vi.mocked(streamText).mock.calls;
       const prompt = calls[0][0].prompt;
 
       expect(prompt).toContain(customPrompt);
     });
 
     it("should include document inputs when provided", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const documentInputs = {
         onePager: "# One-Pager\n\nParent time tracking app.",
@@ -169,7 +169,7 @@ describe("Generate Doc API Route", () => {
 
       await POST(req);
 
-      const calls = vi.mocked(generateText).mock.calls;
+      const calls = vi.mocked(streamText).mock.calls;
       const prompt = calls[0][0].prompt;
 
       expect(prompt).toContain("previously generated documents");
@@ -178,7 +178,7 @@ describe("Generate Doc API Route", () => {
     });
 
     it("should handle multiple document inputs", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const documentInputs = {
         onePager: "# One-Pager",
@@ -196,7 +196,7 @@ describe("Generate Doc API Route", () => {
 
       await POST(req);
 
-      const calls = vi.mocked(generateText).mock.calls;
+      const calls = vi.mocked(streamText).mock.calls;
       const prompt = calls[0][0].prompt;
 
       expect(prompt).toContain("onePager");
@@ -206,7 +206,7 @@ describe("Generate Doc API Route", () => {
     });
 
     it("should work without document inputs", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const req = new Request("http://localhost/api/generate-doc", {
         method: "POST",
@@ -218,7 +218,7 @@ describe("Generate Doc API Route", () => {
 
       await POST(req);
 
-      const calls = vi.mocked(generateText).mock.calls;
+      const calls = vi.mocked(streamText).mock.calls;
       const prompt = calls[0][0].prompt;
 
       expect(prompt).not.toContain("previously generated documents");
@@ -244,7 +244,6 @@ describe("Generate Doc API Route", () => {
 
       expect(openai).toHaveBeenCalledWith("gpt-4-turbo");
 
-      // Restore original env
       if (originalEnv) {
         process.env.OPENAI_MODEL = originalEnv;
       } else {
@@ -270,7 +269,6 @@ describe("Generate Doc API Route", () => {
 
       expect(openai).toHaveBeenCalledWith("gpt-4o");
 
-      // Restore original env
       if (originalEnv) {
         process.env.OPENAI_MODEL = originalEnv;
       }
@@ -278,7 +276,7 @@ describe("Generate Doc API Route", () => {
   });
 
   describe("Response Format", () => {
-    it("should return JSON response with document property", async () => {
+    it("should stream plain text response", async () => {
       const req = new Request("http://localhost/api/generate-doc", {
         method: "POST",
         body: JSON.stringify({
@@ -290,18 +288,17 @@ describe("Generate Doc API Route", () => {
       const response = await POST(req);
 
       expect(response.status).toBe(200);
-      expect(response.headers.get("Content-Type")).toBe("application/json");
+      expect(response.headers.get("Content-Type")).toContain("text");
 
-      const json = await response.json();
-      expect(json).toHaveProperty("document");
-      expect(typeof json.document).toBe("string");
+      const text = await response.text();
+      expect(text).toContain("# Generated Document");
     });
 
-    it("should return generated text from AI model", async () => {
-      const { generateText } = await import("ai");
+    it("should stream custom content when provided by the model", async () => {
+      const { streamText } = await import("ai");
 
-      vi.mocked(generateText).mockResolvedValueOnce({
-        text: "# Custom Generated Document\n\nThis is custom content.",
+      vi.mocked(streamText).mockReturnValueOnce({
+        toTextStreamResponse: () => new Response("## Custom Stream"),
       } as any);
 
       const req = new Request("http://localhost/api/generate-doc", {
@@ -313,19 +310,19 @@ describe("Generate Doc API Route", () => {
       });
 
       const response = await POST(req);
-      const json = await response.json();
+      const text = await response.text();
 
-      expect(json.document).toBe(
-        "# Custom Generated Document\n\nThis is custom content."
-      );
+      expect(text).toBe("## Custom Stream");
     });
   });
 
   describe("Error Handling", () => {
-    it("should return 500 when generateText throws an error", async () => {
-      const { generateText } = await import("ai");
+    it("should return 500 when streamText throws an error", async () => {
+      const { streamText } = await import("ai");
 
-      vi.mocked(generateText).mockRejectedValueOnce(new Error("API Error"));
+      vi.mocked(streamText).mockImplementationOnce(() => {
+        throw new Error("API Error");
+      });
 
       const req = new Request("http://localhost/api/generate-doc", {
         method: "POST",
@@ -343,9 +340,11 @@ describe("Generate Doc API Route", () => {
     });
 
     it("should return JSON error response with correct content type", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
-      vi.mocked(generateText).mockRejectedValueOnce(new Error("API Error"));
+      vi.mocked(streamText).mockImplementationOnce(() => {
+        throw new Error("API Error");
+      });
 
       const req = new Request("http://localhost/api/generate-doc", {
         method: "POST",
@@ -363,7 +362,7 @@ describe("Generate Doc API Route", () => {
 
   describe("Chat History Processing", () => {
     it("should handle empty chat history", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const req = new Request("http://localhost/api/generate-doc", {
         method: "POST",
@@ -376,11 +375,11 @@ describe("Generate Doc API Route", () => {
       const response = await POST(req);
 
       expect(response.status).toBe(200);
-      expect(generateText).toHaveBeenCalled();
+      expect(streamText).toHaveBeenCalled();
     });
 
     it("should handle long chat history", async () => {
-      const { generateText } = await import("ai");
+      const { streamText } = await import("ai");
 
       const longChatHistory = Array.from({ length: 20 }, (_, i) => ({
         role: i % 2 === 0 ? "user" : "assistant",
@@ -399,18 +398,17 @@ describe("Generate Doc API Route", () => {
 
       expect(response.status).toBe(200);
 
-      const calls = vi.mocked(generateText).mock.calls;
+      const calls = vi.mocked(streamText).mock.calls;
       const prompt = calls[0][0].prompt;
 
-      // Should contain all messages
       expect(prompt).toContain("Message 1");
       expect(prompt).toContain("Message 20");
     });
   });
 
   describe("Integration with AI SDK", () => {
-    it("should call generateText with correct parameters", async () => {
-      const { generateText } = await import("ai");
+    it("should call streamText with correct parameters", async () => {
+      const { streamText } = await import("ai");
       const { openai } = await import("@ai-sdk/openai");
 
       const req = new Request("http://localhost/api/generate-doc", {
@@ -423,7 +421,7 @@ describe("Generate Doc API Route", () => {
 
       await POST(req);
 
-      expect(generateText).toHaveBeenCalledWith({
+      expect(streamText).toHaveBeenCalledWith({
         model: "mocked-openai-model",
         prompt: expect.any(String),
       });

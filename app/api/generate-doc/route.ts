@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { generateText } from "ai";
+import { streamText } from "ai";
 
 export const runtime = "edge";
 
@@ -67,17 +67,15 @@ Please generate the ${stepName} document now in markdown format:`;
     const modelName = process.env.OPENAI_MODEL || "gpt-4o";
     console.log(`🔧 Using model: ${modelName}\n`);
 
-    const result = await generateText({
+    const result = streamText({
       model: openai(modelName),
       prompt: generationPrompt,
     });
 
-    console.log(`\n✅ Document generated (${result.text.length} characters)`);
+    console.log("\n✅ Document generation stream started");
     console.log("=".repeat(80) + "\n");
 
-    return new Response(JSON.stringify({ document: result.text }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Generate doc API error:", error);
     return new Response(
