@@ -62,8 +62,22 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       });
 
       if (!response.ok) throw new Error("Failed to generate document");
-      const data = await response.json();
-      updateStepDoc(stepKey, data.document);
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let generatedDoc = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        generatedDoc += decoder.decode(value);
+      }
+
+      updateStepDoc(stepKey, generatedDoc);
 
       setTimeout(() => {
         const previewElement = document.getElementById('preview-box');
