@@ -5,6 +5,7 @@ import { StepConfig, Message } from "@/app/types";
 import { useWizardStore } from "@/app/store";
 import ChatInterface from "./ChatInterface";
 import DocumentPreview from "./DocumentPreview";
+import { Terminal, Loader2 } from 'lucide-react';
 
 interface WizardStepProps {
   config: StepConfig;
@@ -95,15 +96,20 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
     <>
       {/* Chat Box */}
       <div className="flex flex-col h-[500px] lg:h-[600px]">
-        <div className="px-6 py-4 border-b-2 border-stone-100 bg-stone-50/50">
-          <div className="text-lg font-black text-stone-800 mb-1">
+        <div className="px-6 py-3 border-b border-zinc-800 bg-zinc-950">
+          <div className="text-xs font-mono text-zinc-500 uppercase mb-1">Current Module</div>
+          <div className="text-sm font-bold text-white tracking-wide uppercase">
             {config.stepName}
           </div>
-          <div className="text-sm font-medium text-stone-500">
-            {config.userInstructions}
+        </div>
+        
+        <div className="px-6 py-2 bg-zinc-900/50 border-b border-zinc-800">
+          <div className="text-xs font-mono text-zinc-500">
+            <span className="text-emerald-500">$</span> {config.userInstructions}
           </div>
         </div>
-        <div className="flex-1 overflow-hidden bg-stone-50/30">
+
+        <div className="flex-1 overflow-hidden bg-zinc-950">
           <ChatInterface
             key={stepKey}
             systemPrompt={config.systemPrompt}
@@ -117,17 +123,18 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
 
       {/* Loading Box */}
       {isGenerating && !stepData.generatedDoc && (
-        <div id="preview-box" className="border-t-4 border-stone-100 bg-white p-8">
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="text-6xl mb-6 animate-bounce">🪄</div>
-            <div className="text-xl font-black text-stone-800 mb-2">
-               Magic is happening...
+        <div id="preview-box" className="border-t border-zinc-800 bg-zinc-950 p-8">
+          <div className="flex flex-col items-center justify-center py-16">
+            <Loader2 className="w-12 h-12 text-white animate-spin mb-6" />
+            <div className="text-sm font-mono font-bold text-white mb-2 tracking-widest">
+               GENERATING_ASSETS...
             </div>
-            <div className="text-stone-500 font-medium mb-8">
-              We're writing your {config.stepName} right now.
+            <div className="text-xs text-zinc-500 font-mono">
+              Processing {config.stepName} requirements
             </div>
-            <div className="w-64 h-4 bg-stone-100 rounded-full overflow-hidden">
-               <div className="h-full bg-coral-400 w-1/2 animate-[slide_1s_linear_infinite] rounded-full"></div>
+            
+            <div className="w-64 h-1 bg-zinc-800 mt-8 overflow-hidden">
+               <div className="h-full bg-white w-1/2 animate-[slide_1s_linear_infinite]"></div>
             </div>
           </div>
         </div>
@@ -135,7 +142,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
 
       {/* Preview Box */}
       {stepData.generatedDoc && (
-        <div id="preview-box" className="border-t-4 border-stone-100 h-[600px] flex flex-col">
+        <div id="preview-box" className="border-t border-zinc-800 h-[800px] flex flex-col">
           <DocumentPreview
             content={stepData.generatedDoc}
             onRegenerate={handleGenerate}
@@ -144,8 +151,8 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       )}
 
       {error && (
-        <div className="bg-red-50 border-2 border-red-100 rounded-2xl p-6 m-6">
-          <p className="text-red-500 font-bold">Uh oh! {error}</p>
+        <div className="bg-red-950/20 border border-red-900/50 p-4 m-6">
+          <p className="text-red-400 font-mono text-xs">ERROR: {error}</p>
         </div>
       )}
     </>

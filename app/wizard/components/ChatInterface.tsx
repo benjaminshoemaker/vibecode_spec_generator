@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Message } from "@/app/types";
+import { Terminal, ArrowRight } from 'lucide-react';
 
 interface ChatInterfaceProps {
   systemPrompt: string;
@@ -96,7 +97,7 @@ export default function ChatInterface({
       setMessages([...updatedMessages, {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Oops! Something went wrong. Mind trying again?",
+        content: "Error: Connection failed. Please retry.",
       }]);
     } finally {
       setIsLoading(false);
@@ -104,51 +105,43 @@ export default function ChatInterface({
   };
 
   return (
-    <div className="flex flex-col h-full bg-stone-50/50">
+    <div className="flex flex-col h-full bg-zinc-950">
       {/* Chat History */}
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center px-10">
-            <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mb-6 rotate-3">
-              <span className="text-4xl">👋</span>
-            </div>
-            <h3 className="text-2xl font-black text-stone-800 mb-2">Let's chat!</h3>
-            <p className="text-stone-500 font-medium max-w-xs">Tell me a bit about what you want to build, and I'll help you figure out the details.</p>
+          <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
+            <Terminal className="w-12 h-12 text-zinc-600 mb-4" />
+            <div className="text-sm font-mono text-zinc-500">TERMINAL SESSION READY</div>
           </div>
         )}
         
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex gap-4 ${message.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+            className={`flex flex-col max-w-[90%] ${message.role === "user" ? "self-end items-end" : "self-start items-start"}`}
           >
-            {/* Avatar */}
-            <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-base font-bold ${
-              message.role === "user" 
-                ? "bg-coral-400 text-white" 
-                : "bg-teal-400 text-white"
+            <div className={`text-[10px] font-mono mb-1 ${
+              message.role === "user" ? "text-emerald-500" : "text-zinc-500"
             }`}>
               {message.role === "user" ? "Me" : "AI"}
             </div>
 
-            {/* Bubble */}
-            <div className={`max-w-[85%] rounded-3xl px-6 py-4 text-base font-medium leading-relaxed ${
+            <div className={`px-4 py-3 text-sm font-mono leading-relaxed whitespace-pre-wrap ${
               message.role === "user"
-                ? "bg-coral-400 text-white rounded-tr-none shadow-sm"
-                : "bg-white border-2 border-stone-100 text-stone-700 rounded-tl-none"
+                ? "bg-zinc-800 text-white border border-zinc-700"
+                : "text-zinc-400 pl-0"
             }`}>
-              <div className="whitespace-pre-wrap">{message.content}</div>
+              {message.role === "assistant" && <span className="text-zinc-600 mr-2">{'>'}</span>}
+              {message.content}
             </div>
           </div>
         ))}
 
         {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-          <div className="flex gap-4">
-            <div className="w-10 h-10 rounded-full bg-teal-400 flex items-center justify-center text-white font-bold">AI</div>
-            <div className="bg-white border-2 border-stone-100 rounded-3xl rounded-tl-none px-6 py-4 flex items-center gap-2">
-               <span className="w-2 h-2 bg-stone-300 rounded-full animate-bounce"></span>
-               <span className="w-2 h-2 bg-stone-300 rounded-full animate-bounce delay-75"></span>
-               <span className="w-2 h-2 bg-stone-300 rounded-full animate-bounce delay-150"></span>
+          <div className="self-start">
+            <div className="text-[10px] font-mono text-zinc-500 mb-1 uppercase">SYSTEM_RESPONSE</div>
+            <div className="flex items-center gap-2 text-zinc-500 text-sm font-mono">
+               <span className="animate-pulse">_</span>
             </div>
           </div>
         )}
@@ -156,8 +149,8 @@ export default function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="p-6 bg-white border-t-2 border-stone-100">
-        <form onSubmit={handleSubmit} className="relative flex gap-3 items-end">
+      <div className="p-4 bg-zinc-950 border-t border-zinc-800">
+        <form onSubmit={handleSubmit} className="relative flex gap-3 items-center bg-zinc-900 border border-zinc-800 px-4 py-2 focus-within:border-zinc-600 transition-colors">
           <div className="flex-1 relative">
              <textarea
                 value={input}
@@ -169,18 +162,19 @@ export default function ChatInterface({
                   }
                 }}
                 placeholder="Type your ideas here..."
-                className="w-full pl-6 pr-12 py-4 bg-stone-50 border-2 border-stone-100 rounded-3xl text-base font-medium text-stone-800 focus:outline-none focus:ring-4 focus:ring-coral-100 focus:border-coral-300 transition-all resize-none min-h-[64px] max-h-[140px] placeholder:text-stone-400"
+                className="w-full bg-transparent text-sm font-mono text-white focus:outline-none resize-none py-2 placeholder:text-zinc-600"
                 rows={1}
                 disabled={isLoading}
+                style={{ minHeight: '24px', maxHeight: '120px' }}
              />
           </div>
           
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="h-[64px] w-[64px] flex items-center justify-center bg-stone-800 hover:bg-black text-white rounded-full transition-all disabled:bg-stone-200 disabled:cursor-not-allowed transform active:scale-95"
+            className="text-zinc-500 hover:text-white disabled:opacity-30 transition-colors"
           >
-            <svg className="w-6 h-6 transform rotate-90 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </form>
       </div>

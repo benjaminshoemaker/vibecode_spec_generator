@@ -1,73 +1,58 @@
+import Link from 'next/link';
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white py-12 border-t-2 border-stone-100 mt-auto">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer className="bg-zinc-950 border-t border-zinc-800 py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-coral-400 rounded-xl flex items-center justify-center text-white font-black text-xl rotate-3">
-                V
+              <div className="w-6 h-6 bg-white flex items-center justify-center">
+                 <div className="w-3 h-3 bg-zinc-950"></div>
               </div>
-              <span className="font-black text-stone-800 text-lg tracking-tight">
-                Vibe Scaffold
+              <span className="font-mono font-bold text-white tracking-tighter">
+                VIBE_SCAFFOLD
               </span>
             </div>
-            <p className="text-sm text-stone-500 font-medium">
+            <p className="text-xs text-zinc-500 font-mono">
               Turn your messy ideas into crystal clear specs.
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <h3 className="font-bold text-stone-800 mb-3 text-sm uppercase tracking-wide">
+            <h3 className="font-mono text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">
               Product
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               <li>
-                <a
-                  href="/wizard"
-                  className="text-stone-600 hover:text-coral-500 transition-colors text-sm font-medium"
-                >
+                <Link href="/wizard" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Get Started
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/#how-it-works"
-                  className="text-stone-600 hover:text-coral-500 transition-colors text-sm font-medium"
-                >
+                <Link href="/#how-it-works" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   How It Works
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Resources */}
           <div>
-            <h3 className="font-bold text-stone-800 mb-3 text-sm uppercase tracking-wide">
+            <h3 className="font-mono text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">
               Resources
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               <li>
-                <a
-                  href="https://github.com/benjaminshoemaker/vibecode_spec_generator"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-stone-600 hover:text-coral-500 transition-colors text-sm font-medium"
-                >
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   GitHub
                 </a>
               </li>
               <li>
-                <a
-                  href="https://docs.example.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-stone-600 hover:text-coral-500 transition-colors text-sm font-medium"
-                >
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/README.md" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Documentation
                 </a>
               </li>
@@ -76,33 +61,27 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="font-bold text-stone-800 mb-3 text-sm uppercase tracking-wide">
+            <h3 className="font-mono text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">
               Support
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               <li>
                 <a
                   href="https://forms.gle/CBvAEG7YLxdJvezD6"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-stone-600 hover:text-coral-500 transition-colors text-sm font-medium"
+                  className="text-sm text-zinc-500 hover:text-white transition-colors"
                 >
                   Send Feedback
                 </a>
               </li>
               <li>
-                <a
-                  href="/privacy"
-                  className="text-stone-600 hover:text-coral-500 transition-colors text-sm font-medium"
-                >
+                <a href="/privacy" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a
-                  href="/terms"
-                  className="text-stone-600 hover:text-coral-500 transition-colors text-sm font-medium"
-                >
+                <a href="/terms" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Terms of Service
                 </a>
               </li>
@@ -111,8 +90,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-stone-500 font-medium">
+        <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-zinc-600 font-mono">
             © {currentYear} Vibe Scaffold. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
@@ -120,7 +99,7 @@ export default function Footer() {
               href="https://github.com/benjaminshoemaker"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-400 hover:text-coral-500 transition-colors"
+              className="text-zinc-500 hover:text-white transition-colors"
               aria-label="GitHub"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
