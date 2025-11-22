@@ -137,6 +137,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
             onMessagesChange={handleMessagesChange}
             documentInputs={documentInputsForChat}
             initialGreeting={config.initialGreeting}
+            stepName={config.stepName}
           />
         </div>
       </div>
