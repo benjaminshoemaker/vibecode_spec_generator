@@ -3,17 +3,30 @@ import { useWizardStore } from "@/app/store";
 import { Message } from "@/app/types";
 
 describe("Zustand Wizard Store", () => {
-  // Reset store state before each test using the built-in resetWizard action
   beforeEach(() => {
-    const state = useWizardStore.getState();
-    state.resetWizard();
-    state.setIsGenerating(false);
+    useWizardStore.setState((state) => ({
+      ...state,
+      currentStep: 1,
+      isGenerating: false,
+      resetCounter: 0,
+      steps: {
+        onePager: { chatHistory: [], generatedDoc: null, approved: false },
+        devSpec: { chatHistory: [], generatedDoc: null, approved: false },
+        checklist: { chatHistory: [], generatedDoc: null, approved: false },
+        agentsMd: { chatHistory: [], generatedDoc: null, approved: false },
+      },
+    }));
   });
 
   describe("Initial State", () => {
     it("should initialize with step 1", () => {
       const state = useWizardStore.getState();
       expect(state.currentStep).toBe(1);
+    });
+
+    it("should initialize resetCounter to 0", () => {
+      const state = useWizardStore.getState();
+      expect(state.resetCounter).toBe(0);
     });
 
     it("should initialize with isGenerating false", () => {
@@ -264,6 +277,7 @@ describe("Zustand Wizard Store", () => {
         generatedDoc: null,
         approved: false,
       });
+      expect(state.resetCounter).toBeGreaterThan(0);
     });
 
     it("should reset currentStep to 1", () => {
@@ -274,6 +288,17 @@ describe("Zustand Wizard Store", () => {
 
       const state = useWizardStore.getState();
       expect(state.currentStep).toBe(1);
+    });
+
+    it("should increment resetCounter each time resetWizard is called", () => {
+      const { resetWizard } = useWizardStore.getState();
+      const initialCounter = useWizardStore.getState().resetCounter;
+
+      resetWizard();
+      expect(useWizardStore.getState().resetCounter).toBe(initialCounter + 1);
+
+      resetWizard();
+      expect(useWizardStore.getState().resetCounter).toBe(initialCounter + 2);
     });
   });
 

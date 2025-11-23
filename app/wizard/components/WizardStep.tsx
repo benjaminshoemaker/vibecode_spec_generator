@@ -15,7 +15,7 @@ interface WizardStepProps {
 }
 
 export default function WizardStep({ config, stepKey, onApproveAndNext }: WizardStepProps) {
-  const { steps, isGenerating, setIsGenerating, updateStepChat, updateStepDoc, approveStep } =
+  const { steps, isGenerating, setIsGenerating, updateStepChat, updateStepDoc, approveStep, resetCounter } =
     useWizardStore();
   const stepData = steps[stepKey];
 
@@ -131,7 +131,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
 
         <div className="flex-1 overflow-hidden bg-zinc-950">
           <ChatInterface
-            key={stepKey}
+            key={`${stepKey}-${resetCounter}`}
             systemPrompt={config.systemPrompt}
             initialMessages={stepData.chatHistory}
             onMessagesChange={handleMessagesChange}

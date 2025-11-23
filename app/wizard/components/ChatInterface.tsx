@@ -27,6 +27,9 @@ export default function ChatInterface({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const lastMessage = messages[messages.length - 1];
+  const isAssistantPending =
+    isLoading && lastMessage?.role === "assistant" ? lastMessage.id : null;
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -58,8 +61,8 @@ export default function ChatInterface({
       content: input.trim(),
     };
 
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    const requestMessages = [...messages, userMessage];
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
@@ -68,45 +71,127 @@ export default function ChatInterface({
       analytics.trackChatMessage(stepName);
     }
 
+    const updateAssistantMessage = (assistantId: string, content: string) => {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantId
+            ? {
+                ...msg,
+                content,
+              }
+            : msg
+        )
+      );
+    };
+
+    const runNonStreamingFallback = async (assistantId: string) => {
+      try {
+        const fallbackResponse = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: requestMessages.map((msg) => ({
+              role: msg.role,
+              content: msg.content,
+            })),
+            systemPrompt,
+            documentInputs,
+            stream: false,
+          }),
+        });
+
+        const fallbackText = await fallbackResponse.text();
+        const content =
+          fallbackText ||
+          "No response received. Please check your API key and try again.";
+        updateAssistantMessage(assistantId, content);
+      } catch (err) {
+        updateAssistantMessage(
+          assistantId,
+          "Error: Connection failed. Please retry."
+        );
+      }
+    };
+
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: updatedMessages.map((msg) => ({ role: msg.role, content: msg.content })),
+          messages: requestMessages.map((msg) => ({ role: msg.role, content: msg.content })),
           systemPrompt,
           documentInputs,
         }),
       });
 
       if (!response.ok) throw new Error("Failed to get response");
-      const reader = response.body?.getReader();
+      const responseClone = response.clone();
+      const assistantMessageId = (Date.now() + 1).toString();
+
+      // Seed the assistant message bubble immediately
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: assistantMessageId,
+          role: "assistant",
+          content: "",
+        },
+      ]);
+
+      // Fallback for environments where the response body isn't streamable
+      if (!response.body) {
+        const fallbackText = await responseClone.text();
+        if (fallbackText) {
+          updateAssistantMessage(assistantMessageId, fallbackText);
+        } else {
+          await runNonStreamingFallback(assistantMessageId);
+        }
+        return;
+      }
+
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      if (!reader) throw new Error("No response body");
-
-      let assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: "",
-      };
-
-      const messagesWithAssistant = [...updatedMessages, assistantMessage];
-      setMessages(messagesWithAssistant);
+      let accumulatedText = "";
+      let chunkCount = 0;
 
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value);
-        assistantMessage = { ...assistantMessage, content: assistantMessage.content + chunk };
-        setMessages([...updatedMessages, assistantMessage]);
+        if (value) {
+          const chunk = decoder.decode(value, { stream: !done });
+          accumulatedText += chunk;
+          chunkCount += chunk.length;
+          updateAssistantMessage(assistantMessageId, accumulatedText);
+        }
+        if (done) {
+          const finalChunk = decoder.decode();
+          if (finalChunk) {
+            accumulatedText += finalChunk;
+            chunkCount += finalChunk.length;
+            updateAssistantMessage(assistantMessageId, accumulatedText);
+          }
+
+          // If nothing streamed, fall back to full text (may include errors)
+          if (chunkCount === 0) {
+            const fallbackText = await responseClone.text().catch(() => "");
+            if (fallbackText) {
+              updateAssistantMessage(assistantMessageId, fallbackText);
+            } else {
+              await runNonStreamingFallback(assistantMessageId);
+            }
+          }
+          break;
+        }
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      setMessages([...updatedMessages, {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: "Error: Connection failed. Please retry.",
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: "Error: Connection failed. Please retry.",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -141,18 +226,31 @@ export default function ChatInterface({
             }`}>
               {message.role === "assistant" && <span className="text-zinc-600 mr-2">{'>'}</span>}
               {message.content}
+              {message.role === "assistant" && isAssistantPending === message.id && (
+                <span
+                  className="ml-1 inline-block w-[6px] h-4 bg-zinc-500 animate-pulse align-bottom rounded-sm opacity-80"
+                  aria-label="Assistant is typing"
+                />
+              )}
             </div>
           </div>
         ))}
 
-        {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-          <div className="self-start">
-            <div className="text-[10px] font-mono text-zinc-500 mb-1 uppercase">SYSTEM_RESPONSE</div>
-            <div className="flex items-center gap-2 text-zinc-500 text-sm font-mono">
-               <span className="animate-pulse">_</span>
+        {isLoading && lastMessage?.role === "user" && (
+          <div className="flex flex-col max-w-[90%] self-start items-start">
+            <div className="text-[10px] font-mono mb-1 text-zinc-500">
+              AI
+            </div>
+            <div className="text-zinc-400 pl-0 px-4 py-3 text-sm font-mono leading-relaxed">
+              <span className="text-zinc-600 mr-2">{'>'}</span>
+              <span
+                className="inline-block w-[6px] h-4 bg-zinc-500 animate-pulse align-bottom rounded-sm opacity-80"
+                aria-label="Waiting for response"
+              />
             </div>
           </div>
         )}
+
         <div ref={messagesEndRef} />
       </div>
 

@@ -14,6 +14,7 @@ export const useWizardStore = create<WizardState>()(
     (set) => ({
       currentStep: 1,
       isGenerating: false,
+      resetCounter: 0,
       steps: {
         onePager: { ...initialStepData },
         devSpec: { ...initialStepData },
@@ -54,19 +55,22 @@ export const useWizardStore = create<WizardState>()(
         })),
       resetWizard: () => {
         analytics.trackWizardReset();
-        return set({
+        return set((state) => ({
           currentStep: 1,
+          isGenerating: false,
+          resetCounter: state.resetCounter + 1,
           steps: {
             onePager: { ...initialStepData },
             devSpec: { ...initialStepData },
             checklist: { ...initialStepData },
             agentsMd: { ...initialStepData },
           },
-        });
+        }));
       },
       loadSampleDocs: () =>
         set({
           currentStep: 1,
+          isGenerating: false,
           steps: {
             onePager: {
               chatHistory: [],
@@ -95,6 +99,7 @@ export const useWizardStore = create<WizardState>()(
       name: "wizard-storage",
       partialize: (state) => ({
         currentStep: state.currentStep,
+        resetCounter: state.resetCounter,
         steps: state.steps,
         // Don't persist isGenerating (it's transient state)
       }),

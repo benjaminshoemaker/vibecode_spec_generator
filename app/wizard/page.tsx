@@ -8,6 +8,7 @@ import { step3Config } from "./steps/step3-config";
 import { step4Config } from "./steps/step4-config";
 import { StepConfig } from "@/app/types";
 import { sampleDocs } from "./utils/sampleDocs";
+import { canAccessStep } from "./utils/stepAccess";
 import JSZip from "jszip";
 import Footer from "../components/Footer";
 import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson } from 'lucide-react';
@@ -37,6 +38,10 @@ export default function WizardPage() {
   }, [currentStep]);
 
   const handleStepClick = (stepNumber: number) => {
+    if (!canAccessStep(stepNumber, steps, stepKeyMap)) {
+      return;
+    }
+
     if (stepNumber > currentStep) {
       const { updateStepChat } = useWizardStore.getState();
       const targetStepKey = stepKeyMap[stepNumber - 1];
@@ -177,21 +182,38 @@ export default function WizardPage() {
                 const isCompleted = steps[stepKey].approved;
                 const isActive = currentStep === index + 1;
                 const hasDocument = steps[stepKey].generatedDoc !== null;
+                const isLocked = !canAccessStep(index + 1, steps, stepKeyMap);
 
                 return (
                   <div key={name} className={`relative flex items-center justify-between p-3 transition-all ${
-                    isActive ? 'bg-zinc-800 border-l-2 border-white' : 'bg-zinc-900 hover:bg-zinc-800/50 border-l-2 border-transparent'
+                    isActive
+                      ? 'bg-zinc-800 border-l-2 border-white'
+                      : isLocked
+                        ? 'bg-zinc-900 border-l-2 border-transparent opacity-70'
+                        : 'bg-zinc-900 hover:bg-zinc-800/50 border-l-2 border-transparent'
                   }`}>
                     <button
                       onClick={() => handleStepClick(index + 1)}
-                      className="flex items-center gap-3 flex-1 text-left"
+                      disabled={isLocked}
+                      title={isLocked ? "Complete previous steps to unlock this stage" : undefined}
+                      className={`flex items-center gap-3 flex-1 text-left ${
+                        isLocked ? 'cursor-not-allowed' : ''
+                      }`}
                     >
                       <div className={`font-mono text-xs ${
-                        isCompleted ? 'text-emerald-500' : isActive ? 'text-white' : 'text-zinc-600'
+                        isCompleted
+                          ? 'text-emerald-500'
+                          : isActive
+                            ? 'text-white'
+                            : isLocked
+                              ? 'text-zinc-700'
+                              : 'text-zinc-600'
                       }`}>
                         {isCompleted ? '[✓]' : `[0${index + 1}]`}
                       </div>
-                      <span className={`text-xs font-bold font-mono tracking-wide ${isActive ? 'text-white' : 'text-zinc-500'}`}>
+                      <span className={`text-xs font-bold font-mono tracking-wide ${
+                        isActive ? 'text-white' : isLocked ? 'text-zinc-600' : 'text-zinc-500'
+                      }`}>
                         {name}
                       </span>
                     </button>
