@@ -156,11 +156,11 @@ export default function WizardPage() {
       </header>
 
       {/* Main Layout */}
-      <div className="flex-1 max-w-[1800px] mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+      <div className="flex-1 max-w-[1800px] mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
         
         {/* Left Column: Interactive Wizard Area */}
-        <div className="flex flex-col min-h-[600px]">
-          <div className="flex-1 bg-zinc-900 border border-zinc-800 overflow-hidden flex flex-col shadow-xl">
+        <div className="flex flex-col lg:min-h-[600px]">
+          <div className="lg:flex-1 bg-zinc-900 border border-zinc-800 overflow-hidden flex flex-col shadow-xl">
              <WizardStep
                 config={currentConfig}
                 stepKey={currentStepKey}
@@ -170,12 +170,49 @@ export default function WizardPage() {
         </div>
 
         {/* Right Column: Sidebar */}
-        <aside className="space-y-6">
-          
-          {/* Progress Card */}
-          <div className="bg-zinc-900 border border-zinc-800 p-6">
+        <aside className="space-y-6 flex flex-col">
+
+          {/* Action Card - Order 1 on mobile, Order 2 on desktop */}
+          <div className="bg-zinc-900 border border-zinc-800 p-6 lg:sticky lg:top-20 order-1 lg:order-2">
+            <h3 className="text-xs font-mono font-bold text-zinc-500 mb-4">=ACTIONS</h3>
+
+            <button
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('triggerGenerate'));
+              }}
+              disabled={steps[currentStepKey].chatHistory.length === 0 || isGenerating}
+              className="w-full mb-3 py-3 px-4 bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed"
+            >
+              {isGenerating && (
+                <div className="w-3 h-3 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin"></div>
+              )}
+              {isGenerating ? "PROCESSING..." : currentConfig.generateButtonText.toUpperCase()}
+            </button>
+
+            <button
+              onClick={handleApproveAndNext}
+              disabled={!steps[currentStepKey].generatedDoc}
+              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {currentStep === 4 ? "FINALIZE" : "APPROVE & NEXT"}
+            </button>
+
+            <div className="h-px bg-zinc-800 my-6"></div>
+
+            <button
+              onClick={handleDownloadAll}
+              disabled={!Object.values(steps).some(step => step.generatedDoc !== null)}
+              className="w-full py-2 px-4 text-zinc-500 hover:text-white text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-30"
+            >
+              <Download className="w-3 h-3" />
+              DOWNLOAD_ALL.ZIP
+            </button>
+          </div>
+
+          {/* Progress Card - Order 2 on mobile, Order 1 on desktop */}
+          <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-1">
             <h3 className="text-xs font-mono font-bold text-zinc-500 mb-4">=SEQUENCE</h3>
-            
+
             <div className="space-y-px bg-zinc-800 border border-zinc-800">
                {stepNames.map((name, index) => {
                 const stepKey = stepKeyMap[index];
@@ -217,7 +254,7 @@ export default function WizardPage() {
                         {name}
                       </span>
                     </button>
-                    
+
                     {hasDocument && (
                       <button
                         onClick={() => handleDownload(stepKey, name)}
@@ -231,43 +268,6 @@ export default function WizardPage() {
                 );
               })}
             </div>
-          </div>
-
-          {/* Action Card */}
-          <div className="bg-zinc-900 border border-zinc-800 p-6 sticky top-20">
-            <h3 className="text-xs font-mono font-bold text-zinc-500 mb-4">=ACTIONS</h3>
-            
-            <button
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent('triggerGenerate'));
-              }}
-              disabled={steps[currentStepKey].chatHistory.length === 0 || isGenerating}
-              className="w-full mb-3 py-3 px-4 bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed"
-            >
-              {isGenerating && (
-                <div className="w-3 h-3 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin"></div>
-              )}
-              {isGenerating ? "PROCESSING..." : currentConfig.generateButtonText.toUpperCase()}
-            </button>
-
-            <button
-              onClick={handleApproveAndNext}
-              disabled={!steps[currentStepKey].generatedDoc}
-              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {currentStep === 4 ? "FINALIZE" : "APPROVE & NEXT"}
-            </button>
-
-            <div className="h-px bg-zinc-800 my-6"></div>
-
-            <button
-              onClick={handleDownloadAll}
-              disabled={!Object.values(steps).some(step => step.generatedDoc !== null)}
-              className="w-full py-2 px-4 text-zinc-500 hover:text-white text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-30"
-            >
-              <Download className="w-3 h-3" />
-              DOWNLOAD_ALL.ZIP
-            </button>
           </div>
 
         </aside>
