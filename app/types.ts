@@ -13,6 +13,7 @@ export interface StepData {
 export interface WizardState {
   currentStep: number;
   isGenerating: boolean;
+  resetCounter: number;
   steps: {
     onePager: StepData;
     devSpec: StepData;

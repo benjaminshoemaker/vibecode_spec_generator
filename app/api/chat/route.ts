@@ -1,11 +1,11 @@
 import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { streamText, generateText } from "ai";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { messages, systemPrompt, documentInputs } = await req.json();
+    const { messages, systemPrompt, documentInputs, stream = true } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response("Invalid messages format", { status: 400 });
@@ -39,13 +39,26 @@ export async function POST(req: Request) {
     const modelName = process.env.OPENAI_MODEL || "gpt-4o";
     console.log(`🔧 Using model: ${modelName}\n`);
 
-    const result = streamText({
+    if (stream) {
+      const result = streamText({
+        model: openai(modelName),
+        system: fullSystemPrompt,
+        messages,
+      });
+
+      return result.toTextStreamResponse();
+    }
+
+    const result = await generateText({
       model: openai(modelName),
       system: fullSystemPrompt,
       messages,
     });
 
-    return result.toTextStreamResponse();
+    return new Response(result.text, {
+      status: 200,
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
   } catch (error) {
     console.error("Chat API error:", error);
     return new Response(

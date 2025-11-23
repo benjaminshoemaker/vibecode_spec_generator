@@ -54,7 +54,7 @@ export default function LandingPage() {
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight mb-8">
-                Turn your messy ideas into <br />
+                Turn your fresh ideas into <br />
                 <span className="text-zinc-500">crystal clear specs.</span>
                 <span className={`${cursorVisible ? 'opacity-100' : 'opacity-0'} ml-1 text-white`}>_</span>
               </h1>

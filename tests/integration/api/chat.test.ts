@@ -6,6 +6,9 @@ vi.mock("ai", () => ({
   streamText: vi.fn(() => ({
     toTextStreamResponse: vi.fn(() => new Response("Mocked stream response")),
   })),
+  generateText: vi.fn(() => ({
+    text: "Mocked generated text",
+  })),
 }));
 
 vi.mock("@ai-sdk/openai", () => ({
@@ -221,6 +224,26 @@ describe("Chat API Route", () => {
       expect(response.status).toBe(200);
       const text = await response.text();
       expect(text).toBe("Mocked stream response");
+    });
+
+    it("should return non-streamed text when stream is false", async () => {
+      const { generateText } = await import("ai");
+
+      const req = new Request("http://localhost/api/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          messages: [{ role: "user", content: "Hello" }],
+          stream: false,
+        }),
+      });
+
+      const response = await POST(req);
+
+      expect(generateText).toHaveBeenCalled();
+      expect(response.status).toBe(200);
+      expect(response.headers.get("Content-Type")).toContain("text/plain");
+      const text = await response.text();
+      expect(text).toBe("Mocked generated text");
     });
   });
 
