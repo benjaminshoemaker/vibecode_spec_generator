@@ -3,15 +3,10 @@ import { analytics } from "@/app/utils/analytics";
 
 describe("Analytics Utility", () => {
   let gtagMock: ReturnType<typeof vi.fn>;
-  let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     // Create a fresh mock for each test
     gtagMock = vi.fn();
-    fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ success: true }),
-    });
 
     // Mock window.gtag
     Object.defineProperty(window, 'gtag', {
@@ -19,10 +14,6 @@ describe("Analytics Utility", () => {
       writable: true,
       configurable: true,
     });
-
-    // Mock fetch for activity tracking
-    // @ts-expect-error - allow assigning to global fetch for tests
-    global.fetch = fetchMock;
   });
 
   describe("trackStepView", () => {
@@ -64,15 +55,6 @@ describe("Analytics Utility", () => {
       expect(gtagMock).toHaveBeenCalledWith("event", "wizard_start", {
         source: "hero_start_building",
       });
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/api/track",
-        expect.objectContaining({
-          body: JSON.stringify({
-            eventType: "wizard_start",
-            params: { source: "hero_start_building" },
-          }),
-        })
-      );
     });
 
     it("should not call gtag if window.gtag is undefined", () => {
@@ -81,7 +63,6 @@ describe("Analytics Utility", () => {
       analytics.trackWizardStart("nav_get_started");
 
       expect(gtagMock).not.toHaveBeenCalled();
-      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -141,7 +122,6 @@ describe("Analytics Utility", () => {
         step_name: "ONE_PAGER",
         success: true,
       });
-      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it("should call gtag with success false", () => {
@@ -151,8 +131,6 @@ describe("Analytics Utility", () => {
         step_name: "DEV_SPEC",
         success: false,
       });
-      // Should not track activity on failure
-      expect(fetchMock).not.toHaveBeenCalled();
     });
 
     it("should not call gtag if window.gtag is undefined", () => {
@@ -245,7 +223,6 @@ describe("Analytics Utility", () => {
 
       expect(gtagMock).toHaveBeenCalledTimes(1);
       expect(gtagMock).toHaveBeenCalledWith("event", "wizard_complete");
-      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it("should not call gtag if window.gtag is undefined", () => {
@@ -254,7 +231,6 @@ describe("Analytics Utility", () => {
       analytics.trackWizardComplete();
 
       expect(gtagMock).not.toHaveBeenCalled();
-      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -263,15 +239,6 @@ describe("Analytics Utility", () => {
       analytics.trackFinalizeClick();
 
       expect(gtagMock).toHaveBeenCalledWith("event", "finalize_clicked");
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/api/track",
-        expect.objectContaining({
-          body: JSON.stringify({
-            eventType: "finalize_clicked",
-            params: undefined,
-          }),
-        })
-      );
     });
 
     it("should track modal download and copy events", () => {
@@ -280,14 +247,6 @@ describe("Analytics Utility", () => {
 
       expect(gtagMock).toHaveBeenCalledWith("event", "completion_modal_download");
       expect(gtagMock).toHaveBeenCalledWith("event", "completion_modal_copy");
-
-      const bodies = fetchMock.mock.calls.map(([, options]) => (options as any).body);
-      expect(bodies).toContain(
-        JSON.stringify({ eventType: "completion_modal_download", params: undefined })
-      );
-      expect(bodies).toContain(
-        JSON.stringify({ eventType: "completion_modal_copy", params: undefined })
-      );
     });
 
     it("should still track activity when gtag is missing", () => {
@@ -296,12 +255,6 @@ describe("Analytics Utility", () => {
       analytics.trackFinalizeClick();
 
       expect(gtagMock).not.toHaveBeenCalled();
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/api/track",
-        expect.objectContaining({
-          body: JSON.stringify({ eventType: "finalize_clicked", params: undefined }),
-        })
-      );
     });
   });
 

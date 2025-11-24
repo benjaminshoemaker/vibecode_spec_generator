@@ -21,7 +21,6 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vercel/analytics": "^1.5.0",
-    "@vercel/kv": "^3.0.0",
     "ai": "^5.0.93",
     "autoprefixer": "^10.4.22",
     "jszip": "^3.10.1",
