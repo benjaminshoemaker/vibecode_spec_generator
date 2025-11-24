@@ -1,8 +1,29 @@
 # Vibe Scaffold
 
+[![Vercel Deployment](https://img.shields.io/github/deployments/benjaminshoemaker/vibecode_spec_generator/Production?label=Vercel&logo=vercel&logoColor=white)](https://vibescaffold.dev/)
+[![GitHub Repo stars](https://img.shields.io/github/stars/benjaminshoemaker/vibecode_spec_generator?label=Stars&logo=github)](https://github.com/benjaminshoemaker/vibecode_spec_generator)
+
+Live at **[vibescaffold.dev](https://vibescaffold.dev/)**.
+
 A Next.js application with a multi-step wizard interface that uses AI-powered chat to gather requirements and generate comprehensive technical specification documents.
 
 Stop getting "close but not quite right" results from AI coding tools. Vibe Scaffold gives you a structured, step-by-step process to capture your vision and generate documentation that AI agents understand and can execute on iteratively. The app helps you refine your idea, turn it into full technical architecture, and create a step-by-step development plan. 
+
+## Quick Start
+
+```bash
+npm install
+cp .env.example .env.local
+# add OPENAI_API_KEY=sk-... (and optionally NEXT_PUBLIC_GA_ID for analytics)
+npm run dev
+```
+
+Then open [http://localhost:3000](http://localhost:3000) and click **Start Building Now** to launch the wizard.
+
+## Screenshots
+
+![Vibe Scaffold landing page](./public/scaffold_landing.png)
+![Wizard step 1](./public/scaffold_step1.png)
 
 ## Features
 

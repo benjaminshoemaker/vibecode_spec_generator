@@ -47,6 +47,25 @@ describe("Analytics Utility", () => {
     });
   });
 
+  describe("trackWizardStart", () => {
+    it("should call gtag with correct parameters for wizard start", () => {
+      analytics.trackWizardStart("hero_start_building");
+
+      expect(gtagMock).toHaveBeenCalledTimes(1);
+      expect(gtagMock).toHaveBeenCalledWith("event", "wizard_start", {
+        source: "hero_start_building",
+      });
+    });
+
+    it("should not call gtag if window.gtag is undefined", () => {
+      delete (window as any).gtag;
+
+      analytics.trackWizardStart("nav_get_started");
+
+      expect(gtagMock).not.toHaveBeenCalled();
+    });
+  });
+
   describe("trackChatMessage", () => {
     it("should call gtag with correct parameters for chat message", () => {
       analytics.trackChatMessage("ONE_PAGER");
@@ -69,6 +88,26 @@ describe("Analytics Utility", () => {
       delete (window as any).gtag;
 
       analytics.trackChatMessage("ONE_PAGER");
+
+      expect(gtagMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("trackStepApproved", () => {
+    it("should call gtag with correct parameters when approving a step", () => {
+      analytics.trackStepApproved(2, "DEV_SPEC");
+
+      expect(gtagMock).toHaveBeenCalledTimes(1);
+      expect(gtagMock).toHaveBeenCalledWith("event", "step_approved", {
+        step_number: 2,
+        step_name: "DEV_SPEC",
+      });
+    });
+
+    it("should not call gtag if window.gtag is undefined", () => {
+      delete (window as any).gtag;
+
+      analytics.trackStepApproved(1, "ONE_PAGER");
 
       expect(gtagMock).not.toHaveBeenCalled();
     });

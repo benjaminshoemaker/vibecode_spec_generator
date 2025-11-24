@@ -8,7 +8,15 @@ Make sure you have set `NEXT_PUBLIC_GA_ID` in your environment variables with yo
 
 ## Events Being Tracked
 
-### 1. Step Views
+### 1. Wizard Start
+**Event Name:** `wizard_start`
+
+Triggered when a user clicks a CTA to open the wizard (nav, hero, footer) or lands directly on `/wizard`.
+
+**Parameters:**
+- `source` - Where the journey began (e.g., `hero_start_building`, `nav_get_started`, `direct_wizard`)
+
+### 2. Step Views
 **Event Name:** `step_view`
 
 Triggered when a user navigates to a different wizard step.
@@ -17,7 +25,16 @@ Triggered when a user navigates to a different wizard step.
 - `step_number` - The step number (1-4)
 - `step_name` - The step name (ONE_PAGER, DEV_SPEC, PROMPT_PLAN, AGENTS_MD)
 
-### 2. Chat Message Submission
+### 3. Step Approval
+**Event Name:** `step_approved`
+
+Triggered when a user approves a step (including finalization on step 4).
+
+**Parameters:**
+- `step_number` - The step number (1-4)
+- `step_name` - The approved step name
+
+### 4. Chat Message Submission
 **Event Name:** `chat_message`
 
 Triggered when a user submits a chat message (via Enter key or clicking the arrow button).
@@ -25,7 +42,7 @@ Triggered when a user submits a chat message (via Enter key or clicking the arro
 **Parameters:**
 - `step_name` - The name of the step where the message was sent
 
-### 3. Document Generation
+### 5. Document Generation
 **Event Name:** `document_generate`
 
 Triggered when a user generates a document (success or failure).
@@ -34,7 +51,7 @@ Triggered when a user generates a document (success or failure).
 - `step_name` - The name of the step/document being generated
 - `success` - Boolean indicating if generation succeeded
 
-### 4. Individual Document Download
+### 6. Individual Document Download
 **Event Name:** `document_download`
 
 Triggered when a user downloads a single document.
@@ -43,7 +60,7 @@ Triggered when a user downloads a single document.
 - `step_name` - The name of the document downloaded
 - `download_type` - Always "individual"
 
-### 5. Bulk ZIP Download
+### 7. Bulk ZIP Download
 **Event Name:** `bulk_download`
 
 Triggered when a user downloads all documents as a ZIP file.
@@ -52,12 +69,12 @@ Triggered when a user downloads all documents as a ZIP file.
 - `document_count` - Number of documents included in the ZIP
 - `download_type` - Always "zip"
 
-### 6. Wizard Reset
+### 8. Wizard Reset
 **Event Name:** `wizard_reset`
 
 Triggered when a user clicks the RESET button.
 
-### 7. Wizard Completion
+### 9. Wizard Completion
 **Event Name:** `wizard_complete`
 
 Triggered when a user finalizes the last step (clicks FINALIZE on step 4).
