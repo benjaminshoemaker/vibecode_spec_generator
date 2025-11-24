@@ -12,17 +12,29 @@ declare global {
 }
 
 // Helper to send events to activity store
-const trackActivity = async (eventType: string, params?: Record<string, any>) => {
-  try {
-    await fetch('/api/track', {
+const trackActivity = (eventType: string, params?: Record<string, any>) => {
+  // Only track on client side
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  console.log('[Analytics] Tracking activity:', { eventType, params });
+
+  // Use setTimeout to avoid blocking and fire-and-forget
+  setTimeout(() => {
+    fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ eventType, params }),
-    });
-  } catch (error) {
-    // Silently fail - don't break user experience
-    console.error('Failed to track activity:', error);
-  }
+    })
+      .then(r => r.json())
+      .then(result => {
+        console.log('[Analytics] Track response:', result);
+      })
+      .catch(error => {
+        console.error('[Analytics] Failed to track activity:', error);
+      });
+  }, 0);
 };
 
 export const analytics = {

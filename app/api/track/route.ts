@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { activityStore } from '@/app/utils/activityStore';
+import { activityKV } from '@/app/utils/activityKV';
 
 export const runtime = 'edge';
 
@@ -73,9 +73,18 @@ export async function POST(request: NextRequest) {
     }
 
     const message = getEventMessage(eventType, params, location);
-    activityStore.addEvent(message, eventType);
+    await activityKV.addEvent(message, eventType);
 
-    return NextResponse.json({ success: true });
+    // Get current count to verify it was stored
+    const currentEvents = await activityKV.getRecentEvents(50);
+
+    console.log('[Track API] Event tracked:', { eventType, message, location, totalStored: currentEvents.length });
+
+    return NextResponse.json({
+      success: true,
+      message,
+      totalEventsStored: currentEvents.length
+    });
   } catch (error) {
     console.error('Error tracking activity:', error);
     return NextResponse.json({ error: 'Failed to track activity' }, { status: 500 });

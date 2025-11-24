@@ -1,17 +1,15 @@
 import { NextResponse } from 'next/server';
-import { activityStore } from '@/app/utils/activityStore';
+import { activityKV } from '@/app/utils/activityKV';
 
 export const runtime = 'edge';
 
 export async function GET() {
-  const recentEvents = activityStore.getRecentEvents(10);
+  const recentEvents = await activityKV.getRecentEvents(10);
+
+  console.log('[Activity API] Fetching events, count:', recentEvents.length);
 
   return NextResponse.json({
-    events: recentEvents.map(event => ({
-      id: event.id,
-      message: event.message,
-      timestamp: event.timestamp.toISOString(),
-      eventType: event.eventType,
-    })),
+    events: recentEvents,
+    totalEvents: recentEvents.length,
   });
 }
