@@ -11,6 +11,20 @@ declare global {
   }
 }
 
+// Helper to send events to activity store
+const trackActivity = async (eventType: string, params?: Record<string, any>) => {
+  try {
+    await fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventType, params }),
+    });
+  } catch (error) {
+    // Silently fail - don't break user experience
+    console.error('Failed to track activity:', error);
+  }
+};
+
 export const analytics = {
   // Track start of the wizard journey (CTA clicks or direct visits)
   trackWizardStart: (source?: string) => {
@@ -18,6 +32,7 @@ export const analytics = {
       window.gtag('event', 'wizard_start', {
         source,
       });
+      trackActivity('wizard_start', { source });
     }
   },
 
@@ -28,6 +43,7 @@ export const analytics = {
         step_number: stepNumber,
         step_name: stepName,
       });
+      trackActivity('step_view', { step_number: stepNumber, step_name: stepName });
     }
   },
 
@@ -38,6 +54,7 @@ export const analytics = {
         step_number: stepNumber,
         step_name: stepName,
       });
+      trackActivity('step_approved', { step_number: stepNumber, step_name: stepName });
     }
   },
 
@@ -48,6 +65,9 @@ export const analytics = {
         step_name: stepName,
         success: success,
       });
+      if (success) {
+        trackActivity('document_generate', { step_name: stepName, success });
+      }
     }
   },
 
@@ -58,6 +78,7 @@ export const analytics = {
         step_name: stepName,
         download_type: 'individual',
       });
+      trackActivity('document_download', { step_name: stepName, download_type: 'individual' });
     }
   },
 
@@ -68,6 +89,7 @@ export const analytics = {
         document_count: documentCount,
         download_type: 'zip',
       });
+      trackActivity('bulk_download', { document_count: documentCount, download_type: 'zip' });
     }
   },
 
@@ -75,6 +97,7 @@ export const analytics = {
   trackWizardReset: () => {
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'wizard_reset');
+      trackActivity('wizard_reset');
     }
   },
 
@@ -82,6 +105,7 @@ export const analytics = {
   trackWizardComplete: () => {
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'wizard_complete');
+      trackActivity('wizard_complete');
     }
   },
 
@@ -91,6 +115,7 @@ export const analytics = {
       window.gtag('event', 'chat_message', {
         step_name: stepName,
       });
+      trackActivity('chat_message', { step_name: stepName });
     }
   },
 };

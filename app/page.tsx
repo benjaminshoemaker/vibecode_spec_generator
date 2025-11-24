@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Footer from "./components/Footer";
+import LiveActivityTicker from "./components/LiveActivityTicker";
+import StatsGrid from "./components/StatsGrid";
 import { analytics } from "@/app/utils/analytics";
 
 export default function LandingPage() {
@@ -136,6 +138,14 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Social Proof: Live Activity + Stats */}
+        <div className="max-w-7xl mx-auto px-6 mb-16">
+          <LiveActivityTicker />
+          <div className="mt-4">
+            <StatsGrid />
           </div>
         </div>
 
