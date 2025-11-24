@@ -13,7 +13,8 @@ import JSZip from "jszip";
 import Footer from "../components/Footer";
 import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson } from 'lucide-react';
 import { analytics } from "@/app/utils/analytics";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FinalInstructionsModal } from "./components/FinalInstructionsModal";
 
 const stepConfigs: StepConfig[] = [
   step1Config,
@@ -27,10 +28,13 @@ const stepNames = ["ONE_PAGER", "DEV_SPEC", "PROMPT_PLAN", "AGENTS_MD"];
 
 export default function WizardPage() {
   const { currentStep, setCurrentStep, steps, isGenerating, resetWizard, updateStepDoc, approveStep } = useWizardStore();
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   const currentConfig = stepConfigs[currentStep - 1];
   const currentStepKey = stepKeyMap[currentStep - 1];
   const isDevelopment = process.env.NODE_ENV === 'development';
+  const agentCommand =
+    "Read AGENTS.md first, then ONE_PAGER.md, DEV_SPEC.md, and PROMPT_PLAN.md. Confirm when finished loading them.";
 
   // Track when users land on the wizard (covers direct visits)
   useEffect(() => {
@@ -62,6 +66,7 @@ export default function WizardPage() {
 
   const handleApproveAndNext = () => {
     const { approveStep, updateStepChat } = useWizardStore.getState();
+    const wasAlreadyApproved = steps[currentStepKey].approved;
     analytics.trackStepApproved(currentStep, stepNames[currentStep - 1]);
     approveStep(currentStepKey);
     if (currentStep < 4) {
@@ -69,8 +74,11 @@ export default function WizardPage() {
       updateStepChat(nextStepKey, []);
       setCurrentStep(currentStep + 1);
     } else {
-      // Track wizard completion when user finalizes the last step
-      analytics.trackWizardComplete();
+      analytics.trackFinalizeClick();
+      if (!wasAlreadyApproved) {
+        analytics.trackWizardComplete();
+      }
+      setShowCompletionModal(true);
     }
   };
 
@@ -93,6 +101,7 @@ export default function WizardPage() {
   };
 
   const handleLoadSampleDocs = () => {
+    setShowCompletionModal(false);
     updateStepDoc('onePager', sampleDocs.onePager);
     approveStep('onePager');
     updateStepDoc('devSpec', sampleDocs.devSpec);
@@ -102,6 +111,20 @@ export default function WizardPage() {
     updateStepDoc('agentsMd', sampleDocs.agentsMd);
     approveStep('agentsMd');
     setCurrentStep(1);
+  };
+
+  const handleReset = () => {
+    setShowCompletionModal(false);
+    resetWizard();
+  };
+
+  const handleCompletionDownload = () => {
+    analytics.trackCompletionDownload();
+    handleDownloadAll();
+  };
+
+  const handleCommandCopy = () => {
+    analytics.trackCompletionCopy();
   };
 
   const handleDownloadAll = async () => {
@@ -157,7 +180,7 @@ export default function WizardPage() {
             </button>
           )}
           <button
-            onClick={resetWizard}
+            onClick={handleReset}
             className="flex items-center gap-2 px-3 py-1 text-xs font-mono text-zinc-500 hover:text-white transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
@@ -285,6 +308,14 @@ export default function WizardPage() {
       </div>
 
       <Footer />
+
+      <FinalInstructionsModal
+        open={showCompletionModal}
+        onClose={() => setShowCompletionModal(false)}
+        onDownloadAll={handleCompletionDownload}
+        agentCommand={agentCommand}
+        onCopyCommand={handleCommandCopy}
+      />
     </div>
   );
 }
