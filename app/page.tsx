@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Footer from "./components/Footer";
 import LiveActivityTicker from "./components/LiveActivityTicker";
 import StatsGrid from "./components/StatsGrid";
+import ActivityDebugPanel from "./components/ActivityDebugPanel";
 import { analytics } from "@/app/utils/analytics";
 
 export default function LandingPage() {
@@ -219,6 +220,7 @@ export default function LandingPage() {
       </main>
 
       <Footer />
+      <ActivityDebugPanel />
     </div>
   );
 }

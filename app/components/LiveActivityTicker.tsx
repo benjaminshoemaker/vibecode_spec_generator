@@ -38,13 +38,18 @@ export default function LiveActivityTicker() {
   // Fetch activities from API
   const fetchActivities = async () => {
     try {
+      console.log('[LiveActivityTicker] Fetching activities...');
       const response = await fetch('/api/activity');
       const data = await response.json();
+      console.log('[LiveActivityTicker] Received data:', data);
       if (data.events && data.events.length > 0) {
         setActivities(data.events);
+        console.log('[LiveActivityTicker] Set activities:', data.events.length);
+      } else {
+        console.log('[LiveActivityTicker] No events returned');
       }
     } catch (error) {
-      console.error('Error fetching activities:', error);
+      console.error('[LiveActivityTicker] Error fetching activities:', error);
     }
   };
 
