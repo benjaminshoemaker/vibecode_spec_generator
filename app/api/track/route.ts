@@ -3,6 +3,20 @@ import { activityStore } from '@/app/utils/activityStore';
 
 export const runtime = 'edge';
 
+// Vercel geolocation type (available in Edge Runtime)
+interface VercelGeo {
+  city?: string;
+  country?: string;
+  region?: string;
+  latitude?: string;
+  longitude?: string;
+}
+
+// Extend NextRequest to include Vercel's geo property
+interface VercelRequest extends NextRequest {
+  geo?: VercelGeo;
+}
+
 // Map event types to human-readable messages with location
 const getEventMessage = (eventType: string, params?: any, location?: string): string => {
   const loc = location ? ` in ${location}` : '';
@@ -26,6 +40,12 @@ const getEventMessage = (eventType: string, params?: any, location?: string): st
       return `User started over${loc}`;
     case 'chat_message':
       return `Chat message in ${params?.step_name || 'wizard'}${loc}`;
+    case 'finalize_clicked':
+      return `Finalize clicked${loc}`;
+    case 'completion_modal_download':
+      return `Completion modal download triggered${loc}`;
+    case 'completion_modal_copy':
+      return `Agent command copied${loc}`;
     default:
       return `Activity on the platform${loc}`;
   }
@@ -40,7 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get location from Vercel geolocation (available in Edge Runtime)
-    const geo = request.geo;
+    const geo = (request as VercelRequest).geo;
     let location = '';
 
     if (geo) {
