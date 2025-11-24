@@ -32,6 +32,16 @@ export default function WizardPage() {
   const currentStepKey = stepKeyMap[currentStep - 1];
   const isDevelopment = process.env.NODE_ENV === 'development';
 
+  // Track when users land on the wizard (covers direct visits)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hasStarted = sessionStorage.getItem('wizard-started');
+    if (!hasStarted) {
+      analytics.trackWizardStart('direct_wizard');
+      sessionStorage.setItem('wizard-started', 'true');
+    }
+  }, []);
+
   // Track step views
   useEffect(() => {
     analytics.trackStepView(currentStep, stepNames[currentStep - 1]);
@@ -52,6 +62,7 @@ export default function WizardPage() {
 
   const handleApproveAndNext = () => {
     const { approveStep, updateStepChat } = useWizardStore.getState();
+    analytics.trackStepApproved(currentStep, stepNames[currentStep - 1]);
     approveStep(currentStepKey);
     if (currentStep < 4) {
       const nextStepKey = stepKeyMap[currentStep];

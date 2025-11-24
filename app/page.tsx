@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Footer from "./components/Footer";
+import { analytics } from "@/app/utils/analytics";
 
 export default function LandingPage() {
   // Blinking cursor effect for the hero
@@ -12,6 +13,13 @@ export default function LandingPage() {
     const interval = setInterval(() => setCursorVisible(v => !v), 530);
     return () => clearInterval(interval);
   }, []);
+
+  const handleWizardStart = (source: string) => {
+    analytics.trackWizardStart(source);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('wizard-started', 'true');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans selection:bg-white selection:text-black flex flex-col">
@@ -27,11 +35,16 @@ export default function LandingPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <Link href="/wizard" className="text-xs font-mono text-zinc-400 hover:text-white transition-colors">
+            <Link
+              href="/wizard"
+              onClick={() => handleWizardStart("nav_login")}
+              className="text-xs font-mono text-zinc-400 hover:text-white transition-colors"
+            >
               Log In
             </Link>
             <Link 
               href="/wizard" 
+              onClick={() => handleWizardStart("nav_get_started")}
               className="bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-2"
             >
               Get Started <ArrowRight className="w-3 h-3" />
@@ -66,6 +79,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link 
                   href="/wizard" 
+                  onClick={() => handleWizardStart("hero_start_building")}
                   className="h-12 px-8 bg-white text-black font-bold flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors border border-transparent text-sm tracking-wide"
                 >
                   <Terminal className="w-4 h-4" />
@@ -183,6 +197,7 @@ export default function LandingPage() {
              <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Link 
                   href="/wizard" 
+                  onClick={() => handleWizardStart("footer_cta")}
                   className="bg-white text-black px-10 py-4 font-bold text-sm uppercase tracking-wide hover:bg-zinc-200 transition-colors"
                 >
                   Get started

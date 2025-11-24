@@ -12,10 +12,29 @@ declare global {
 }
 
 export const analytics = {
+  // Track start of the wizard journey (CTA clicks or direct visits)
+  trackWizardStart: (source?: string) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'wizard_start', {
+        source,
+      });
+    }
+  },
+
   // Track page views for wizard steps
   trackStepView: (stepNumber: number, stepName: string) => {
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'step_view', {
+        step_number: stepNumber,
+        step_name: stepName,
+      });
+    }
+  },
+
+  // Track approvals for each step
+  trackStepApproved: (stepNumber: number, stepName: string) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'step_approved', {
         step_number: stepNumber,
         step_name: stepName,
       });
