@@ -155,6 +155,11 @@ export default function WizardPage() {
 
       // Track bulk download
       analytics.trackBulkDownload(documentCount);
+
+      // If all docs exist, also surface the completion modal
+      if (documentCount === stepNames.length) {
+        setShowCompletionModal(true);
+      }
     }
   };
 
