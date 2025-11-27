@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, Download, Clipboard, CheckCircle2 } from "lucide-react";
+import { X, Download, Clipboard, CheckCircle2, Mail } from "lucide-react";
+import { analytics } from "@/app/utils/analytics";
 
 interface FinalInstructionsModalProps {
   open: boolean;
@@ -19,8 +20,35 @@ export function FinalInstructionsModal({
   onCopyCommand,
 }: FinalInstructionsModalProps) {
   const [copied, setCopied] = useState(false);
+  const [email, setEmail] = useState("");
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   if (!open) return null;
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setSubscribeStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (res.ok) {
+        setSubscribeStatus("success");
+        analytics.trackEmailSubscribe(true);
+      } else {
+        setSubscribeStatus("error");
+        analytics.trackEmailSubscribe(false);
+      }
+    } catch {
+      setSubscribeStatus("error");
+      analytics.trackEmailSubscribe(false);
+    }
+  };
 
   const handleCopy = async () => {
     try {
@@ -127,6 +155,42 @@ export function FinalInstructionsModal({
             <div>
               <div className="font-semibold text-white">Paste prompts from the Prompt Plan and build!</div>
               <p className="text-zinc-400 text-xs mt-1">Follow PROMPT_PLAN.md in order and watch your project come together.</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <div className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-zinc-800 text-zinc-400 text-xs font-bold">
+              <Mail className="w-3 h-3" />
+            </div>
+            <div className="flex-1">
+              <div className="font-semibold text-white">Join the mailing list to receive updates and early access to new features:</div>
+              {subscribeStatus === "success" ? (
+                <p className="text-emerald-400 text-xs mt-2 flex items-center gap-1">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Thanks! You&apos;re subscribed.
+                </p>
+              ) : (
+                <form onSubmit={handleSubscribe} className="flex gap-2 mt-2">
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={subscribeStatus === "loading"}
+                    className="flex-1 px-3 py-1.5 bg-zinc-900 border border-zinc-700 rounded-sm text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={subscribeStatus === "loading" || !email.trim()}
+                    className="px-4 py-1.5 bg-white text-zinc-900 text-xs font-bold uppercase tracking-wide hover:bg-zinc-200 transition-colors rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {subscribeStatus === "loading" ? "..." : "Subscribe"}
+                  </button>
+                </form>
+              )}
+              {subscribeStatus === "error" && (
+                <p className="text-red-400 text-xs mt-1">Something went wrong. Please try again.</p>
+              )}
             </div>
           </div>
         </div>

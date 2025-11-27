@@ -53,4 +53,7 @@ export const analytics = {
   trackCompletionCopy: () => {
     sendGtag("completion_modal_copy");
   },
+  trackEmailSubscribe: (success: boolean) => {
+    sendGtag("email_subscribe", { success });
+  },
 };
