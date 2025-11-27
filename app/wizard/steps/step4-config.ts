@@ -94,5 +94,8 @@ Ask the human if any of the following is true:
 - You need new environment variables or secrets.  
 - An external dependency or major architectural change is required.
 - Design files are missing, unsupported or oversized
+
+At the very end of the file, add this HTML comment on its own line:
+<!-- Generated with vibescaffold.dev -->
 `,
 };

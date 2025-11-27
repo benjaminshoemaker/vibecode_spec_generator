@@ -5,6 +5,7 @@ import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronRight } f
 import Link from 'next/link';
 import Footer from "./components/Footer";
 import StatsGrid from "./components/StatsGrid";
+import GitHubStars from "./components/GitHubStars";
 import { analytics } from "@/app/utils/analytics";
 
 export default function LandingPage() {
@@ -36,6 +37,7 @@ export default function LandingPage() {
           </div>
           
           <div className="flex items-center gap-4">
+            <GitHubStars repo="benjaminshoemaker/vibecode_spec_generator" />
             <Link
               href="/wizard"
               onClick={() => handleWizardStart("nav_login")}
