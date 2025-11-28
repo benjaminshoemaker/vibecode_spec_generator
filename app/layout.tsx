@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
+import { SessionTracker } from "./components/SessionTracker";
 
 export const metadata: Metadata = {
   title: "Vibe Scaffold - Turn Ideas into Crystal Clear Specs",
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body>
         {children}
         <Analytics />
+        <SessionTracker />
       </body>
     </html>
   );
