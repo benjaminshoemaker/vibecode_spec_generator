@@ -32,12 +32,20 @@ Ideal User: ${metadata.idealUser || "N/A"}`,
   }
 }
 
+interface LogMetadataRequest extends SpecMetadata {
+  clientId?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const metadata: SpecMetadata = await request.json();
+    const body: LogMetadataRequest = await request.json();
+    const { clientId, ...metadata } = body;
 
     // Convert array to Postgres array literal format
     const techStackArray = `{${metadata.techStack.map(t => `"${t.replace(/"/g, '\\"')}"`).join(",")}}`;
+
+    // clientId is optional - may be null if not provided
+    const sanitizedClientId = clientId && typeof clientId === "string" ? clientId : null;
 
     await sql`
       INSERT INTO spec_metadata (
@@ -47,7 +55,8 @@ export async function POST(request: NextRequest) {
         platform,
         tech_stack,
         integration_count,
-        complexity_tier
+        complexity_tier,
+        client_id
       ) VALUES (
         ${metadata.appName},
         ${metadata.problem},
@@ -55,7 +64,8 @@ export async function POST(request: NextRequest) {
         ${metadata.platform},
         ${techStackArray}::text[],
         ${metadata.integrationCount},
-        ${metadata.complexityTier}
+        ${metadata.complexityTier},
+        ${sanitizedClientId}
       )
     `;
 
