@@ -114,7 +114,7 @@ export function FinalInstructionsModal({
             </div>
             <div>
               <div className="font-semibold text-white">Open your AI coding tool in that directory</div>
-              <p className="text-zinc-400 text-xs mt-1">Examples: Cursor, Windsurf, Claude Code, or your preferred agent.</p>
+              <p className="text-zinc-400 text-xs mt-1">Examples: Codex CLI, Claude Code, or your preferred agent.</p>
             </div>
           </div>
 
