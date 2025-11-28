@@ -16,6 +16,11 @@ information when you use the VibeCODE Spec Generator application.
   statement and target audience. We do **not** store the full document content.
 - **Usage data:** Basic technical details such as browser type, operating
   system, and interaction events used to improve the product.
+- **Anonymous usage tracking:** We assign a randomly generated anonymous
+  identifier (stored in your browser's localStorage) to track usage patterns
+  across sessions. This helps us understand retention and how users interact
+  with the wizard over time. This identifier is not linked to any personal
+  information.
 - **Logs and diagnostics:** Error reports and performance data that help us
   maintain reliability.
 
@@ -25,6 +30,8 @@ information when you use the VibeCODE Spec Generator application.
 - To send product updates and announcements if you subscribe to our mailing list.
 - To analyze aggregated spec metadata to understand what types of projects users
   are building and improve our product accordingly.
+- To perform cohort analysis and understand user retention patterns using
+  anonymous identifiers.
 - To monitor and protect the security and reliability of the service.
 
 ## Data Retention
@@ -32,6 +39,7 @@ information when you use the VibeCODE Spec Generator application.
   storage) so you can continue where you left off.
 - Email addresses are retained until you unsubscribe from the mailing list.
 - Spec metadata is retained indefinitely for analytics purposes.
+- Anonymous usage events are retained indefinitely for cohort analysis.
 - Server-side logs and diagnostics are retained only as long as needed for
   security, reliability, and debugging.
 
@@ -50,6 +58,8 @@ information when you use the VibeCODE Spec Generator application.
 ## Your Choices
 - You may reset the wizard to clear stored chats and documents from your
   browser.
+- You may clear your browser's localStorage to remove the anonymous tracking
+  identifier.
 - If you choose to avoid sending sensitive information to third-party AI
   providers, please refrain from entering such data into the chat.
 
