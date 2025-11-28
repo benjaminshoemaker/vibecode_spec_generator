@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Download, Clipboard, CheckCircle2, Mail } from "lucide-react";
+import { X, Download, Clipboard, CheckCircle2, Mail, MessageCircle } from "lucide-react";
 import { analytics } from "@/app/utils/analytics";
 
 interface FinalInstructionsModalProps {
@@ -191,6 +191,34 @@ export function FinalInstructionsModal({
               {subscribeStatus === "error" && (
                 <p className="text-red-400 text-xs mt-1">Something went wrong. Please try again.</p>
               )}
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <div className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-zinc-800 text-zinc-400 text-xs font-bold">
+              <MessageCircle className="w-3 h-3" />
+            </div>
+            <div className="flex-1">
+              <div className="font-semibold text-white">Connect with us</div>
+              <div className="flex gap-3 mt-2">
+                <a
+                  href="https://discord.gg/9v3GpsEpCa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-zinc-400 hover:text-white transition-colors"
+                >
+                  Join our Discord
+                </a>
+                <span className="text-zinc-600">·</span>
+                <a
+                  href="https://forms.gle/CBvAEG7YLxdJvezD6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-zinc-400 hover:text-white transition-colors"
+                >
+                  Send feedback
+                </a>
+              </div>
             </div>
           </div>
         </div>
