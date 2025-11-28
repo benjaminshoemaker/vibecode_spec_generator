@@ -13,6 +13,7 @@ import JSZip from "jszip";
 import Footer from "../components/Footer";
 import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson } from 'lucide-react';
 import { analytics } from "@/app/utils/analytics";
+import { parseSpecMetadata } from "@/app/utils/parseSpecMetadata";
 import { useEffect, useState } from "react";
 import { FinalInstructionsModal } from "./components/FinalInstructionsModal";
 
@@ -128,6 +129,23 @@ export default function WizardPage() {
   };
 
   const handleDownloadAll = async () => {
+    // Fire and forget: log metadata for analytics
+    try {
+      const metadata = parseSpecMetadata(
+        steps.onePager.generatedDoc,
+        steps.devSpec.generatedDoc
+      );
+      fetch("/api/log-metadata", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(metadata),
+      }).catch(() => {
+        // Silently ignore errors - non-blocking
+      });
+    } catch {
+      // Parsing failed, continue with download
+    }
+
     const zip = new JSZip();
     let hasDocuments = false;
     let documentCount = 0;
