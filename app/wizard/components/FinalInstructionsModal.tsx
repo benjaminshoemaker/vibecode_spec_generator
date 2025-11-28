@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Download, Clipboard, CheckCircle2, Mail, MessageCircle, Sparkles } from "lucide-react";
-import { analytics } from "@/app/utils/analytics";
+import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 
 interface FinalInstructionsModalProps {
   open: boolean;
@@ -31,10 +31,11 @@ export function FinalInstructionsModal({
 
     setSubscribeStatus("loading");
     try {
+      const clientId = getOrCreateClientId();
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), clientId }),
       });
 
       if (res.ok) {

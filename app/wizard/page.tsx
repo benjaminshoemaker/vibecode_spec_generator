@@ -12,7 +12,7 @@ import { canAccessStep } from "./utils/stepAccess";
 import JSZip from "jszip";
 import Footer from "../components/Footer";
 import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson } from 'lucide-react';
-import { analytics } from "@/app/utils/analytics";
+import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { parseSpecMetadata } from "@/app/utils/parseSpecMetadata";
 import { useEffect, useState } from "react";
 import { FinalInstructionsModal } from "./components/FinalInstructionsModal";
@@ -135,10 +135,11 @@ export default function WizardPage() {
         steps.onePager.generatedDoc,
         steps.devSpec.generatedDoc
       );
+      const clientId = getOrCreateClientId();
       fetch("/api/log-metadata", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(metadata),
+        body: JSON.stringify({ ...metadata, clientId }),
       }).catch(() => {
         // Silently ignore errors - non-blocking
       });

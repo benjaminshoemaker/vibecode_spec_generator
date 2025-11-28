@@ -5,7 +5,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const { email, clientId } = await request.json();
 
     if (!email || typeof email !== "string") {
       return NextResponse.json(
@@ -23,10 +23,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // clientId is optional - may be null if not provided
+    const sanitizedClientId = clientId && typeof clientId === "string" ? clientId : null;
+
     await sql`
-      INSERT INTO subscribers (email)
-      VALUES (${trimmedEmail})
-      ON CONFLICT (email) DO NOTHING
+      INSERT INTO subscribers (email, client_id)
+      VALUES (${trimmedEmail}, ${sanitizedClientId})
+      ON CONFLICT (email) DO UPDATE SET client_id = COALESCE(subscribers.client_id, ${sanitizedClientId})
     `;
 
     return NextResponse.json({ success: true });
