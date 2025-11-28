@@ -67,6 +67,16 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
+                  href="https://discord.gg/9v3GpsEpCa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-zinc-500 hover:text-white transition-colors"
+                >
+                  Discord
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://forms.gle/CBvAEG7YLxdJvezD6"
                   target="_blank"
                   rel="noopener noreferrer"

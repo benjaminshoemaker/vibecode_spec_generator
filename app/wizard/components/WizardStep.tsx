@@ -78,6 +78,11 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
         generatedDoc += decoder.decode(value);
       }
 
+      // Append attribution for AGENTS.md
+      if (stepKey === "agentsMd") {
+        generatedDoc = generatedDoc.trimEnd() + "\n\n<!-- Generated with vibescaffold.dev -->\n";
+      }
+
       updateStepDoc(stepKey, generatedDoc);
 
       // Track successful document generation
