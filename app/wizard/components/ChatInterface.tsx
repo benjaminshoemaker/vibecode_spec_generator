@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Message } from "@/app/types";
 import { Terminal, ArrowRight } from 'lucide-react';
 import { analytics } from "@/app/utils/analytics";
+import { spikelog } from "@/app/utils/spikelog";
 
 interface ChatInterfaceProps {
   systemPrompt: string;
@@ -69,6 +70,7 @@ export default function ChatInterface({
     // Track chat message submission
     if (stepName) {
       analytics.trackChatMessage(stepName);
+      spikelog.trackChatMessage(stepName); // #13
     }
 
     const updateAssistantMessage = (assistantId: string, content: string) => {
@@ -84,7 +86,10 @@ export default function ChatInterface({
       );
     };
 
-    const runNonStreamingFallback = async (assistantId: string) => {
+    const runNonStreamingFallback = async (assistantId: string, reason: string) => {
+      // Track streaming fallback (#3)
+      spikelog.trackStreamingFallback(reason);
+
       try {
         const fallbackResponse = await fetch("/api/chat", {
           method: "POST",
@@ -144,7 +149,7 @@ export default function ChatInterface({
         if (fallbackText) {
           updateAssistantMessage(assistantMessageId, fallbackText);
         } else {
-          await runNonStreamingFallback(assistantMessageId);
+          await runNonStreamingFallback(assistantMessageId, "no_response_body");
         }
         return;
       }
@@ -176,7 +181,7 @@ export default function ChatInterface({
             if (fallbackText) {
               updateAssistantMessage(assistantMessageId, fallbackText);
             } else {
-              await runNonStreamingFallback(assistantMessageId);
+              await runNonStreamingFallback(assistantMessageId, "empty_stream");
             }
           }
           break;

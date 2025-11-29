@@ -1,9 +1,12 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText, generateText } from "ai";
+import { spikelog } from "@/app/utils/spikelog";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  const startTime = Date.now();
+
   try {
     const { messages, systemPrompt, documentInputs, stream = true } = await req.json();
 
@@ -46,6 +49,9 @@ export async function POST(req: Request) {
         messages,
       });
 
+      // Track response time for streaming (time to first byte)
+      spikelog.trackApiResponseTime("chat", Date.now() - startTime);
+
       return result.toTextStreamResponse();
     }
 
@@ -55,12 +61,22 @@ export async function POST(req: Request) {
       messages,
     });
 
+    // Track response time for non-streaming
+    spikelog.trackApiResponseTime("chat", Date.now() - startTime);
+
     return new Response(result.text, {
       status: 200,
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
   } catch (error) {
     console.error("Chat API error:", error);
+
+    // Track API error (#10)
+    spikelog.trackApiError(
+      "chat",
+      error instanceof Error ? error.name : "Unknown"
+    );
+
     return new Response(
       JSON.stringify({ error: "Failed to process chat request" }),
       {

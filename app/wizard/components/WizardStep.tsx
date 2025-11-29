@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { StepConfig, Message } from "@/app/types";
 import { useWizardStore } from "@/app/store";
 import ChatInterface from "./ChatInterface";
 import DocumentPreview from "./DocumentPreview";
 import { Terminal, Loader2 } from 'lucide-react';
 import { analytics } from "@/app/utils/analytics";
+import { spikelog } from "@/app/utils/spikelog";
 
 interface WizardStepProps {
   config: StepConfig;
@@ -20,6 +21,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
   const stepData = steps[stepKey];
 
   const [error, setError] = useState<string | null>(null);
+  const hasGeneratedBefore = useRef(!!stepData.generatedDoc);
 
   const handleMessagesChange = useCallback((messages: Message[]) => {
     updateStepChat(stepKey, messages);
@@ -87,6 +89,21 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
 
       // Track successful document generation
       analytics.trackDocumentGenerate(config.stepName, true);
+
+      // Track token usage approximation (#8) - ~4 chars per token
+      const promptChars = stepData.chatHistory.reduce((sum, msg) => sum + msg.content.length, 0);
+      const completionChars = generatedDoc.length;
+      spikelog.trackTokenUsage(
+        Math.round(promptChars / 4),
+        Math.round(completionChars / 4),
+        config.stepName
+      );
+
+      // Track regeneration (#14) if this is not the first generation
+      if (hasGeneratedBefore.current) {
+        spikelog.trackRegeneration(config.stepName);
+      }
+      hasGeneratedBefore.current = true;
 
       setTimeout(() => {
         const previewElement = document.getElementById('preview-box');

@@ -1,5 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
+import { spikelog } from "@/app/utils/spikelog";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -32,9 +33,16 @@ export async function POST(request: NextRequest) {
       ON CONFLICT (email) DO UPDATE SET client_id = COALESCE(subscribers.client_id, ${sanitizedClientId})
     `;
 
+    // Track successful email subscription (#15)
+    spikelog.trackEmailSubscription(true);
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Subscribe error:", error);
+
+    // Track failed email subscription (#15)
+    spikelog.trackEmailSubscription(false);
+
     return NextResponse.json(
       { error: "Failed to subscribe" },
       { status: 500 }
