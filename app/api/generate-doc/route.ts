@@ -1,11 +1,17 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
+import { spikelog } from "@/app/utils/spikelog";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  const startTime = Date.now();
+  let stepName: string | undefined;
+
   try {
-    const { chatHistory, stepName, documentInputs, generationPrompt: customPrompt } = await req.json();
+    const body = await req.json();
+    stepName = body.stepName;
+    const { chatHistory, documentInputs, generationPrompt: customPrompt } = body;
 
     if (!chatHistory || !Array.isArray(chatHistory)) {
       return new Response("Invalid chat history format", { status: 400 });
@@ -75,9 +81,21 @@ Please generate the ${stepName} document now in markdown format:`;
     console.log("\n✅ Document generation stream started");
     console.log("=".repeat(80) + "\n");
 
+    // Track response time (#2) and success (#12)
+    spikelog.trackApiResponseTime("generate", Date.now() - startTime);
+    spikelog.trackGenerationResult(true, stepName);
+
     return result.toTextStreamResponse();
   } catch (error) {
     console.error("Generate doc API error:", error);
+
+    // Track API error (#11) and failure (#12)
+    spikelog.trackApiError(
+      "generate",
+      error instanceof Error ? error.name : "Unknown"
+    );
+    spikelog.trackGenerationResult(false, stepName);
+
     return new Response(
       JSON.stringify({ error: "Failed to generate document" }),
       {

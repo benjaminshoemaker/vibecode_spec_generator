@@ -16,6 +16,7 @@ import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { parseSpecMetadata } from "@/app/utils/parseSpecMetadata";
 import { useEffect, useState } from "react";
 import { FinalInstructionsModal } from "./components/FinalInstructionsModal";
+import { spikelog } from "@/app/utils/spikelog";
 
 const stepConfigs: StepConfig[] = [
   step1Config,
@@ -43,13 +44,23 @@ export default function WizardPage() {
     const hasStarted = sessionStorage.getItem('wizard-started');
     if (!hasStarted) {
       analytics.trackWizardStart('direct_wizard');
+      spikelog.trackWizardStart('direct_wizard'); // #4
       sessionStorage.setItem('wizard-started', 'true');
     }
+
+    // Start session heartbeat for active sessions tracking (#9)
+    spikelog.startSessionHeartbeat();
+
+    // Cleanup on unmount
+    return () => {
+      spikelog.endSessionHeartbeat();
+    };
   }, []);
 
-  // Track step views
+  // Track step views (#6)
   useEffect(() => {
     analytics.trackStepView(currentStep, stepNames[currentStep - 1]);
+    spikelog.trackStepView(currentStep, stepNames[currentStep - 1]);
   }, [currentStep]);
 
   const handleStepClick = (stepNumber: number) => {
@@ -78,6 +89,7 @@ export default function WizardPage() {
       analytics.trackFinalizeClick();
       if (!wasAlreadyApproved) {
         analytics.trackWizardComplete();
+        spikelog.trackWizardCompletion(); // #5
       }
       setShowCompletionModal(true);
     }
@@ -99,6 +111,7 @@ export default function WizardPage() {
 
     // Track individual document download
     analytics.trackDocumentDownload(stepName);
+    spikelog.trackDocumentDownload("individual", 1); // #7
   };
 
   const handleLoadSampleDocs = () => {
@@ -174,6 +187,7 @@ export default function WizardPage() {
 
       // Track bulk download
       analytics.trackBulkDownload(documentCount);
+      spikelog.trackDocumentDownload("bulk", documentCount); // #7
 
       // If all docs exist, also surface the completion modal
       if (documentCount === stepNames.length) {
