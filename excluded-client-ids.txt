@@ -1,0 +1,5 @@
+# Add client IDs to exclude from analytics (one per line)
+# These will be deleted during pre-deploy cleanup
+# Example: 550e8400-e29b-41d4-a716-446655440000
+cdfbbfb1-12b8-4c1d-b448-43bf43c92976
+494a41bd-7b1d-4909-9575-06e395cf2ac3

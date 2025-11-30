@@ -23,13 +23,13 @@ export default function DocumentPreview({
     <div className="h-full flex flex-col bg-zinc-950">
       {/* Toolbar */}
       <div className="flex justify-between items-center px-6 py-3 border-b border-zinc-800 bg-zinc-950">
-        <div className="flex gap-2">
+        <div className="flex">
           <button
             onClick={() => setViewMode("rendered")}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-mono uppercase tracking-wide transition-all ${
+            className={`flex items-center gap-2 px-5 py-3 text-[11px] font-mono uppercase tracking-wider border-b-2 transition-all ${
               viewMode === "rendered"
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "text-accent border-accent"
+                : "text-[#a1a1aa] border-transparent hover:text-[#e4e4e7]"
             }`}
           >
             <Eye className="w-3 h-3" />
@@ -37,20 +37,20 @@ export default function DocumentPreview({
           </button>
           <button
             onClick={() => setViewMode("raw")}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-mono uppercase tracking-wide transition-all ${
+            className={`flex items-center gap-2 px-5 py-3 text-[11px] font-mono uppercase tracking-wider border-b-2 transition-all ${
               viewMode === "raw"
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "text-accent border-accent"
+                : "text-[#a1a1aa] border-transparent hover:text-[#e4e4e7]"
             }`}
           >
             <Code className="w-3 h-3" />
             Source
           </button>
         </div>
-        
-        <button 
+
+        <button
           onClick={copyToClipboard}
-          className="text-zinc-500 hover:text-white transition-colors"
+          className="text-[#a1a1aa] hover:text-accent transition-colors"
           title="Copy to Clipboard"
         >
           <Copy className="w-4 h-4" />
@@ -58,9 +58,9 @@ export default function DocumentPreview({
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-zinc-950">
+      <div className="flex-1 overflow-y-auto custom-scrollbar bg-zinc-800 border-t border-zinc-800">
         {viewMode === "raw" ? (
-          <div className="p-8 font-mono text-xs leading-relaxed text-zinc-400 whitespace-pre-wrap">
+          <div className="p-8 font-mono text-[13px] leading-relaxed text-[#e4e4e7] whitespace-pre-wrap">
             {content}
           </div>
         ) : (

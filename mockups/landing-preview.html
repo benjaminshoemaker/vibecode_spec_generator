@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Scaffold - Landing Page Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #09090b;
+      --bg-surface: #18181b;
+      --bg-elevated: #27272a;
+      --border-default: #3f3f46;
+      --border-subtle: #27272a;
+      --text-primary: #ffffff;
+      --text-secondary: #e4e4e7;
+      --text-muted: #a1a1aa;
+      --accent: #f59e0b;
+      --accent-light: #fbbf24;
+      --accent-dim: #d97706;
+      --accent-glow: rgba(245, 158, 11, 0.15);
+      --success: #10b981;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-void);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Blueprint Grid Background */
+    .blueprint-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle, var(--accent) 1.5px, transparent 1.5px),
+        linear-gradient(to right, rgba(63, 63, 70, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(63, 63, 70, 0.4) 1px, transparent 1px);
+      background-size: 24px 24px, 48px 48px, 48px 48px;
+      opacity: 0.35;
+      animation: grid-pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes grid-pulse {
+      0%, 100% { opacity: 0.30; }
+      50% { opacity: 0.40; }
+    }
+
+    /* Content wrapper */
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(9, 9, 11, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .logo-icon {
+      width: 18px;
+      height: 18px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon-inner {
+      width: 8px;
+      height: 8px;
+      background: var(--bg-void);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: color 150ms ease-out;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
+    .github-stars {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      transition: all 150ms ease-out;
+    }
+
+    .github-stars:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .github-stars-count {
+      color: inherit;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-void);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 150ms ease-out;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 160px 24px 120px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .hero-content {
+      animation: fade-up 600ms ease-out;
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .hero-title {
+      font-size: 56px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    .hero-title-accent {
+      color: var(--text-muted);
+    }
+
+    .hero-cursor {
+      color: var(--accent);
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hero-description {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 24px;
+      border: 1px solid var(--border-default);
+      cursor: pointer;
+      transition: all 150ms ease-out;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary-lg {
+      background: var(--accent);
+      color: var(--bg-void);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 14px 28px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 150ms ease-out;
+    }
+
+    .btn-primary-lg:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+
+    /* Hero Visual */
+    .hero-visual {
+      animation: fade-up 600ms ease-out 200ms backwards;
+    }
+
+    .terminal-window {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      position: relative;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-void);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--border-default);
+    }
+
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .terminal-body {
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+
+    .line-number {
+      color: var(--text-muted);
+      user-select: none;
+      min-width: 20px;
+      text-align: right;
+    }
+
+    .line-content {
+      color: var(--text-secondary);
+    }
+
+    .syntax-keyword { color: #c084fc; }
+    .syntax-function { color: var(--accent); }
+    .syntax-string { color: #4ade80; }
+    .syntax-comment { color: var(--text-muted); }
+    .syntax-type { color: #38bdf8; }
+
+    .terminal-output {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .output-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .output-file {
+      background: var(--bg-void);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 14px;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    /* Stats Section */
+    .stats {
+      padding: 80px 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--border-subtle);
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .stat-item {
+      padding: 32px 24px;
+      text-align: center;
+      border-right: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-void);
+      position: relative;
+      transition: all 150ms ease-out;
+    }
+
+    .stat-item::before,
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 150ms ease-out;
+    }
+
+    .stat-item::before {
+      top: 0;
+      left: 0;
+      width: 32px;
+      height: 1px;
+    }
+
+    .stat-item::after {
+      top: 0;
+      left: 0;
+      width: 1px;
+      height: 32px;
+    }
+
+    .stat-item:hover {
+      background: var(--bg-surface);
+    }
+
+    .stat-item:hover::before,
+    .stat-item:hover::after {
+      opacity: 1;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Capabilities Section */
+    .capabilities {
+      padding: 80px 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .capabilities-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--border-subtle);
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .capability-card {
+      padding: 32px 24px;
+      border-right: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-void);
+      position: relative;
+      transition: all 150ms ease-out;
+    }
+
+    .capability-card::before,
+    .capability-card::after {
+      content: '';
+      position: absolute;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 150ms ease-out;
+    }
+
+    .capability-card::before {
+      top: 0;
+      left: 0;
+      width: 32px;
+      height: 1px;
+    }
+
+    .capability-card::after {
+      top: 0;
+      left: 0;
+      width: 1px;
+      height: 32px;
+    }
+
+    .capability-card:hover {
+      background: var(--bg-surface);
+    }
+
+    .capability-card:hover::before,
+    .capability-card:hover::after {
+      opacity: 1;
+    }
+
+    .capability-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+
+    .capability-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .capability-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .capability-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 120px 24px;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 64px 24px 32px;
+      border-top: 1px solid var(--border-subtle);
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand .logo {
+      margin-bottom: 16px;
+    }
+
+    .footer-brand p {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 280px;
+    }
+
+    .footer-column-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #a1a1aa;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 8px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 150ms ease-out;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      padding-top: 32px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copyright {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        padding: 120px 24px 80px;
+      }
+
+      .hero-title {
+        font-size: 42px;
+      }
+
+      .capabilities-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+      }
+
+      .capabilities-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="blueprint-grid"></div>
+
+  <div class="content">
+    <!-- Navigation -->
+    <nav>
+      <div class="logo">
+        <div class="logo-icon">
+          <div class="logo-icon-inner"></div>
+        </div>
+        VIBE_SCAFFOLD
+      </div>
+      <div class="nav-right">
+        <a href="#" class="github-stars">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span class="github-stars-count">128</span>
+          <span>GitHub</span>
+        </a>
+        <a href="#" class="nav-link">Log In</a>
+        <button class="btn-primary">
+          Get Started
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <div class="hero-badge-dot"></div>
+          AI-Powered Spec Generator
+        </div>
+        <h1 class="hero-title">
+          Turn your fresh ideas into<br>
+          <span class="hero-title-accent">crystal clear specs.</span><span class="hero-cursor">_</span>
+        </h1>
+        <p class="hero-description">
+          Stop writing vague prompt iterations. Generate detailed technical specifications, architecture diagrams, and agent directives from a single structured conversation.
+        </p>
+        <div class="hero-ctas">
+          <button class="btn-primary-lg">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 17 10 11 4 5"></polyline>
+              <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+            Start Building Now
+          </button>
+          <button class="btn-secondary">Read Documentation</button>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot"></div>
+              <div class="terminal-dot"></div>
+              <div class="terminal-dot"></div>
+            </div>
+            <div class="terminal-title">spec_generator.exe</div>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-line">
+              <span class="line-number">01</span>
+              <span class="line-content"><span class="syntax-keyword">function</span> <span class="syntax-function">generateSpec</span>(input) {</span>
+            </div>
+            <div class="terminal-line">
+              <span class="line-number">02</span>
+              <span class="line-content">  <span class="syntax-comment">// Analysis in progress...</span></span>
+            </div>
+            <div class="terminal-line">
+              <span class="line-number">03</span>
+              <span class="line-content">  <span class="syntax-keyword">const</span> architecture = <span class="syntax-type">new</span> SystemDesign(input);</span>
+            </div>
+            <div class="terminal-line">
+              <span class="line-number">04</span>
+              <span class="line-content">  <span class="syntax-keyword">return</span> architecture.compile();</span>
+            </div>
+            <div class="terminal-line">
+              <span class="line-number">05</span>
+              <span class="line-content">}</span>
+            </div>
+            <div class="terminal-output">
+              <div class="output-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+                OUTPUT GENERATED
+              </div>
+              <div class="output-grid">
+                <div class="output-file">ONE_PAGER.md</div>
+                <div class="output-file">DEV_SPEC.md</div>
+                <div class="output-file">PROMPT_PLAN.md</div>
+                <div class="output-file">AGENTS.md</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">2,200+</div>
+          <div class="stat-label">Active Users</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">1,300+</div>
+          <div class="stat-label">AI Conversations</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">300+</div>
+          <div class="stat-label">Documents Generated</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">70+</div>
+          <div class="stat-label">Specs Completed</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Capabilities Section -->
+    <section class="capabilities">
+      <div class="section-header">
+        <div class="section-label">=Capabilities</div>
+        <h2 class="section-title">Reason over your requirements</h2>
+      </div>
+      <div class="capabilities-grid">
+        <div class="capability-card">
+          <div class="capability-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+          <div class="capability-number">[01]</div>
+          <h3 class="capability-title">Product Definition</h3>
+          <p class="capability-desc">Converts abstract ideas into concrete MVP requirements and user stories.</p>
+        </div>
+        <div class="capability-card">
+          <div class="capability-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line>
+              <line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line>
+              <line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line>
+              <line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line>
+              <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+          </div>
+          <div class="capability-number">[02]</div>
+          <h3 class="capability-title">Tech Architecture</h3>
+          <p class="capability-desc">Drafts complete schema designs, API routes, and security protocols.</p>
+        </div>
+        <div class="capability-card">
+          <div class="capability-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="6" y1="3" x2="6" y2="15"></line>
+              <circle cx="18" cy="6" r="3"></circle>
+              <circle cx="6" cy="18" r="3"></circle>
+              <path d="M18 9a9 9 0 0 1-9 9"></path>
+            </svg>
+          </div>
+          <div class="capability-number">[03]</div>
+          <h3 class="capability-title">Development Plan</h3>
+          <p class="capability-desc">Breaks complexity into sequential, LLM-testable prompt chains.</p>
+        </div>
+        <div class="capability-card">
+          <div class="capability-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <div class="capability-number">[04]</div>
+          <h3 class="capability-title">Agent Directives</h3>
+          <p class="capability-desc">Generates system prompts (AGENTS.md) for autonomous coding agents.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2 class="cta-title">Ready to draft?</h2>
+      <button class="btn-primary-lg">
+        Get Started
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">
+            <div class="logo-icon">
+              <div class="logo-icon-inner"></div>
+            </div>
+            VIBE_SCAFFOLD
+          </div>
+          <p>Turn your ideas into production-ready specifications. Built for vibe coders who want professional results.</p>
+        </div>
+        <div class="footer-column">
+          <div class="footer-column-title">Product</div>
+          <ul class="footer-links">
+            <li><a href="#">Get Started</a></li>
+            <li><a href="#">How It Works</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <div class="footer-column-title">Resources</div>
+          <ul class="footer-links">
+            <li><a href="#">GitHub</a></li>
+            <li><a href="#">Documentation</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <div class="footer-column-title">Support</div>
+          <ul class="footer-links">
+            <li><a href="#">Discord</a></li>
+            <li><a href="#">Send Feedback</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">&copy; 2024 Vibe Scaffold. All rights reserved.</div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

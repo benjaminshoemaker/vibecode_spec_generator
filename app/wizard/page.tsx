@@ -31,6 +31,7 @@ const stepNames = ["ONE_PAGER", "DEV_SPEC", "PROMPT_PLAN", "AGENTS_MD"];
 export default function WizardPage() {
   const { currentStep, setCurrentStep, steps, isGenerating, resetWizard, updateStepDoc, approveStep } = useWizardStore();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [isDemoGenerating, setIsDemoGenerating] = useState(false);
 
   const currentConfig = stepConfigs[currentStep - 1];
   const currentStepKey = stepKeyMap[currentStep - 1];
@@ -127,6 +128,19 @@ export default function WizardPage() {
     setCurrentStep(1);
   };
 
+  const handleLoadDemoStep = async (stepKey: typeof stepKeyMap[number], stepIndex: number) => {
+    const sampleMap: Record<typeof stepKeyMap[number], string> = {
+      onePager: sampleDocs.onePager,
+      devSpec: sampleDocs.devSpec,
+      checklist: sampleDocs.promptPlan,
+      agentsMd: sampleDocs.agentsMd,
+    };
+    setIsDemoGenerating(true);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    updateStepDoc(stepKey, sampleMap[stepKey]);
+    setIsDemoGenerating(false);
+  };
+
   const handleReset = () => {
     setShowCompletionModal(false);
     resetWizard();
@@ -197,14 +211,20 @@ export default function WizardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans flex flex-col">
+    <div className="min-h-screen bg-zinc-950 text-[#e4e4e7] font-sans flex flex-col">
+      {/* Blueprint Grid Background */}
+      <div className="blueprint-grid"></div>
+
+      {/* Content wrapper */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+
       {/* Header */}
       <header className="bg-zinc-950 border-b border-zinc-800 h-14 sticky top-0 z-30 px-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-           <div className="w-6 h-6 bg-white flex items-center justify-center">
-              <div className="w-3 h-3 bg-zinc-950"></div>
+           <div className="w-[18px] h-[18px] bg-accent flex items-center justify-center">
+              <div className="w-2 h-2 bg-zinc-950"></div>
            </div>
-           <span className="font-mono text-sm font-bold text-white tracking-tight">VIBE_SCAFFOLD <span className="text-zinc-600">// WIZARD</span></span>
+           <span className="font-mono text-sm font-bold text-white tracking-tight">VIBE_SCAFFOLD <span className="text-[#a1a1aa]">// WIZARD</span></span>
         </div>
         
         <div className="flex gap-4">
@@ -217,9 +237,22 @@ export default function WizardPage() {
               LOAD_SAMPLES
             </button>
           )}
+          {isDevelopment && (
+            <button
+              onClick={() => {
+                const clientId = localStorage.getItem('vs_client_id');
+                if (clientId) {
+                  navigator.clipboard.writeText(clientId);
+                }
+              }}
+              className="hidden md:flex items-center gap-2 px-3 py-1 text-xs font-mono text-amber-500 border border-amber-900/50 bg-amber-950/20 hover:bg-amber-950/40 transition-colors"
+            >
+              COPY_CLIENT_ID
+            </button>
+          )}
           <button
             onClick={handleReset}
-            className="flex items-center gap-2 px-3 py-1 text-xs font-mono text-zinc-500 hover:text-white transition-colors"
+            className="flex items-center gap-2 px-3 py-1 text-xs font-mono text-[#a1a1aa] hover:text-white transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
             RESET
@@ -246,17 +279,30 @@ export default function WizardPage() {
 
           {/* Action Card - Order 1 on mobile, Order 2 on desktop */}
           <div className="bg-zinc-900 border border-zinc-800 p-6 lg:sticky lg:top-20 order-1 lg:order-2">
-            <h3 className="text-xs font-mono font-bold text-zinc-500 mb-4">=ACTIONS</h3>
+            <h3 className="text-[10px] font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">=ACTIONS</h3>
+
+            {isDevelopment && (
+              <button
+                onClick={() => handleLoadDemoStep(currentStepKey, currentStep - 1)}
+                disabled={isDemoGenerating}
+                className="w-full mb-2 py-2 px-4 bg-amber-600 hover:bg-amber-500 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:bg-amber-800 disabled:cursor-not-allowed"
+              >
+                {isDemoGenerating && (
+                  <div className="w-3 h-3 border-2 border-amber-400 border-t-zinc-900 rounded-full animate-spin"></div>
+                )}
+                {isDemoGenerating ? "PROCESSING..." : `${currentConfig.generateButtonText.toUpperCase()} (DEMO)`}
+              </button>
+            )}
 
             <button
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('triggerGenerate'));
               }}
               disabled={steps[currentStepKey].chatHistory.length === 0 || isGenerating}
-              className="w-full mb-3 py-3 px-4 bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed"
+              className="w-full mb-3 py-3 px-4 bg-accent hover:bg-accent-light text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:bg-zinc-800 disabled:text-[#a1a1aa] disabled:cursor-not-allowed hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(245,158,11,0.15)]"
             >
               {isGenerating && (
-                <div className="w-3 h-3 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin"></div>
+                <div className="w-3 h-3 border-2 border-amber-400 border-t-zinc-900 rounded-full animate-spin"></div>
               )}
               {isGenerating ? "PROCESSING..." : currentConfig.generateButtonText.toUpperCase()}
             </button>
@@ -264,7 +310,7 @@ export default function WizardPage() {
             <button
               onClick={handleApproveAndNext}
               disabled={!steps[currentStepKey].generatedDoc}
-              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 hover:border-accent hover:text-accent text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {currentStep === 4 ? "FINALIZE" : "APPROVE & NEXT"}
             </button>
@@ -274,7 +320,7 @@ export default function WizardPage() {
             <button
               onClick={handleDownloadAll}
               disabled={!Object.values(steps).some(step => step.generatedDoc !== null)}
-              className="w-full py-2 px-4 text-zinc-500 hover:text-white text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-30"
+              className="w-full py-2 px-4 text-[#a1a1aa] hover:text-accent text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-30"
             >
               <Download className="w-3 h-3" />
               DOWNLOAD_ALL.ZIP
@@ -283,7 +329,7 @@ export default function WizardPage() {
 
           {/* Progress Card - Order 2 on mobile, Order 1 on desktop */}
           <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-1">
-            <h3 className="text-xs font-mono font-bold text-zinc-500 mb-4">=SEQUENCE</h3>
+            <h3 className="text-[10px] font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">=SEQUENCE</h3>
 
             <div className="space-y-px bg-zinc-800 border border-zinc-800">
                {stepNames.map((name, index) => {
@@ -296,7 +342,7 @@ export default function WizardPage() {
                 return (
                   <div key={name} className={`relative flex items-center justify-between p-3 transition-all ${
                     isActive
-                      ? 'bg-zinc-800 border-l-2 border-white'
+                      ? 'bg-zinc-800 border-l-2 border-accent'
                       : isLocked
                         ? 'bg-zinc-900 border-l-2 border-transparent opacity-70'
                         : 'bg-zinc-900 hover:bg-zinc-800/50 border-l-2 border-transparent'
@@ -313,15 +359,15 @@ export default function WizardPage() {
                         isCompleted
                           ? 'text-emerald-500'
                           : isActive
-                            ? 'text-white'
+                            ? 'text-accent'
                             : isLocked
                               ? 'text-zinc-700'
-                              : 'text-zinc-600'
+                              : 'text-[#a1a1aa]'
                       }`}>
                         {isCompleted ? '[✓]' : `[0${index + 1}]`}
                       </div>
                       <span className={`text-xs font-bold font-mono tracking-wide ${
-                        isActive ? 'text-white' : isLocked ? 'text-zinc-600' : 'text-zinc-500'
+                        isActive ? 'text-white' : isLocked ? 'text-zinc-600' : 'text-[#a1a1aa]'
                       }`}>
                         {name}
                       </span>
@@ -330,7 +376,7 @@ export default function WizardPage() {
                     {hasDocument && (
                       <button
                         onClick={() => handleDownload(stepKey, name)}
-                        className="text-zinc-500 hover:text-white transition-all"
+                        className="text-[#a1a1aa] hover:text-accent transition-all"
                         title="Download"
                       >
                         <Download className="w-4 h-4" />
@@ -354,6 +400,7 @@ export default function WizardPage() {
         agentCommand={agentCommand}
         onCopyCommand={handleCommandCopy}
       />
+      </div>
     </div>
   );
 }

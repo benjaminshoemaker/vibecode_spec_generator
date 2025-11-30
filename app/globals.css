@@ -5,6 +5,21 @@
 :root {
   --background: #09090b; /* Zinc 950 */
   --foreground: #e4e4e7; /* Zinc 200 */
+
+  /* Design System Colors */
+  --bg-void: #09090b;
+  --bg-surface: #18181b;
+  --bg-elevated: #27272a;
+  --border-default: #3f3f46;
+  --border-subtle: #27272a;
+  --text-primary: #ffffff;
+  --text-secondary: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --accent: #f59e0b;
+  --accent-light: #fbbf24;
+  --accent-dim: #d97706;
+  --accent-glow: rgba(245, 158, 11, 0.15);
+  --success: #10b981;
 }
 
 body {
@@ -93,4 +108,57 @@ body {
 .prose td {
   border-bottom: 1px solid #27272a;
   padding: 0.75rem;
+}
+
+/* Blueprint Grid Background */
+.blueprint-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle, var(--accent) 1.5px, transparent 1.5px),
+    linear-gradient(to right, rgba(63, 63, 70, 0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(63, 63, 70, 0.4) 1px, transparent 1px);
+  background-size: 24px 24px, 48px 48px, 48px 48px;
+  opacity: 0.35;
+  animation: grid-pulse 8s ease-in-out infinite;
+}
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.30; }
+  50% { opacity: 0.40; }
+}
+
+/* Card hover accent corner */
+.card-hover-accent {
+  position: relative;
+}
+
+.card-hover-accent::before,
+.card-hover-accent::after {
+  content: '';
+  position: absolute;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.card-hover-accent::before {
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 1px;
+}
+
+.card-hover-accent::after {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 32px;
+}
+
+.card-hover-accent:hover::before,
+.card-hover-accent:hover::after {
+  opacity: 1;
 }
