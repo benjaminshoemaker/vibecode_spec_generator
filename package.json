@@ -4,7 +4,8 @@
   "description": "A Next.js application with a multi-step wizard interface that uses AI-powered chat to gather requirements and generate comprehensive technical specification documents.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run cleanup-test-data && next build",
+    "cleanup-test-data": "node scripts/cleanup-test-data.mjs",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Message } from "@/app/types";
 import { Terminal, ArrowRight } from 'lucide-react';
 import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
@@ -28,7 +28,20 @@ export default function ChatInterface({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const sessionIdRef = useRef<string>(crypto.randomUUID());
+
+  // Auto-resize textarea
+  const autoResizeTextarea = useCallback((textarea: HTMLTextAreaElement | null) => {
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+    }
+  }, []);
+
+  useEffect(() => {
+    autoResizeTextarea(textareaRef.current);
+  }, [input, autoResizeTextarea]);
 
   const logChatMessage = async (role: "user" | "assistant", content: string) => {
     try {
@@ -251,22 +264,21 @@ export default function ChatInterface({
             key={message.id}
             className={`flex flex-col max-w-[90%] ${message.role === "user" ? "self-end items-end" : "self-start items-start"}`}
           >
-            <div className={`text-[10px] font-mono mb-1 ${
-              message.role === "user" ? "text-emerald-500" : "text-zinc-500"
+            <div className={`text-[10px] font-mono uppercase tracking-wider mb-1 ${
+              message.role === "user" ? "text-accent" : "text-[#a1a1aa]"
             }`}>
-              {message.role === "user" ? "Me" : "AI"}
+              {message.role === "user" ? "You" : "System"}
             </div>
 
-            <div className={`px-4 py-3 text-sm font-mono leading-relaxed whitespace-pre-wrap ${
+            <div className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
               message.role === "user"
-                ? "bg-zinc-800 text-white border border-zinc-700"
-                : "text-zinc-400 pl-0"
+                ? "bg-accent-glow border border-accent/30 text-[#e4e4e7]"
+                : "bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa]"
             }`}>
-              {message.role === "assistant" && <span className="text-zinc-600 mr-2">{'>'}</span>}
               {message.content}
               {message.role === "assistant" && isAssistantPending === message.id && (
                 <span
-                  className="ml-1 inline-block w-[6px] h-4 bg-zinc-500 animate-pulse align-bottom rounded-sm opacity-80"
+                  className="ml-1 inline-block w-[6px] h-4 bg-accent animate-pulse align-bottom rounded-sm opacity-80"
                   aria-label="Assistant is typing"
                 />
               )}
@@ -276,13 +288,12 @@ export default function ChatInterface({
 
         {isLoading && lastMessage?.role === "user" && (
           <div className="flex flex-col max-w-[90%] self-start items-start">
-            <div className="text-[10px] font-mono mb-1 text-zinc-500">
-              AI
+            <div className="text-[10px] font-mono uppercase tracking-wider mb-1 text-[#a1a1aa]">
+              System
             </div>
-            <div className="text-zinc-400 pl-0 px-4 py-3 text-sm font-mono leading-relaxed">
-              <span className="text-zinc-600 mr-2">{'>'}</span>
+            <div className="bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa] px-4 py-3 text-sm leading-relaxed">
               <span
-                className="inline-block w-[6px] h-4 bg-zinc-500 animate-pulse align-bottom rounded-sm opacity-80"
+                className="inline-block w-[6px] h-4 bg-accent animate-pulse align-bottom rounded-sm opacity-80"
                 aria-label="Waiting for response"
               />
             </div>
@@ -293,10 +304,14 @@ export default function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-zinc-950 border-t border-zinc-800">
-        <form onSubmit={handleSubmit} className="relative flex gap-3 items-center bg-zinc-900 border border-zinc-800 px-4 py-2 focus-within:border-zinc-600 transition-colors">
-          <div className="flex-1 relative">
+      <div className="p-5 bg-zinc-950 border-t border-zinc-800">
+        <form onSubmit={handleSubmit} className="relative flex gap-3 bg-zinc-900 border border-zinc-700 pl-4 pr-1 py-1 focus-within:border-accent focus-within:shadow-[0_0_0_3px_rgba(245,158,11,0.15)] transition-all min-h-[48px]">
+          <div className="flex items-center">
+            <span className="text-accent font-mono text-[13px] select-none">$</span>
+          </div>
+          <div className="flex-1 flex items-center">
              <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -305,21 +320,23 @@ export default function ChatInterface({
                     handleSubmit(e);
                   }
                 }}
-                placeholder="Type your ideas here..."
-                className="w-full bg-transparent text-sm font-mono text-white focus:outline-none resize-none py-2 placeholder:text-zinc-600"
+                placeholder="Describe your requirements..."
+                className="w-full bg-transparent text-[13px] font-mono text-white focus:outline-none resize-none placeholder:text-[#a1a1aa] leading-5 overflow-y-auto py-3"
                 rows={1}
                 disabled={isLoading}
-                style={{ minHeight: '24px', maxHeight: '120px' }}
+                style={{ maxHeight: '200px' }}
              />
           </div>
-          
-          <button
-            type="submit"
-            disabled={isLoading || !input.trim()}
-            className="text-zinc-500 hover:text-white disabled:opacity-30 transition-colors"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </button>
+
+          <div className="flex items-center">
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              className="w-10 h-10 bg-accent hover:bg-accent-light disabled:bg-zinc-800 flex items-center justify-center transition-colors flex-shrink-0"
+            >
+              <ArrowRight className="w-4 h-4 text-zinc-950" />
+            </button>
+          </div>
         </form>
       </div>
     </div>

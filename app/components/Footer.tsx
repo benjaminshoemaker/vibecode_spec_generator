@@ -4,37 +4,37 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-zinc-950 border-t border-zinc-800 py-12">
+    <footer className="bg-zinc-950 border-t border-zinc-800 py-16">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-12">
           {/* Brand */}
-          <div className="md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-white flex items-center justify-center">
-                 <div className="w-3 h-3 bg-zinc-950"></div>
+          <div>
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-[18px] h-[18px] bg-accent flex items-center justify-center">
+                 <div className="w-2 h-2 bg-zinc-950"></div>
               </div>
-              <span className="font-mono font-bold text-white tracking-tighter">
+              <span className="font-mono font-bold text-white tracking-tight text-sm">
                 VIBE_SCAFFOLD
               </span>
             </div>
-            <p className="text-xs text-zinc-500 font-mono">
-              Turn your messy ideas into crystal clear specs.
+            <p className="text-[13px] text-[#a1a1aa] max-w-[280px]">
+              Turn your ideas into production-ready specifications. Built for vibe coders who want professional results.
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <h3 className="font-mono text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">
+            <h3 className="font-mono text-[10px] font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">
               Product
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2">
               <li>
-                <Link href="/wizard" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <Link href="/wizard" className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors">
                   Get Started
                 </Link>
               </li>
               <li>
-                <Link href="/#how-it-works" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <Link href="/#how-it-works" className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors">
                   How It Works
                 </Link>
               </li>
@@ -42,17 +42,17 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-mono text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">
+            <h3 className="font-mono text-[10px] font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">
               Resources
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2">
               <li>
-                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors">
                   GitHub
                 </a>
               </li>
               <li>
-                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/README.md" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/README.md" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors">
                   Documentation
                 </a>
               </li>
@@ -61,16 +61,16 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="font-mono text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">
+            <h3 className="font-mono text-[10px] font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">
               Support
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2">
               <li>
                 <a
                   href="https://discord.gg/9v3GpsEpCa"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-zinc-500 hover:text-white transition-colors"
+                  className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors"
                 >
                   Discord
                 </a>
@@ -80,18 +80,18 @@ export default function Footer() {
                   href="https://forms.gle/CBvAEG7YLxdJvezD6"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-zinc-500 hover:text-white transition-colors"
+                  className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors"
                 >
                   Send Feedback
                 </a>
               </li>
               <li>
-                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/PRIVACY_POLICY.md" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/PRIVACY_POLICY.md" className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/TERMS_OF_SERVICE.md" className="text-sm text-zinc-500 hover:text-white transition-colors">
+                <a href="https://github.com/benjaminshoemaker/vibecode_spec_generator/blob/main/TERMS_OF_SERVICE.md" className="text-[13px] text-[#e4e4e7] hover:text-accent transition-colors">
                   Terms of Service
                 </a>
               </li>
@@ -100,8 +100,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-zinc-600 font-mono">
+        <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-[#a1a1aa] font-mono">
             © {currentYear} Vibe Scaffold. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
@@ -109,7 +109,7 @@ export default function Footer() {
               href="https://github.com/benjaminshoemaker"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-zinc-500 hover:text-white transition-colors"
+              className="text-[#a1a1aa] hover:text-accent transition-colors"
               aria-label="GitHub"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

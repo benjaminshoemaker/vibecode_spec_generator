@@ -11,6 +11,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        accent: {
+          DEFAULT: '#f59e0b',
+          light: '#fbbf24',
+          dim: '#d97706',
+          glow: 'rgba(245, 158, 11, 0.15)',
+        },
       },
       borderRadius: {
         'lg': '0.5rem',
@@ -19,7 +25,17 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
-      }
+      },
+      animation: {
+        'grid-pulse': 'grid-pulse 8s ease-in-out infinite',
+        'pulse-slow': 'pulse 2s ease-in-out infinite',
+      },
+      keyframes: {
+        'grid-pulse': {
+          '0%, 100%': { opacity: '0.30' },
+          '50%': { opacity: '0.40' },
+        },
+      },
     },
   },
   plugins: [
