@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Message } from "@/app/types";
 import { Terminal, ArrowRight } from 'lucide-react';
-import { analytics } from "@/app/utils/analytics";
+import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { spikelog } from "@/app/utils/spikelog";
 
 interface ChatInterfaceProps {
@@ -28,6 +28,27 @@ export default function ChatInterface({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>(crypto.randomUUID());
+
+  const logChatMessage = async (role: "user" | "assistant", content: string) => {
+    try {
+      const clientId = getOrCreateClientId();
+      await fetch("/api/log-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientId,
+          sessionId: sessionIdRef.current,
+          stepName,
+          role,
+          content,
+        }),
+      });
+    } catch (error) {
+      // Fire-and-forget: don't block user experience
+      console.error("Failed to log chat message:", error);
+    }
+  };
   const lastMessage = messages[messages.length - 1];
   const isAssistantPending =
     isLoading && lastMessage?.role === "assistant" ? lastMessage.id : null;
@@ -73,6 +94,9 @@ export default function ChatInterface({
       spikelog.trackChatMessage(stepName); // #13
     }
 
+    // Log user message to database
+    logChatMessage("user", userMessage.content);
+
     const updateAssistantMessage = (assistantId: string, content: string) => {
       setMessages((prev) =>
         prev.map((msg) =>
@@ -110,6 +134,8 @@ export default function ChatInterface({
           fallbackText ||
           "No response received. Please check your API key and try again.";
         updateAssistantMessage(assistantId, content);
+        // Log assistant message to database
+        logChatMessage("assistant", content);
       } catch (err) {
         updateAssistantMessage(
           assistantId,
@@ -148,6 +174,8 @@ export default function ChatInterface({
         const fallbackText = await responseClone.text();
         if (fallbackText) {
           updateAssistantMessage(assistantMessageId, fallbackText);
+          // Log assistant message to database
+          logChatMessage("assistant", fallbackText);
         } else {
           await runNonStreamingFallback(assistantMessageId, "no_response_body");
         }
@@ -180,9 +208,14 @@ export default function ChatInterface({
             const fallbackText = await responseClone.text().catch(() => "");
             if (fallbackText) {
               updateAssistantMessage(assistantMessageId, fallbackText);
+              // Log assistant message to database
+              logChatMessage("assistant", fallbackText);
             } else {
               await runNonStreamingFallback(assistantMessageId, "empty_stream");
             }
+          } else {
+            // Log assistant message to database after streaming completes
+            logChatMessage("assistant", accumulatedText);
           }
           break;
         }
