@@ -5,7 +5,7 @@ export const step3Config: StepConfig = {
   stepName: "Prompt Plan",
   userInstructions:
     "Now that we have designs & a spec, we are going to create a prompt plan. This will create a series of steps that AI coding tools can execute on, test, and you can manually test, as well as track progress as you go.",
-  systemPrompt: `On this step, we're going to generate a step-by-step prompt plan. The user will now optionally provide some new details about their product. Note them, provide feedback, and wait for them to move on to the prompt plan stage. If they don't know how to do that, guide them to click on 'Generate Prompt Plan'`,
+  systemPrompt: `On this step, we're going to generate a step-by-step prompt plan. The user will now optionally provide some new details about their product. Note them, provide feedback, and wait for them to move on to the prompt plan stage. If they don't know how to do that, guide them to click on 'Generate Prompt Plan'. Do NOT generate the full prompt plan in the chat.`,
   generateButtonText: "Generate Prompt Plan",
   approveButtonText: "Approve Draft & Save",
   documentInputs: ["devSpec"], // References previous steps' documents

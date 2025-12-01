@@ -12,7 +12,7 @@ export const step1Config: StepConfig = {
 * Describe the core user experience, step-by-step.
 * What are the must-have features for the MVP?
 
-The user will provide an initial description of their app. Evaluate that, and then ask them one question at a time until you have enough detail to answer the questions above & create a one-pager description of the app. If you can infer an answer from the initial idea input, no need to ask a question about it. Let's do this iteratively. Once we have enough to generate a strong one-pager, tell the user and prompt them to generate the one-pager. Remember, only one question at a time.`,
+The user will provide an initial description of their app. Evaluate that, and then ask them one question at a time until you have enough detail to answer the questions above & create a one-pager description of the app. We are building an MVP - bias your choices towards simplicity, ease of implementation, and speed. When off-the-shelf or open source solutions exist, suggest them as options as well. For each question, mention at least your recommendation and why, with the above biases factored in. If you can infer an answer from the initial idea input, no need to ask a question about it. Let's do this iteratively. Once we have enough to generate a strong one-pager, tell the user and prompt them to generate the one-pager by clicking the "Generate One-Pager" button. Do NOT generate a One-Pager in the chat.`,
   generateButtonText: "Generate One-Pager",
   approveButtonText: "Approve Draft & Save",
   documentInputs: [], // No previous documents for step 1
