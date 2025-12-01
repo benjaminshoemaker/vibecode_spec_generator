@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, X, AlertTriangle, Download } from 'lucide-react';
+import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, X, AlertTriangle, Check, Download } from 'lucide-react';
 import Link from 'next/link';
 import Footer from "./components/Footer";
 import StatsGrid from "./components/StatsGrid";
@@ -168,13 +168,6 @@ export default function LandingPage() {
             <GitHubStars repo="benjaminshoemaker/vibecode_spec_generator" />
             <Link
               href="/wizard"
-              onClick={() => handleWizardStart("nav_login")}
-              className="text-xs font-mono text-zinc-400 hover:text-accent transition-colors"
-            >
-              Log In
-            </Link>
-            <Link
-              href="/wizard"
               onClick={() => handleWizardStart("nav_get_started")}
               className="bg-accent text-zinc-950 hover:bg-accent-light px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-all flex items-center gap-2 hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(245,158,11,0.15)]"
             >
@@ -285,6 +278,51 @@ export default function LandingPage() {
         {/* Divider */}
         <div className="w-full border-t border-zinc-800"></div>
 
+        {/* How It Works Section */}
+        <div id="how-it-works" className="max-w-7xl mx-auto px-6 py-24">
+          <div className="text-center mb-16">
+            <h2 className="text-2xs font-mono text-zinc-400 mb-2 uppercase tracking-widest">How It Works</h2>
+            <h3 className="text-3xl font-bold text-white tracking-tight">Three steps to a complete spec</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
+            {/* Connecting line (desktop only) */}
+            <div className="hidden md:block absolute top-5 left-[16.67%] right-[16.67%] h-px bg-zinc-800">
+              <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent"></div>
+            </div>
+
+            {/* Step 1 */}
+            <div className="flex flex-col items-center text-center relative">
+              <div className="w-10 h-10 bg-accent text-zinc-950 font-mono font-bold text-sm flex items-center justify-center mb-4 relative z-10">
+                1
+              </div>
+              <h4 className="text-base font-bold text-white mb-2">Describe your idea</h4>
+              <p className="text-sm text-zinc-400">Tell us what you&apos;re building in plain English</p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex flex-col items-center text-center relative">
+              <div className="w-10 h-10 bg-accent text-zinc-950 font-mono font-bold text-sm flex items-center justify-center mb-4 relative z-10">
+                2
+              </div>
+              <h4 className="text-base font-bold text-white mb-2">Chat to refine</h4>
+              <p className="text-sm text-zinc-400">AI asks the right questions to fill in the gaps</p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex flex-col items-center text-center relative">
+              <div className="w-10 h-10 bg-accent text-zinc-950 font-mono font-bold text-sm flex items-center justify-center mb-4 relative z-10">
+                3
+              </div>
+              <h4 className="text-base font-bold text-white mb-2">Download 4 docs</h4>
+              <p className="text-sm text-zinc-400">Get spec files ready to paste into any AI coding tool</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="w-full border-t border-zinc-800"></div>
+
         {/* The 80% Problem Section - Combined with Solutions */}
         <div id="the-80-problem" className="max-w-7xl mx-auto px-6 py-24">
           <div className="mb-16">
@@ -294,48 +332,66 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1 - No Clear Spec */}
-            <div className="bg-zinc-900 border border-zinc-800 p-6">
-              <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
+            <div className="bg-zinc-900 border border-zinc-800 overflow-hidden">
+              <div className="p-6">
+                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
+                  <AlertTriangle className="w-5 h-5 text-red-500" />
+                </div>
+                <h4 className="text-base font-bold text-white mb-3">No Clear Spec</h4>
+                <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed">
+                  <li>• Vague user stories, missing edge cases</li>
+                  <li>• AI fills gaps with hallucinated defaults</li>
+                </ul>
               </div>
-              <h4 className="text-base font-bold text-white mb-3">No Clear Spec</h4>
-              <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed mb-5">
-                <li>• Vague user stories, missing edge cases</li>
-                <li>• AI fills gaps with hallucinated defaults</li>
-              </ul>
-              <div className="border-t border-zinc-700 pt-5">
+              <div className="border-t border-emerald-500/20 bg-emerald-950/30 p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-2xs font-mono text-emerald-500 uppercase tracking-widest">Solution</span>
+                </div>
                 <h5 className="text-sm font-bold text-emerald-400 font-mono mb-2">ONE_PAGER.md + DEV_SPEC.md</h5>
                 <p className="text-xs text-zinc-400">Forces decisions about audience, MVP scope, auth, data model upfront</p>
               </div>
             </div>
 
             {/* Card 2 - Fragmented Context */}
-            <div className="bg-zinc-900 border border-zinc-800 p-6">
-              <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
-                <AlertTriangle className="w-5 h-5 text-orange-500" />
+            <div className="bg-zinc-900 border border-zinc-800 overflow-hidden">
+              <div className="p-6">
+                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
+                  <AlertTriangle className="w-5 h-5 text-orange-500" />
+                </div>
+                <h4 className="text-base font-bold text-white mb-3">Fragmented Context</h4>
+                <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed">
+                  <li>• Ideas scattered across chat history</li>
+                  <li>• Agent can&apos;t hold the project in memory</li>
+                </ul>
               </div>
-              <h4 className="text-base font-bold text-white mb-3">Fragmented Context</h4>
-              <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed mb-5">
-                <li>• Ideas scattered across chat history</li>
-                <li>• Agent can&apos;t hold the project in memory</li>
-              </ul>
-              <div className="border-t border-zinc-700 pt-5">
+              <div className="border-t border-emerald-500/20 bg-emerald-950/30 p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-2xs font-mono text-emerald-500 uppercase tracking-widest">Solution</span>
+                </div>
                 <h5 className="text-sm font-bold text-emerald-400 font-mono mb-2">All 4 docs feed into each other</h5>
                 <p className="text-xs text-zinc-400">Single source of truth AI agents can reference every session</p>
               </div>
             </div>
 
             {/* Card 3 - 'Done' is Undefined */}
-            <div className="bg-zinc-900 border border-zinc-800 p-6">
-              <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
-                <AlertTriangle className="w-5 h-5 text-yellow-500" />
+            <div className="bg-zinc-900 border border-zinc-800 overflow-hidden">
+              <div className="p-6">
+                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
+                  <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                </div>
+                <h4 className="text-base font-bold text-white mb-3">&apos;Done&apos; is Undefined</h4>
+                <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed">
+                  <li>• No test cases, no acceptance criteria</li>
+                  <li>• Every fix breaks something else</li>
+                </ul>
               </div>
-              <h4 className="text-base font-bold text-white mb-3">&apos;Done&apos; is Undefined</h4>
-              <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed mb-5">
-                <li>• No test cases, no acceptance criteria</li>
-                <li>• Every fix breaks something else</li>
-              </ul>
-              <div className="border-t border-zinc-700 pt-5">
+              <div className="border-t border-emerald-500/20 bg-emerald-950/30 p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-2xs font-mono text-emerald-500 uppercase tracking-widest">Solution</span>
+                </div>
                 <h5 className="text-sm font-bold text-emerald-400 font-mono mb-2">PROMPT_PLAN.md + AGENTS.md</h5>
                 <p className="text-xs text-zinc-400">Step-by-step prompts with TDD checkboxes and acceptance criteria</p>
               </div>
@@ -419,6 +475,24 @@ export default function LandingPage() {
             <p className="text-xs text-zinc-500 mt-3">
               4 complete documents for a Photo Captioner app
             </p>
+
+            {/* Or divider + Primary CTA */}
+            <div className="flex items-center justify-center gap-4 my-8">
+              <div className="w-16 h-px bg-zinc-700"></div>
+              <span className="text-xs text-zinc-500 font-mono">or</span>
+              <div className="w-16 h-px bg-zinc-700"></div>
+            </div>
+            <Link
+              href="/wizard"
+              onClick={() => handleWizardStart("output_preview_cta")}
+              className="inline-flex items-center gap-2 bg-accent text-zinc-950 px-8 py-4 font-bold text-sm uppercase tracking-wide hover:bg-accent-light transition-all hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(245,158,11,0.15)]"
+            >
+              <Terminal className="w-4 h-4" />
+              Generate Your First Spec
+            </Link>
+            <p className="text-xs text-zinc-500 mt-3">
+              Free. No account required.
+            </p>
           </div>
         </div>
 
@@ -428,6 +502,20 @@ export default function LandingPage() {
         {/* Social Proof Stats */}
         <div className="max-w-7xl mx-auto px-6 py-24">
           <StatsGrid />
+        </div>
+
+        {/* Divider */}
+        <div className="w-full border-t border-zinc-800"></div>
+
+        {/* Tools Compatibility Section */}
+        <div className="py-24 text-center">
+          <h2 className="text-2xs font-mono text-zinc-400 mb-4 uppercase tracking-widest">Works with the tools you already use</h2>
+          <p className="text-lg text-zinc-400 mb-3">
+            Claude Code • Cursor • Codex CLI • Windsurf • Copilot
+          </p>
+          <p className="text-xs text-zinc-600">
+            Also works with: Lovable, Bolt, v0, Replit, and any tool that accepts markdown context
+          </p>
         </div>
 
         {/* Divider */}
