@@ -101,9 +101,15 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-[#a1a1aa] font-mono">
-            © {currentYear} Vibe Scaffold. All rights reserved.
-          </p>
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+            <p className="text-xs text-[#a1a1aa] font-mono">
+              © {currentYear} Vibe Scaffold. All rights reserved.
+            </p>
+            <span className="hidden md:inline text-zinc-700">•</span>
+            <p className="text-xs text-zinc-600">
+              Works with Claude Code, Cursor, Codex CLI, Windsurf, Copilot, and more
+            </p>
+          </div>
           <div className="flex items-center gap-6">
             <a
               href="https://github.com/benjaminshoemaker"

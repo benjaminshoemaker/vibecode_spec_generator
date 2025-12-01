@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, X, AlertTriangle, Check, FileText, Code, ListChecks, Shield, Download } from 'lucide-react';
+import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, X, AlertTriangle, Check, Download } from 'lucide-react';
 import Link from 'next/link';
 import Footer from "./components/Footer";
 import StatsGrid from "./components/StatsGrid";
@@ -123,10 +123,10 @@ Guardrails
 - If a file cannot be opened, say so and stop`;
 
 const SAMPLE_TABS = [
-  { id: 'one-pager', label: 'ONE_PAGER.md', content: ONE_PAGER_EXCERPT },
-  { id: 'dev-spec', label: 'DEV_SPEC.md', content: DEV_SPEC_EXCERPT },
-  { id: 'prompt-plan', label: 'PROMPT_PLAN.md', content: PROMPT_PLAN_EXCERPT },
-  { id: 'agents', label: 'AGENTS.md', content: AGENTS_EXCERPT },
+  { id: 'one-pager', label: 'ONE_PAGER.md', description: 'Problem, audience, MVP scope, core flows', content: ONE_PAGER_EXCERPT },
+  { id: 'dev-spec', label: 'DEV_SPEC.md', description: 'Architecture, API contracts, data models', content: DEV_SPEC_EXCERPT },
+  { id: 'prompt-plan', label: 'PROMPT_PLAN.md', description: 'Step-by-step prompts with TDD checkboxes', content: PROMPT_PLAN_EXCERPT },
+  { id: 'agents', label: 'AGENTS.md', description: 'Guardrails to keep AI on track', content: AGENTS_EXCERPT },
 ];
 
 export default function LandingPage() {
@@ -424,115 +424,32 @@ export default function LandingPage() {
         {/* Divider */}
         <div className="w-full border-t border-zinc-800"></div>
 
-        {/* Tools Section */}
-        <div className="py-24 text-center">
-          <h2 className="text-2xs font-mono text-[#a1a1aa] mb-4 uppercase tracking-widest">Works with the tools you already use</h2>
-          <p className="text-zinc-400 text-lg mb-3">
-            Claude Code • Cursor • Codex CLI • Windsurf • Copilot
-          </p>
-          <p className="text-xs text-zinc-600">
-            Also works with: Lovable, Bolt, v0, Replit, and any tool that accepts markdown context
-          </p>
-        </div>
-
-        {/* Divider */}
-        <div className="w-full border-t border-zinc-800"></div>
-
-        {/* What You Get Section */}
-        <div id="what-you-get" className="max-w-7xl mx-auto px-6 py-24">
-          <div className="mb-16">
-            <h2 className="text-2xs font-mono text-[#a1a1aa] mb-2 uppercase tracking-widest">What You Get</h2>
-            <h3 className="text-3xl font-bold text-white tracking-tight">Four documents. One command away from shipping.</h3>
-          </div>
-
-          <div className="max-w-3xl space-y-0">
-            {/* Document 1 - ONE_PAGER.md */}
-            <div className="flex gap-6">
-              <div className="flex flex-col items-center">
-                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white flex-shrink-0">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div className="flex-1 w-px bg-zinc-800 my-2"></div>
-              </div>
-              <div className="pb-8">
-                <h4 className="text-base font-bold text-white font-mono mb-2">ONE_PAGER.md</h4>
-                <p className="text-sm text-[#a1a1aa] leading-relaxed">Lock in the what and why before AI starts guessing. Problem, audience, MVP scope, core flows.</p>
-              </div>
-            </div>
-
-            {/* Document 2 - DEV_SPEC.md */}
-            <div className="flex gap-6">
-              <div className="flex flex-col items-center">
-                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white flex-shrink-0">
-                  <Code className="w-5 h-5" />
-                </div>
-                <div className="flex-1 w-px bg-zinc-800 my-2"></div>
-              </div>
-              <div className="pb-8">
-                <h4 className="text-base font-bold text-white font-mono mb-2">DEV_SPEC.md</h4>
-                <p className="text-sm text-[#a1a1aa] leading-relaxed">Architecture, data model, auth - decisions, not defaults. Everything a developer (human or AI) needs to start building.</p>
-              </div>
-            </div>
-
-            {/* Document 3 - PROMPT_PLAN.md */}
-            <div className="flex gap-6">
-              <div className="flex flex-col items-center">
-                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white flex-shrink-0">
-                  <ListChecks className="w-5 h-5" />
-                </div>
-                <div className="flex-1 w-px bg-zinc-800 my-2"></div>
-              </div>
-              <div className="pb-8">
-                <h4 className="text-base font-bold text-white font-mono mb-2">PROMPT_PLAN.md</h4>
-                <p className="text-sm text-[#a1a1aa] leading-relaxed">Step-by-step prompts your AI agent can execute and test. Each step builds on the last. TDD checkboxes track progress.</p>
-              </div>
-            </div>
-
-            {/* Document 4 - AGENTS.md */}
-            <div className="flex gap-6">
-              <div className="flex flex-col items-center">
-                <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white flex-shrink-0">
-                  <Shield className="w-5 h-5" />
-                </div>
-              </div>
-              <div className="pb-8">
-                <h4 className="text-base font-bold text-white font-mono mb-2">AGENTS.md</h4>
-                <p className="text-sm text-[#a1a1aa] leading-relaxed">Guardrails that keep AI on track across sessions. Testing requirements, deferred-work notation, and &apos;when to ask a human&apos; rules.</p>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-sm text-zinc-500 font-mono text-center mt-12">
-            Download as markdown. Paste into any AI coding tool. Ship to 100%.
-          </p>
-        </div>
-
-        {/* Divider */}
-        <div className="w-full border-t border-zinc-800"></div>
-
         {/* Output Preview Section */}
-        <div id="output-preview" className="max-w-7xl mx-auto px-6 py-24">
+        <div id="what-you-get" className="max-w-7xl mx-auto px-6 py-24">
           <div className="text-center mb-12">
-            <h2 className="text-2xs font-mono text-[#a1a1aa] mb-2 uppercase tracking-widest">Sample Output</h2>
-            <h3 className="text-3xl font-bold text-white tracking-tight mb-4">See what you&apos;ll get</h3>
+            <h2 className="text-2xs font-mono text-[#a1a1aa] mb-2 uppercase tracking-widest">What You Get</h2>
+            <h3 className="text-3xl font-bold text-white tracking-tight mb-4">Four documents. See exactly what&apos;s inside.</h3>
             <p className="text-lg text-[#a1a1aa] max-w-2xl mx-auto leading-relaxed">
               Real output from VibeScaffold for a Photo Captioner app
             </p>
           </div>
 
           {/* Tab buttons */}
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          <div className="flex flex-wrap gap-3 mb-6 overflow-x-auto pb-2">
             {SAMPLE_TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 font-mono text-sm whitespace-nowrap transition-all ${
+                className={`px-4 py-3 text-left transition-all border ${
                   activeTab === tab.id
-                    ? 'text-accent border-b-2 border-accent bg-zinc-900'
-                    : 'text-zinc-400 border-b-2 border-zinc-800 hover:text-zinc-300'
+                    ? 'text-accent border-accent bg-zinc-900'
+                    : 'text-zinc-400 border-zinc-800 hover:text-zinc-300 hover:border-zinc-700'
                 }`}
               >
-                {tab.label}
+                <div className="font-mono text-sm whitespace-nowrap">{tab.label}</div>
+                <div className={`text-xs mt-1 ${activeTab === tab.id ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                  {tab.description}
+                </div>
               </button>
             ))}
           </div>
@@ -583,6 +500,28 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Demo Video Section */}
+        <div className="max-w-4xl mx-auto px-6 py-24">
+          <div className="relative bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950">
+              <div className="flex gap-2">
+                <div className="w-2 h-2 bg-zinc-700"></div>
+                <div className="w-2 h-2 bg-zinc-700"></div>
+                <div className="w-2 h-2 bg-zinc-700"></div>
+              </div>
+              <div className="text-2xs font-mono text-[#a1a1aa] uppercase tracking-widest">demo.mov</div>
+            </div>
+            <div className="relative w-full" style={{ paddingBottom: '49.64%' }}>
+              <iframe
+                src="https://www.loom.com/embed/4c94b21cade442a7acf083dc2cbe01a5?hide_share=true&hideEmbedTopBar=true&hide_speed=true"
+                frameBorder="0"
+                allowFullScreen
+                className="absolute top-0 left-0 w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Call to Action */}
         <div className="border-t border-zinc-800 bg-zinc-900 py-24">
            <div className="max-w-3xl mx-auto px-6 flex flex-col items-center text-center">
@@ -604,28 +543,6 @@ export default function LandingPage() {
                Free. No account required.
              </p>
            </div>
-        </div>
-
-        {/* Demo Video Section */}
-        <div className="max-w-4xl mx-auto px-6 py-24">
-          <div className="relative bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950">
-              <div className="flex gap-2">
-                <div className="w-2 h-2 bg-zinc-700"></div>
-                <div className="w-2 h-2 bg-zinc-700"></div>
-                <div className="w-2 h-2 bg-zinc-700"></div>
-              </div>
-              <div className="text-2xs font-mono text-[#a1a1aa] uppercase tracking-widest">demo.mov</div>
-            </div>
-            <div className="relative w-full" style={{ paddingBottom: '49.64%' }}>
-              <iframe
-                src="https://www.loom.com/embed/4c94b21cade442a7acf083dc2cbe01a5?hide_share=true&hideEmbedTopBar=true&hide_speed=true"
-                frameBorder="0"
-                allowFullScreen
-                className="absolute top-0 left-0 w-full h-full"
-              />
-            </div>
-          </div>
         </div>
 
       </main>
