@@ -68,7 +68,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Hero Text */}
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-6">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-zinc-800 bg-zinc-900/50 text-[10px] font-mono text-[#a1a1aa] mb-8 uppercase tracking-widest">
                 <span className="w-1.5 h-1.5 bg-accent animate-pulse"></span>
                 AI-Powered Spec Generator
@@ -102,44 +102,24 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Hero Visual - Abstract Interface */}
-            <div className="lg:col-span-5">
-              <div className="relative">
-                <div className="relative bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950">
-                    <div className="flex gap-2">
-                      <div className="w-2 h-2 bg-zinc-700"></div>
-                      <div className="w-2 h-2 bg-zinc-700"></div>
-                      <div className="w-2 h-2 bg-zinc-700"></div>
-                    </div>
-                    <div className="text-[10px] font-mono text-[#a1a1aa] uppercase tracking-widest">spec_generator.exe</div>
+            {/* Hero Visual - Loom Demo */}
+            <div className="lg:col-span-6">
+              <div className="relative bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950">
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 bg-zinc-700"></div>
+                    <div className="w-2 h-2 bg-zinc-700"></div>
+                    <div className="w-2 h-2 bg-zinc-700"></div>
                   </div>
-                  <div className="p-5 font-mono text-xs">
-                    <div className="flex gap-4 mb-6">
-                      <div className="text-zinc-600 text-right select-none">
-                        01<br/>02<br/>03<br/>04<br/>05
-                      </div>
-                      <div className="text-[#e4e4e7]">
-                        <span className="text-purple-400">function</span> <span className="text-accent">generateSpec</span>(input) {'{'}<br/>
-                        &nbsp;&nbsp;<span className="text-zinc-500">// Analysis in progress...</span><br/>
-                        &nbsp;&nbsp;<span className="text-blue-400">const</span> architecture = <span className="text-emerald-400">new</span> SystemDesign(input);<br/>
-                        &nbsp;&nbsp;<span className="text-blue-400">return</span> architecture.compile();<br/>
-                        {'}'}
-                      </div>
-                    </div>
-                    <div className="border-t border-zinc-800 pt-4 mt-4">
-                      <div className="flex items-center gap-2 text-accent mb-3">
-                        <ChevronRight className="w-3 h-3" />
-                        <span className="font-bold">OUTPUT GENERATED</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="bg-zinc-950 border border-zinc-800 p-2.5 text-[#a1a1aa]">ONE_PAGER.md</div>
-                        <div className="bg-zinc-950 border border-zinc-800 p-2.5 text-[#a1a1aa]">DEV_SPEC.md</div>
-                        <div className="bg-zinc-950 border border-zinc-800 p-2.5 text-[#a1a1aa]">PROMPT_PLAN.md</div>
-                        <div className="bg-zinc-950 border border-zinc-800 p-2.5 text-[#a1a1aa]">AGENTS.md</div>
-                      </div>
-                    </div>
-                  </div>
+                  <div className="text-[10px] font-mono text-[#a1a1aa] uppercase tracking-widest">demo.mov</div>
+                </div>
+                <div className="relative w-full" style={{ paddingBottom: '49.64%' }}>
+                  <iframe
+                    src="https://www.loom.com/embed/4c94b21cade442a7acf083dc2cbe01a5?hide_share=true&hideEmbedTopBar=true&hide_speed=true"
+                    frameBorder="0"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full"
+                  />
                 </div>
               </div>
             </div>

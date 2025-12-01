@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Eye, Code, Copy } from 'lucide-react';
+import { useSyncScroll } from '@/app/hooks/useSyncScroll';
 
 interface DocumentPreviewProps {
   content: string;
@@ -14,6 +15,7 @@ export default function DocumentPreview({
   onRegenerate,
 }: DocumentPreviewProps) {
   const [viewMode, setViewMode] = useState<"rendered" | "raw">("rendered");
+  const scrollContainerRef = useSyncScroll<HTMLDivElement>();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(content);
@@ -58,7 +60,10 @@ export default function DocumentPreview({
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-zinc-800 border-t border-zinc-800">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto custom-scrollbar bg-zinc-800 border-t border-zinc-800"
+      >
         {viewMode === "raw" ? (
           <div className="p-8 font-mono text-[13px] leading-relaxed text-[#e4e4e7] whitespace-pre-wrap">
             {content}
