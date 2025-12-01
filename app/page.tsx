@@ -227,7 +227,7 @@ export default function LandingPage() {
                   Generate Your First Spec
                 </Link>
                 <Link
-                  href="#the-80-problem"
+                  href="#how-it-works"
                   className="h-12 px-8 bg-transparent border border-zinc-700 text-white font-medium flex items-center justify-center gap-2 hover:border-accent hover:text-accent transition-all text-sm tracking-wide"
                 >
                   Learn More
