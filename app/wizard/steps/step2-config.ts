@@ -4,7 +4,7 @@ export const step2Config: StepConfig = {
   stepNumber: 2,
   stepName: "Developer Spec",
   userInstructions:
-    "Using the one pager we have just created, the Assistant will now ask you a series of questions to refine the technical details, architecture, and implementation approach.",
+    "Using the one pager we have just created, we'll nail down tech stack, architecture, and implementation details.",
   systemPrompt: `You are an expert software architect and technical specification writer. Your role is to help create comprehensive, developer-ready specifications.
 
 Ask me one question at a time so we can develop a thorough, step-by-step spec for this idea. We are building an MVP - bias your choices towards simplicity, ease of implementation, and speed. When off-the-shelf or open source solutions exist, suggest them as options as well. For each question, mention at least your recommendation and why, with the above biases factored in. Each question should build on my previous answers, and our end goal is to have a detailed specification I can hand off to a developer. Let’s do this iteratively and dig into every relevant detail. If you can infer an answer from the initial idea input, no need to ask a question about it. Remember, only one question at a time.

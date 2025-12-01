@@ -33,15 +33,18 @@ Then open [http://localhost:3000](http://localhost:3000) and click **Start Build
   - **Step 3 - Prompt Plan**: Staged development plan with LLM-ready prompts and checklists
   - **Step 4 - AGENTS.md**: Automated agent guidance and workflow documentation
 
-- **AI-Powered Chat**: Interactive conversations with OpenAI models to gather detailed requirements
+- **AI-Powered Chat**: Interactive conversations with OpenAI models via the "Vibe Scaffold Assistant"
 - **Context-Aware Generation**: Later steps receive previous documents as context for coherent output
 - **State Persistence**: Progress automatically saved to localStorage
 - **Document Management**:
   - Individual document downloads (ALL_CAPS_UNDERSCORES.md format)
   - Download all documents as ZIP file
-  - Load sample documents for quick testing
-- **Real-time Streaming**: Chat messages stream in real-time for responsive UX
+  - Sample document preview on each step
+- **Completion Flow**: Final instructions modal with agent handoff guide and copyable command
+- **Real-time Streaming**: Chat and document generation stream in real-time for responsive UX
 - **Markdown Preview**: Toggle between rendered and raw markdown views
+- **Step Locking**: Must complete and approve each step before proceeding to the next
+- **Example Output**: Preview sample documents for each step to understand expected format
 
 ## Tech Stack
 
@@ -104,7 +107,7 @@ The application will be available at [http://localhost:3000](http://localhost:30
 
 Each step follows the same three-phase pattern:
 
-1. **Chat Phase**: Have an interactive conversation with the AI assistant
+1. **Chat Phase**: Have an interactive conversation with the Vibe Scaffold Assistant
    - The assistant asks targeted questions to gather requirements
    - You provide details about your project
    - Chat history is automatically saved
@@ -120,21 +123,31 @@ Each step follows the same three-phase pattern:
    - Click "Save Draft & Next Step" to lock in the document and proceed
    - Download individual documents or all documents as a ZIP
 
-### Quick Start with Sample Documents
+### Quick Start with Sample Documents (Development Mode)
 
-Click **"Load Sample Docs"** in the top bar to instantly populate all 4 steps with example documents for a Parent Time Tracking app. This is useful for:
+In development mode, click **"LOAD_SAMPLES"** in the header to instantly populate all 4 steps with example documents for a Photo Captioner app. This is useful for:
 - Testing the application without going through full chat flows
 - Understanding the expected output format
 - Quickly accessing Step 4 to test final features
 
+**Note**: Sample loading buttons are only visible in development mode (`NODE_ENV=development`).
+
 ### Navigation
 
 - **Step Indicators**: Click on completed (green checkmark) steps to review them
-- **Previous/Next Buttons**: Navigate sequentially through steps
-- **Download Individual**: Click ↓ next to any completed document to download
-- **Download All as ZIP**: Click the green button at top of sidebar to download all completed documents
-- **Reset Wizard**: Clear all state and start fresh
-- **Start Over**: Same as Reset Wizard
+- **Step Locking**: Cannot skip ahead—each step must be approved before the next unlocks
+- **Sidebar Actions**: Generate and Approve buttons in the sidebar panel
+- **Download Individual**: Click download icon next to any completed document in the Sequence panel
+- **Download All as ZIP**: Click "DOWNLOAD_ALL.ZIP" in the sidebar to download all completed documents
+- **Reset Wizard**: Click "RESET" in the header to clear all state and start fresh
+
+### Completion Flow
+
+When you complete all 4 steps:
+1. A **Final Instructions Modal** appears with agent handoff guidance
+2. Download all documents as a ZIP
+3. Copy the ready-to-paste command for your AI coding agent
+4. Optionally subscribe to updates or join the Discord community
 
 ### Data Persistence
 
@@ -158,29 +171,45 @@ vibecode_spec_generator/
 │   ├── api/
 │   │   ├── chat/
 │   │   │   └── route.ts                # Streaming chat API (Edge Runtime)
-│   │   └── generate-doc/
-│   │       └── route.ts                # Document generation API (Edge Runtime)
+│   │   ├── generate-doc/
+│   │   │   └── route.ts                # Streaming document generation API (Edge Runtime)
+│   │   ├── subscribe/
+│   │   │   └── route.ts                # Email subscription endpoint
+│   │   ├── spikelog/
+│   │   │   └── route.ts                # Analytics event logging
+│   │   └── log-metadata/
+│   │       └── route.ts                # Spec metadata logging
 │   ├── wizard/
 │   │   ├── components/
 │   │   │   ├── ChatInterface.tsx       # Custom streaming chat UI
 │   │   │   ├── DocumentPreview.tsx     # Markdown renderer with toggle
-│   │   │   └── WizardStep.tsx          # Per-step orchestrator
+│   │   │   ├── FinalInstructionsModal.tsx # Completion modal with handoff instructions
+│   │   │   └── WizardStep.tsx          # Per-step orchestrator with example modal
 │   │   ├── steps/
 │   │   │   ├── step1-config.ts         # One Pager configuration
 │   │   │   ├── step2-config.ts         # Dev Spec configuration
 │   │   │   ├── step3-config.ts         # Prompt Plan configuration
 │   │   │   └── step4-config.ts         # AGENTS.md configuration
 │   │   ├── utils/
-│   │   │   └── sampleDocs.ts           # Sample documents for testing
-│   │   └── page.tsx                    # Main wizard page with nav & downloads
+│   │   │   ├── sampleDocs.ts           # Sample documents for testing
+│   │   │   └── stepAccess.ts           # Step access validation
+│   │   └── page.tsx                    # Main wizard page with sidebar & downloads
+│   ├── utils/
+│   │   ├── analytics.ts                # Google Analytics tracking
+│   │   └── spikelog.ts                 # Custom event logging
+│   ├── components/
+│   │   └── Footer.tsx                  # Footer component
 │   ├── globals.css                     # Global styles with Tailwind
 │   ├── layout.tsx                      # Root layout
-│   ├── page.tsx                        # Home page (redirects to /wizard)
+│   ├── page.tsx                        # Landing page
 │   ├── store.ts                        # Zustand store with localStorage
 │   └── types.ts                        # TypeScript interfaces
+├── tests/                              # Vitest test suite (200 tests)
+│   ├── unit/                           # Unit tests
+│   └── integration/                    # API integration tests
 ├── .env.local                          # Environment variables (gitignored)
 ├── .env.example                        # Example environment file
-├── AGENTS.md                           # Agent guidance (this file)
+├── AGENTS.md                           # Agent guidance
 ├── CLAUDE.md                           # Project instructions for Claude Code
 ├── README.md                           # Project documentation (this file)
 ├── next.config.js                      # Next.js configuration
@@ -226,7 +255,8 @@ Each step is configured with a `StepConfig` object:
   approveButtonText: string,       // Usually "Approve Draft & Save"
   documentInputs: string[],        // Previous step keys for context
   initialGreeting?: string,        // Optional first message from AI
-  generationPrompt?: string        // Optional custom generation instructions
+  generationPrompt?: string,       // Optional custom generation instructions
+  inputPlaceholder?: string        // Optional placeholder text for chat input
 }
 ```
 
@@ -277,13 +307,13 @@ generationPrompt: "Generate a markdown document with these sections: Overview, A
 
 ## Key Features Explained
 
-### Sample Document Loading
+### Sample Document Loading (Development Mode)
 
-The "Load Sample Docs" button (`app/wizard/utils/sampleDocs.ts`) provides instant test data:
-- Populates all 4 steps with a complete Parent Time Tracking app specification
+The "LOAD_SAMPLES" button (`app/wizard/utils/sampleDocs.ts`) provides instant test data:
+- Populates all 4 steps with a complete Photo Captioner app specification
 - Marks all steps as approved
 - Useful for testing, demonstrations, and understanding output format
-- Based on real documents from `/Users/coding/Documents/`
+- Only visible when `NODE_ENV=development`
 
 ### ZIP Download
 
@@ -303,9 +333,10 @@ All downloaded files use:
 ### Custom Streaming Implementation
 
 ChatInterface doesn't use `@ai-sdk/react`'s `useChat` hook:
-- Manual fetch to `/api/chat` endpoint
-- Reads streamed text chunks and appends them to the latest assistant message
-- Incremental message updates for responsive UX
+- Manual fetch to `/api/chat` endpoint for chat messages
+- Manual fetch to `/api/generate-doc` endpoint for document generation
+- Both endpoints stream text chunks for progressive display
+- Reads streamed text chunks and appends them incrementally
 - This approach was necessary due to SDK version compatibility
 
 ## Troubleshooting
@@ -433,8 +464,10 @@ a.download = `${stepName.toUpperCase().replace(/\s+/g, '_')}.md`;
 - **TypeScript Version**: 5
 - **Tailwind Version**: 3.4.1
 - **AI SDK Version**: Latest (`ai` package)
+- **Test Framework**: Vitest 4.0.10 with @testing-library/react (200 tests)
 - **Default OpenAI Model**: `gpt-4o` (configurable via `OPENAI_MODEL`)
 - **Runtime**: Edge Runtime for API routes
+- **State Management**: Zustand with localStorage persistence
 
 ## License
 

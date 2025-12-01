@@ -4,7 +4,7 @@ export const step1Config: StepConfig = {
   stepNumber: 1,
   stepName: "One Pager",
   userInstructions:
-    "The AI Assistant will ask you questions to refine your one-pager.",
+    "First, we'll define your product's problem, audience, and core user flow.",
   systemPrompt: `Ask the user one question at a time so that you can develop a one-pager for this idea. Each question should build on the previous ones, and the end goal is a one-pager description of the idea. We'll pass that on to the next stage of the workflow, the technical specification. We need to gather at least the following:
 * What problem does the app solve?
 * Who is the ideal user for this app?

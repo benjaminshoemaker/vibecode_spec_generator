@@ -8,7 +8,7 @@ Keep this file minimal, readable, and authoritative. If something here conflicts
 
 ## Project Overview
 
-**VibeCODE Spec Generator** is a Next.js 16.0.3 application that implements a multi-step wizard interface for generating technical specification documents using AI-powered chat conversations.
+**Vibe Scaffold** is a Next.js 15.1.0 application that implements a multi-step wizard interface for generating technical specification documents using AI-powered chat conversations. The AI assistant is called "Vibe Scaffold Assistant" in the chat interface.
 
 ### Core Concept
 Users progress through 4 sequential steps, each involving:
@@ -32,21 +32,28 @@ Users progress through 4 sequential steps, each involving:
 - `app/wizard/steps/step{1-4}-config.ts` — Step configurations (instructions, prompts, document inputs)
 
 ### Components
-- `app/wizard/page.tsx` — Main wizard orchestrator with navigation and state management
-- `app/wizard/components/WizardStep.tsx` — Per-step component handling chat/preview/generation
+- `app/wizard/page.tsx` — Main wizard orchestrator with navigation, state management, and sidebar
+- `app/wizard/components/WizardStep.tsx` — Per-step component handling chat/preview/generation with example modal
 - `app/wizard/components/ChatInterface.tsx` — Custom streaming chat implementation (not using @ai-sdk/react hooks)
 - `app/wizard/components/DocumentPreview.tsx` — Markdown renderer with raw/rendered toggle
+- `app/wizard/components/FinalInstructionsModal.tsx` — Completion modal with download, copy command, and email subscribe
 
 ### API Routes (Edge Runtime)
 - `app/api/chat/route.ts` — Streaming chat endpoint using Vercel AI SDK `streamText()`
-- `app/api/generate-doc/route.ts` — Non-streaming document generation using `generateText()`
+- `app/api/generate-doc/route.ts` — Streaming document generation endpoint
+- `app/api/subscribe/route.ts` — Email subscription endpoint
+- `app/api/spikelog/route.ts` — Analytics event logging endpoint
+- `app/api/log-metadata/route.ts` — Spec metadata logging endpoint
 
 ### Utilities
 - `app/wizard/utils/sampleDocs.ts` — Sample documents for quick testing/development
+- `app/wizard/utils/stepAccess.ts` — Step access validation (prevents skipping steps)
+- `app/utils/analytics.ts` — Google Analytics tracking utilities
+- `app/utils/spikelog.ts` — Custom analytics event logging
 
 ### Tests
-- `tests/` — Vitest test suite with 73 tests (see `tests/README.md`)
-- `tests/unit/` — Unit tests (store, utilities)
+- `tests/` — Vitest test suite with 200 tests (see `tests/README.md`)
+- `tests/unit/` — Unit tests (store, utilities, components)
 - `tests/integration/api/` — API integration tests
 
 ---
@@ -69,6 +76,12 @@ StepData {
 }
 ```
 
+**Wizard State** includes:
+- `currentStep: number` — Current step (1-4)
+- `isGenerating: boolean` — Whether document generation is in progress (transient, not persisted)
+- `resetCounter: number` — Incremented on reset to force component re-renders
+- `steps: { onePager, devSpec, checklist, agentsMd }` — Per-step data
+
 ### Chat Implementation
 Custom streaming implementation (not using `useChat` hook due to version compatibility):
 - Manual fetch from `/api/chat` and reads streamed text chunks
@@ -90,10 +103,11 @@ setMessages([...updatedMessages, assistantMessage]);
 **Note**: This assumes API returns plain text chunks; if streaming format changes, update this code.
 
 ### Document Generation
-- `/api/generate-doc` receives: `chatHistory`, `stepName`, `documentInputs` (previous docs for context)
+- `/api/generate-doc` receives: `chatHistory`, `stepName`, `documentInputs` (previous docs for context), `generationPrompt`
 - Step 2+ can reference earlier documents (e.g., Step 2 receives Step 1's one-pager)
-- Non-streaming generation for complete document creation
+- Streaming generation for progressive document display
 - Document context passed via step config's `documentInputs` array
+- AGENTS.md documents get attribution appended: `<!-- Generated with vibescaffold.dev -->`
 
 **Document Context Passing** (`app/wizard/components/WizardStep.tsx:28-35`):
 ```typescript
@@ -118,13 +132,25 @@ if (config.documentInputs.length > 0) {
 ### Component Hierarchy
 ```
 WizardPage (app/wizard/page.tsx)
-├── Progress indicator (shows 1-4 steps)
-├── WizardStep component (per-step orchestrator)
-│   ├── ChatInterface (before document generation)
-│   │   └── Custom streaming implementation
-│   └── DocumentPreview (after generation)
-│       └── ReactMarkdown renderer
-└── Navigation buttons (Previous/Next)
+├── Header (logo, reset button, dev tools)
+├── Main content area
+│   └── WizardStep component (per-step orchestrator)
+│       ├── Step header with example output link
+│       ├── ChatInterface (streaming chat)
+│       │   └── Custom streaming implementation
+│       ├── Loading indicator (during generation)
+│       ├── DocumentPreview (after generation)
+│       │   └── ReactMarkdown renderer
+│       └── Example output modal
+├── Sidebar
+│   ├── Example Output panel (sample doc preview)
+│   ├── Actions panel (Generate, Approve buttons)
+│   └── Sequence panel (step progress with download buttons)
+├── Footer
+└── FinalInstructionsModal (on wizard completion)
+    ├── Download instructions
+    ├── Agent command to copy
+    └── Email subscribe / Discord links
 ```
 
 ---
@@ -163,9 +189,9 @@ WizardPage (app/wizard/page.tsx)
 
 **Test Framework**: Vitest 4.0.10 with @testing-library/react
 
-### Current Test Coverage (73 tests)
-- ✅ Unit tests: Store (24 tests), Utilities (17 tests)
-- ✅ Integration tests: Chat API (13 tests), Generate Doc API (19 tests)
+### Current Test Coverage (200 tests across 17 test files)
+- ✅ Unit tests: Store, Utilities, Components (ChatInterface, WizardStep, WizardPage)
+- ✅ Integration tests: Chat API, Generate Doc API
 
 ### Testing Commands
 ```bash
@@ -186,7 +212,7 @@ npm run test:coverage # Generate coverage report
    ```bash
    npm test
    ```
-   All 73 tests must pass.
+   All 200 tests must pass.
 
 3. **Test Coverage Requirements**
    - New business logic must have unit tests
@@ -403,7 +429,7 @@ Ask the human if:
 - Changing file naming conventions (affects existing user workflows)
 - Modifying Edge Runtime routes in ways that might not be compatible
 - Unsure whether to add tests for a particular change
-- Test coverage drops below current level (73 tests)
+- Test coverage drops below current level (200 tests)
 
 ---
 
@@ -411,16 +437,21 @@ Ask the human if:
 
 | File | Purpose | Tests? |
 |------|---------|--------|
-| `app/wizard/page.tsx` | Main wizard, navigation, downloads, state orchestration | Not yet |
-| `app/wizard/components/WizardStep.tsx` | Per-step logic: chat ↔ preview ↔ generation | Not yet |
-| `app/wizard/components/ChatInterface.tsx` | Streaming chat UI and manual stream parsing | Not yet |
+| `app/wizard/page.tsx` | Main wizard, navigation, downloads, sidebar, completion modal | ✅ |
+| `app/wizard/components/WizardStep.tsx` | Per-step logic: chat ↔ preview ↔ generation | ✅ |
+| `app/wizard/components/ChatInterface.tsx` | Streaming chat UI and manual stream parsing | ✅ |
 | `app/wizard/components/DocumentPreview.tsx` | Markdown rendering with raw/rendered toggle | Not yet |
-| `app/api/chat/route.ts` | Streaming chat endpoint (Edge Runtime) | ✅ 13 tests |
-| `app/api/generate-doc/route.ts` | Document generation endpoint (Edge Runtime) | ✅ 19 tests |
-| `app/store.ts` | Zustand + localStorage state management | ✅ 24 tests |
+| `app/wizard/components/FinalInstructionsModal.tsx` | Completion modal with instructions | Not yet |
+| `app/api/chat/route.ts` | Streaming chat endpoint (Edge Runtime) | ✅ |
+| `app/api/generate-doc/route.ts` | Document generation endpoint (Edge Runtime) | ✅ |
+| `app/api/subscribe/route.ts` | Email subscription endpoint | Not yet |
+| `app/store.ts` | Zustand + localStorage state management | ✅ |
 | `app/types.ts` | TypeScript interfaces for entire app | — |
 | `app/wizard/steps/stepN-config.ts` | Step-specific configuration and prompts | Not yet |
-| `app/wizard/utils/sampleDocs.ts` | Sample documents for testing | ✅ 17 tests |
+| `app/wizard/utils/sampleDocs.ts` | Sample documents for testing | ✅ |
+| `app/wizard/utils/stepAccess.ts` | Step access validation logic | Not yet |
+| `app/utils/analytics.ts` | Google Analytics tracking | Not yet |
+| `app/utils/spikelog.ts` | Custom event logging | Not yet |
 
 ---
 
