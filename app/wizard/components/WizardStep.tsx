@@ -5,9 +5,10 @@ import { StepConfig, Message } from "@/app/types";
 import { useWizardStore } from "@/app/store";
 import ChatInterface from "./ChatInterface";
 import DocumentPreview from "./DocumentPreview";
-import { Terminal, Loader2 } from 'lucide-react';
+import { Terminal, Loader2, X } from 'lucide-react';
 import { analytics } from "@/app/utils/analytics";
 import { spikelog } from "@/app/utils/spikelog";
+import { sampleDocs } from "../utils/sampleDocs";
 
 interface WizardStepProps {
   config: StepConfig;
@@ -21,7 +22,15 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
   const stepData = steps[stepKey];
 
   const [error, setError] = useState<string | null>(null);
+  const [showExampleModal, setShowExampleModal] = useState(false);
   const hasGeneratedBefore = useRef(!!stepData.generatedDoc);
+
+  const sampleDocMap: Record<string, string> = {
+    onePager: sampleDocs.onePager,
+    devSpec: sampleDocs.devSpec,
+    checklist: sampleDocs.promptPlan,
+    agentsMd: sampleDocs.agentsMd,
+  };
 
   const handleMessagesChange = useCallback((messages: Message[]) => {
     updateStepChat(stepKey, messages);
@@ -137,7 +146,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
   return (
     <>
       {/* Chat Box */}
-      <div className="flex flex-col min-h-[400px] h-[50vh] max-h-[600px]">
+      <div className="flex flex-col flex-1 min-h-[400px]">
         <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-950">
           <div className="text-2xs font-mono text-accent uppercase tracking-widest mb-1">Current Module: Step 0{stepKey === 'onePager' ? '1' : stepKey === 'devSpec' ? '2' : stepKey === 'checklist' ? '3' : '4'}</div>
           <div className="text-lg font-bold text-white tracking-tight">
@@ -146,6 +155,12 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
           <div className="text-sm text-[#a1a1aa] mt-1">
             {config.userInstructions}
           </div>
+          <button
+            onClick={() => setShowExampleModal(true)}
+            className="text-xs text-accent hover:text-accent-light font-mono mt-2 inline-flex items-center gap-1"
+          >
+            See example output →
+          </button>
         </div>
 
         <div className="flex-1 overflow-hidden bg-zinc-950">
@@ -157,6 +172,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
             documentInputs={documentInputsForChat}
             initialGreeting={config.initialGreeting}
             stepName={config.stepName}
+            placeholder={config.inputPlaceholder}
           />
         </div>
       </div>
@@ -193,6 +209,35 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       {error && (
         <div className="bg-red-950/20 border border-red-900/50 p-4 m-6">
           <p className="text-red-400 font-mono text-xs">ERROR: {error}</p>
+        </div>
+      )}
+
+      {showExampleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-zinc-900 border border-zinc-800 max-w-3xl w-full max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+              <div>
+                <div className="text-2xs font-mono text-accent uppercase tracking-widest mb-1">Example Output</div>
+                <div className="text-lg font-bold text-white">{config.stepName}</div>
+              </div>
+              <button
+                onClick={() => setShowExampleModal(false)}
+                className="text-zinc-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-6">
+              <pre className="text-sm font-mono text-zinc-300 whitespace-pre-wrap leading-relaxed">
+                {sampleDocMap[stepKey]}
+              </pre>
+            </div>
+            <div className="px-6 py-4 border-t border-zinc-800 bg-zinc-950">
+              <p className="text-xs text-zinc-500">
+                This is sample output for a Photo Captioner app. Your output will be customized to your idea.
+              </p>
+            </div>
+          </div>
         </div>
       )}
     </>

@@ -39,4 +39,5 @@ export interface StepConfig {
   documentInputs: string[];
   initialGreeting?: string;
   generationPrompt?: string;
+  inputPlaceholder?: string;
 }

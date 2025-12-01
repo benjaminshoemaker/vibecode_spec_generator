@@ -4,6 +4,13 @@ import userEvent from "@testing-library/user-event";
 import ChatInterface from "@/app/wizard/components/ChatInterface";
 import { analytics } from "@/app/utils/analytics";
 
+let hydrationFlag = true;
+const useHasHydratedMock = vi.fn(() => hydrationFlag);
+
+vi.mock("@/app/store", () => ({
+  useHasHydrated: () => useHasHydratedMock(),
+}));
+
 // Mock the analytics module
 vi.mock("@/app/utils/analytics", () => ({
   analytics: {
@@ -19,6 +26,7 @@ describe("ChatInterface - Analytics Tracking", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    hydrationFlag = true;
 
     // Setup default fetch mock
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
@@ -254,6 +262,41 @@ describe("ChatInterface - Analytics Tracking", () => {
       await waitFor(() => {
         expect(analytics.trackChatMessage).toHaveBeenCalledTimes(1);
         expect(analytics.trackChatMessage).toHaveBeenCalledWith("ONE_PAGER");
+      });
+    });
+  });
+
+  describe("Hydration handling", () => {
+    it("should not overwrite persisted chat history before hydration finishes", async () => {
+      hydrationFlag = false;
+      const persistedMessages = [
+        { id: "1", role: "assistant" as const, content: "Earlier context" },
+        { id: "2", role: "user" as const, content: "Need a dev spec" },
+      ];
+
+      const { rerender } = render(
+        <ChatInterface
+          systemPrompt="Test prompt"
+          initialMessages={persistedMessages}
+          onMessagesChange={mockOnMessagesChange}
+          stepName="ONE_PAGER"
+        />
+      );
+
+      expect(mockOnMessagesChange).not.toHaveBeenCalled();
+
+      hydrationFlag = true;
+      rerender(
+        <ChatInterface
+          systemPrompt="Test prompt"
+          initialMessages={persistedMessages}
+          onMessagesChange={mockOnMessagesChange}
+          stepName="ONE_PAGER"
+        />
+      );
+
+      await waitFor(() => {
+        expect(mockOnMessagesChange).toHaveBeenCalledWith(persistedMessages);
       });
     });
   });
