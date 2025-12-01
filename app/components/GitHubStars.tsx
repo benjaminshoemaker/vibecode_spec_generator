@@ -28,10 +28,10 @@ export default function GitHubStars({ repo }: GitHubStarsProps) {
       href={`https://github.com/${repo}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-1.5 px-2.5 py-1.5 border border-zinc-700 hover:border-accent bg-zinc-900 text-[11px] font-mono text-[#a1a1aa] hover:text-accent transition-colors"
+      className="flex items-center gap-1.5 px-2.5 py-1.5 border border-zinc-700 hover:border-accent bg-zinc-900 text-2xs font-mono text-[#a1a1aa] hover:text-accent transition-colors"
     >
       <Star className="w-3 h-3" />
-      <span>{stars !== null ? stars.toLocaleString() : "—"}</span>
+      <span>{stars !== null ? stars.toLocaleString() : "-"}</span>
       <span>GitHub</span>
     </a>
   );

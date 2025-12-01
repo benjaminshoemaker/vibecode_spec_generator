@@ -122,4 +122,8 @@ export const analytics = {
   trackEmailSubscribe: (success: boolean) => {
     sendGtag("email_subscribe", { success });
   },
+  trackSampleDownload: () => {
+    sendGtag("sample_download");
+    trackToPostgres("sample_download", {});
+  },
 };

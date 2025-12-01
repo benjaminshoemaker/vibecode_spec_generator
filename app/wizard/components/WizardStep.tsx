@@ -137,13 +137,13 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
   return (
     <>
       {/* Chat Box */}
-      <div className="flex flex-col h-[500px] lg:h-[600px]">
+      <div className="flex flex-col min-h-[400px] h-[50vh] max-h-[600px]">
         <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-950">
-          <div className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Current Module: Step 0{stepKey === 'onePager' ? '1' : stepKey === 'devSpec' ? '2' : stepKey === 'checklist' ? '3' : '4'}</div>
+          <div className="text-2xs font-mono text-accent uppercase tracking-widest mb-1">Current Module: Step 0{stepKey === 'onePager' ? '1' : stepKey === 'devSpec' ? '2' : stepKey === 'checklist' ? '3' : '4'}</div>
           <div className="text-lg font-bold text-white tracking-tight">
             {config.stepName}
           </div>
-          <div className="text-[13px] text-[#a1a1aa] mt-1">
+          <div className="text-sm text-[#a1a1aa] mt-1">
             {config.userInstructions}
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
 
       {/* Preview Box */}
       {stepData.generatedDoc && (
-        <div id="preview-box" className="border-t border-zinc-800 h-[800px] flex flex-col">
+        <div id="preview-box" className="border-t border-zinc-800 min-h-[500px] h-[70vh] max-h-[800px] flex flex-col">
           <DocumentPreview
             content={stepData.generatedDoc}
             onRegenerate={handleGenerate}

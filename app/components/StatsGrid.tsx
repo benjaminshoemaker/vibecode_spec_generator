@@ -26,7 +26,7 @@ export default function StatsGrid() {
             <div className="text-4xl font-bold text-white mb-1 tracking-tight">
               {stat.value}
             </div>
-            <div className="text-[10px] font-mono text-[#a1a1aa] uppercase tracking-widest">
+            <div className="text-2xs font-mono text-[#a1a1aa] uppercase tracking-widest">
               {stat.label}
             </div>
           </div>
