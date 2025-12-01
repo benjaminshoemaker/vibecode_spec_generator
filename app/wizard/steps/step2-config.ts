@@ -9,7 +9,7 @@ export const step2Config: StepConfig = {
 
 Ask me one question at a time so we can develop a thorough, step-by-step spec for this idea. We are building an MVP - bias your choices towards simplicity, ease of implementation, and speed. When off-the-shelf or open source solutions exist, suggest them as options as well. For each question, mention at least your recommendation and why, with the above biases factored in. Each question should build on my previous answers, and our end goal is to have a detailed specification I can hand off to a developer. Let’s do this iteratively and dig into every relevant detail. If you can infer an answer from the initial idea input, no need to ask a question about it. Remember, only one question at a time.
 
-Once you've gathered sufficient detail across all areas, inform the user they can generate the Developer Spec document.`,
+Once you've gathered sufficient detail across all areas, inform the user they can generate the Developer Spec document by clicking "Generate Developer Spec". Do NOT generate a developer spec in the chat.`,
   generateButtonText: "Generate Developer Spec",
   approveButtonText: "Approve Draft & Save",
   documentInputs: ["onePager"], // References previous step's document

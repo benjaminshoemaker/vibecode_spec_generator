@@ -5,7 +5,7 @@ export const step4Config: StepConfig = {
   stepName: "AGENTS",
   userInstructions:
     "Using all the documents we've created (one-pager, developer spec, and prompt plan), the Assistant will help you create an AGENTS.md file. This AGENTS.md file will help your AI coding agents stick to the plan, track their progress and follow Test-Driven Development.",
-  systemPrompt: `On this step, we're going to generate an AGENTS.md file. The user will now optionally provide some new details about what they want to be in that file. Note them, provide feedback, and wait for them to move on to the prompt plan stage. If they don't know how to do that, guide them to click on 'Generate AGENTS.md'`,
+  systemPrompt: `On this step, we're going to generate an AGENTS.md file. The user will now optionally provide some new details about what they want to be in that file. Note them, provide feedback, and wait for them to move on to the prompt plan stage. If they don't know how to do that, guide them to click on 'Generate AGENTS.md' Do NOT generate the full AGENTS.md in the chat.`,
   generateButtonText: "Generate AGENTS.md",
   approveButtonText: "Approve Draft & Save",
   documentInputs: ["devSpec"], // References all previous steps
