@@ -11,7 +11,7 @@ import { sampleDocs } from "./utils/sampleDocs";
 import { canAccessStep } from "./utils/stepAccess";
 import JSZip from "jszip";
 import Footer from "../components/Footer";
-import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson } from 'lucide-react';
+import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson, X } from 'lucide-react';
 import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { parseSpecMetadata } from "@/app/utils/parseSpecMetadata";
 import { useEffect, useState } from "react";
@@ -32,6 +32,7 @@ export default function WizardPage() {
   const { currentStep, setCurrentStep, steps, isGenerating, resetWizard, updateStepDoc, approveStep } = useWizardStore();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [isDemoGenerating, setIsDemoGenerating] = useState(false);
+  const [showExampleModal, setShowExampleModal] = useState(false);
 
   const currentConfig = stepConfigs[currentStep - 1];
   const currentStepKey = stepKeyMap[currentStep - 1];
@@ -250,6 +251,18 @@ export default function WizardPage() {
               COPY_CLIENT_ID
             </button>
           )}
+          {isDevelopment && (
+            <button
+              onClick={() => handleLoadDemoStep(currentStepKey, currentStep - 1)}
+              disabled={isDemoGenerating}
+              className="hidden md:flex items-center gap-2 px-3 py-1 text-xs font-mono text-amber-500 border border-amber-900/50 bg-amber-950/20 hover:bg-amber-950/40 transition-colors disabled:opacity-50"
+            >
+              {isDemoGenerating && (
+                <div className="w-3 h-3 border-2 border-amber-400 border-t-amber-950 rounded-full animate-spin"></div>
+              )}
+              {isDemoGenerating ? "DEMO..." : `${currentConfig.generateButtonText.toUpperCase()} (DEMO)`}
+            </button>
+          )}
           <button
             onClick={handleReset}
             className="flex items-center gap-2 px-3 py-1 text-xs font-mono text-[#a1a1aa] hover:text-white transition-colors"
@@ -264,7 +277,7 @@ export default function WizardPage() {
       <div className="flex-1 max-w-[1800px] mx-auto w-full p-6 grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
         
         {/* Left Column: Interactive Wizard Area */}
-        <div className="flex flex-col min-h-[calc(100vh-200px)]">
+        <div className="flex flex-col h-[calc(100vh-104px)]">
           <div className="flex-1 bg-zinc-900 border border-zinc-800 overflow-hidden flex flex-col shadow-xl">
              <WizardStep
                 config={currentConfig}
@@ -277,22 +290,32 @@ export default function WizardPage() {
         {/* Right Column: Sidebar */}
         <aside className="space-y-6 flex flex-col">
 
+          {/* Example Output Panel */}
+          <div className="bg-zinc-900 border border-zinc-800 p-6 order-3 lg:order-1">
+            <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">EXAMPLE OUTPUT</h3>
+
+            <div className="relative max-h-[200px] overflow-hidden">
+              <pre className="font-mono text-xs text-zinc-400 whitespace-pre-wrap leading-relaxed">
+                {(currentStepKey === 'onePager' ? sampleDocs.onePager :
+                  currentStepKey === 'devSpec' ? sampleDocs.devSpec :
+                  currentStepKey === 'checklist' ? sampleDocs.promptPlan :
+                  sampleDocs.agentsMd).split('\n').slice(0, 15).join('\n')}
+              </pre>
+              {/* Fade gradient */}
+              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-zinc-900 to-transparent pointer-events-none"></div>
+            </div>
+
+            <button
+              onClick={() => setShowExampleModal(true)}
+              className="text-xs text-accent hover:text-accent-light font-mono mt-3 inline-flex items-center gap-1"
+            >
+              See full example →
+            </button>
+          </div>
+
           {/* Action Card - Order 1 on mobile, Order 2 on desktop */}
           <div className="bg-zinc-900 border border-zinc-800 p-6 lg:sticky lg:top-20 order-1 lg:order-2">
             <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">ACTIONS</h3>
-
-            {isDevelopment && (
-              <button
-                onClick={() => handleLoadDemoStep(currentStepKey, currentStep - 1)}
-                disabled={isDemoGenerating}
-                className="w-full mb-3 py-2.5 px-4 bg-amber-600 hover:bg-amber-500 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isDemoGenerating && (
-                  <div className="w-3 h-3 border-2 border-amber-400 border-t-zinc-900 rounded-full animate-spin"></div>
-                )}
-                {isDemoGenerating ? "PROCESSING..." : `${currentConfig.generateButtonText.toUpperCase()} (DEMO)`}
-              </button>
-            )}
 
             <button
               onClick={() => {
@@ -313,25 +336,14 @@ export default function WizardPage() {
             <button
               onClick={handleApproveAndNext}
               disabled={!steps[currentStepKey].generatedDoc}
-              className="w-full mb-3 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 hover:border-accent hover:text-accent text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 hover:border-accent hover:text-accent text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {currentStep === 4 ? "FINALIZE" : "APPROVE & NEXT"}
             </button>
-
-            <div className="h-px bg-zinc-800 my-6"></div>
-
-            <button
-              onClick={handleDownloadAll}
-              disabled={!Object.values(steps).some(step => step.generatedDoc !== null)}
-              className="w-full py-2.5 px-4 text-[#a1a1aa] hover:text-accent text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Download className="w-3 h-3" />
-              DOWNLOAD_ALL.ZIP
-            </button>
           </div>
 
-          {/* Progress Card - Order 2 on mobile, Order 1 on desktop */}
-          <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-1">
+          {/* Progress Card - Order 2 on mobile, Order 3 on desktop */}
+          <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-3">
             <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">SEQUENCE</h3>
 
             <div className="space-y-px bg-zinc-800 border border-zinc-800">
@@ -389,6 +401,15 @@ export default function WizardPage() {
                 );
               })}
             </div>
+
+            <button
+              onClick={handleDownloadAll}
+              disabled={!Object.values(steps).some(step => step.generatedDoc !== null)}
+              className="w-full mt-4 py-2.5 px-4 text-[#a1a1aa] hover:text-accent text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="w-3 h-3" />
+              DOWNLOAD_ALL.ZIP
+            </button>
           </div>
 
         </aside>
@@ -403,6 +424,39 @@ export default function WizardPage() {
         agentCommand={agentCommand}
         onCopyCommand={handleCommandCopy}
       />
+
+      {/* Example Output Modal */}
+      {showExampleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-zinc-900 border border-zinc-800 max-w-3xl w-full max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+              <div>
+                <div className="text-2xs font-mono text-accent uppercase tracking-widest mb-1">Example Output</div>
+                <div className="text-lg font-bold text-white">{currentConfig.stepName}</div>
+              </div>
+              <button
+                onClick={() => setShowExampleModal(false)}
+                className="text-zinc-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-6">
+              <pre className="text-sm font-mono text-zinc-300 whitespace-pre-wrap leading-relaxed">
+                {currentStepKey === 'onePager' ? sampleDocs.onePager :
+                  currentStepKey === 'devSpec' ? sampleDocs.devSpec :
+                  currentStepKey === 'checklist' ? sampleDocs.promptPlan :
+                  sampleDocs.agentsMd}
+              </pre>
+            </div>
+            <div className="px-6 py-4 border-t border-zinc-800 bg-zinc-950">
+              <p className="text-xs text-zinc-500">
+                This is sample output for a Photo Captioner app. Your output will be customized to your idea.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
