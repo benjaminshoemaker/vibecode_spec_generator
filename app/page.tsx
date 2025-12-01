@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, X, AlertTriangle, Check, Download } from 'lucide-react';
+import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, X, AlertTriangle, Download } from 'lucide-react';
 import Link from 'next/link';
 import Footer from "./components/Footer";
 import StatsGrid from "./components/StatsGrid";
@@ -147,7 +147,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-[#e4e4e7] font-sans selection:bg-accent selection:text-black flex flex-col">
+    <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans selection:bg-accent selection:text-black flex flex-col">
       {/* Blueprint Grid Background */}
       <div className="blueprint-grid"></div>
 
@@ -169,7 +169,7 @@ export default function LandingPage() {
             <Link
               href="/wizard"
               onClick={() => handleWizardStart("nav_login")}
-              className="text-xs font-mono text-[#a1a1aa] hover:text-accent transition-colors"
+              className="text-xs font-mono text-zinc-400 hover:text-accent transition-colors"
             >
               Log In
             </Link>
@@ -187,11 +187,11 @@ export default function LandingPage() {
       <main className="pt-32 pb-24 flex-grow">
         
         {/* Hero Section */}
-        <div className="max-w-7xl mx-auto px-6 mb-32">
+        <div className="max-w-7xl mx-auto px-6 pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Hero Text */}
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-zinc-800 bg-zinc-900 text-2xs font-mono text-[#a1a1aa] mb-8 uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-zinc-800 bg-zinc-900 text-2xs font-mono text-zinc-400 mb-8 uppercase tracking-widest">
                 <span className="w-1.5 h-1.5 bg-accent animate-pulse"></span>
                 For anyone using AI coding tools
               </div>
@@ -204,15 +204,15 @@ export default function LandingPage() {
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
                   <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-lg text-[#a1a1aa] leading-relaxed">You described your app, AI built something... but not quite right</p>
+                  <p className="text-lg text-zinc-400 leading-relaxed">You described your app, AI built something... but not quite right</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-lg text-[#a1a1aa] leading-relaxed">You&apos;re 47 prompts deep and it keeps breaking things it already fixed</p>
+                  <p className="text-lg text-zinc-400 leading-relaxed">You&apos;re 47 prompts deep and it keeps breaking things it already fixed</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-lg text-[#a1a1aa] leading-relaxed">You don&apos;t know if you&apos;re 80% done or 98% done</p>
+                  <p className="text-lg text-zinc-400 leading-relaxed">You don&apos;t know if you&apos;re 80% done or 98% done</p>
                 </div>
               </div>
 
@@ -220,7 +220,7 @@ export default function LandingPage() {
                 <p className="text-xl text-white font-semibold">The problem isn&apos;t the AI. It&apos;s the spec.</p>
               </div>
 
-              <p className="text-lg text-[#a1a1aa] max-w-xl leading-relaxed mb-10">
+              <p className="text-lg text-zinc-400 max-w-xl leading-relaxed mb-10">
                 VibeScaffold generates the structure your AI coding tools need to finish what they start - clear specs, persistent context, and defined acceptance criteria.
               </p>
 
@@ -282,22 +282,14 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Social Proof: Live Activity + Stats */}
-        <div className="max-w-7xl mx-auto px-6 mb-16">
-          <StatsGrid />
-        </div>
-
         {/* Divider */}
         <div className="w-full border-t border-zinc-800"></div>
 
-        {/* The 80% Problem Section */}
+        {/* The 80% Problem Section - Combined with Solutions */}
         <div id="the-80-problem" className="max-w-7xl mx-auto px-6 py-24">
           <div className="mb-16">
-            <h2 className="text-2xs font-mono text-[#a1a1aa] mb-2 uppercase tracking-widest">The Problem</h2>
-            <h3 className="text-3xl font-bold text-white tracking-tight mb-4">AI gets you 80% there. Then you hit the wall.</h3>
-            <p className="text-lg text-[#a1a1aa] max-w-2xl leading-relaxed">
-              AI coding tools are incredible at the first 80%. Describe your app, get a working prototype in minutes. But then...
-            </p>
+            <h2 className="text-2xs font-mono text-zinc-400 mb-2 uppercase tracking-widest">The 80% Problem</h2>
+            <h3 className="text-3xl font-bold text-white tracking-tight">AI gets you 80% there. Then you hit the wall.</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -307,11 +299,14 @@ export default function LandingPage() {
                 <AlertTriangle className="w-5 h-5 text-red-500" />
               </div>
               <h4 className="text-base font-bold text-white mb-3">No Clear Spec</h4>
-              <ul className="space-y-2 text-sm text-[#a1a1aa] leading-relaxed">
+              <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed mb-5">
                 <li>• Vague user stories, missing edge cases</li>
-                <li>• No decisions about auth, roles, data retention</li>
                 <li>• AI fills gaps with hallucinated defaults</li>
               </ul>
+              <div className="border-t border-zinc-700 pt-5">
+                <h5 className="text-sm font-bold text-emerald-400 font-mono mb-2">ONE_PAGER.md + DEV_SPEC.md</h5>
+                <p className="text-xs text-zinc-400">Forces decisions about audience, MVP scope, auth, data model upfront</p>
+              </div>
             </div>
 
             {/* Card 2 - Fragmented Context */}
@@ -320,11 +315,14 @@ export default function LandingPage() {
                 <AlertTriangle className="w-5 h-5 text-orange-500" />
               </div>
               <h4 className="text-base font-bold text-white mb-3">Fragmented Context</h4>
-              <ul className="space-y-2 text-sm text-[#a1a1aa] leading-relaxed">
-                <li>• Code in one place, prompts in another</li>
+              <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed mb-5">
                 <li>• Ideas scattered across chat history</li>
                 <li>• Agent can&apos;t hold the project in memory</li>
               </ul>
+              <div className="border-t border-zinc-700 pt-5">
+                <h5 className="text-sm font-bold text-emerald-400 font-mono mb-2">All 4 docs feed into each other</h5>
+                <p className="text-xs text-zinc-400">Single source of truth AI agents can reference every session</p>
+              </div>
             </div>
 
             {/* Card 3 - 'Done' is Undefined */}
@@ -333,89 +331,13 @@ export default function LandingPage() {
                 <AlertTriangle className="w-5 h-5 text-yellow-500" />
               </div>
               <h4 className="text-base font-bold text-white mb-3">&apos;Done&apos; is Undefined</h4>
-              <ul className="space-y-2 text-sm text-[#a1a1aa] leading-relaxed">
+              <ul className="space-y-1.5 text-sm text-zinc-400 leading-relaxed mb-5">
                 <li>• No test cases, no acceptance criteria</li>
-                <li>• You don&apos;t know if you&apos;re 80% or 98% done</li>
                 <li>• Every fix breaks something else</li>
               </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="w-full border-t border-zinc-800"></div>
-
-        {/* The Solution Section */}
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <div className="mb-16">
-            <h2 className="text-2xs font-mono text-[#a1a1aa] mb-2 uppercase tracking-widest">The Solution</h2>
-            <h3 className="text-3xl font-bold text-white tracking-tight">VibeScaffold fixes all three - before you write code</h3>
-          </div>
-
-          <div className="space-y-6">
-            {/* Row 1 - No Clear Spec */}
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 md:gap-6 items-center">
-              <div className="bg-zinc-900 border border-zinc-800 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <X className="w-4 h-4 text-red-500" />
-                  <span className="text-2xs font-mono text-red-500 uppercase tracking-widest">Problem</span>
-                </div>
-                <h4 className="text-base font-bold text-white">No clear spec</h4>
-              </div>
-              <div className="hidden md:flex items-center justify-center">
-                <ArrowRight className="w-6 h-6 text-zinc-600" />
-              </div>
-              <div className="bg-emerald-950 border border-emerald-500/20 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span className="text-2xs font-mono text-emerald-500 uppercase tracking-widest">Solution</span>
-                </div>
-                <h4 className="text-base font-bold text-white font-mono mb-3">ONE_PAGER.md + DEV_SPEC.md</h4>
-                <p className="text-sm text-[#a1a1aa] leading-relaxed">Forces decisions about audience, MVP scope, auth, data model upfront</p>
-              </div>
-            </div>
-
-            {/* Row 2 - Fragmented Context */}
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 md:gap-6 items-center">
-              <div className="bg-zinc-900 border border-zinc-800 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <X className="w-4 h-4 text-orange-500" />
-                  <span className="text-2xs font-mono text-orange-500 uppercase tracking-widest">Problem</span>
-                </div>
-                <h4 className="text-base font-bold text-white">Fragmented context</h4>
-              </div>
-              <div className="hidden md:flex items-center justify-center">
-                <ArrowRight className="w-6 h-6 text-zinc-600" />
-              </div>
-              <div className="bg-emerald-950 border border-emerald-500/20 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span className="text-2xs font-mono text-emerald-500 uppercase tracking-widest">Solution</span>
-                </div>
-                <h4 className="text-base font-bold text-white font-mono mb-3">All 4 docs feed into each other</h4>
-                <p className="text-sm text-[#a1a1aa] leading-relaxed">Single source of truth that AI agents can reference every session</p>
-              </div>
-            </div>
-
-            {/* Row 3 - 'Done' is Undefined */}
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 md:gap-6 items-center">
-              <div className="bg-zinc-900 border border-zinc-800 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <X className="w-4 h-4 text-yellow-500" />
-                  <span className="text-2xs font-mono text-yellow-500 uppercase tracking-widest">Problem</span>
-                </div>
-                <h4 className="text-base font-bold text-white">&apos;Done&apos; is undefined</h4>
-              </div>
-              <div className="hidden md:flex items-center justify-center">
-                <ArrowRight className="w-6 h-6 text-zinc-600" />
-              </div>
-              <div className="bg-emerald-950 border border-emerald-500/20 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span className="text-2xs font-mono text-emerald-500 uppercase tracking-widest">Solution</span>
-                </div>
-                <h4 className="text-base font-bold text-white font-mono mb-3">PROMPT_PLAN.md + AGENTS.md</h4>
-                <p className="text-sm text-[#a1a1aa] leading-relaxed">Step-by-step prompts with TDD checkboxes and acceptance criteria</p>
+              <div className="border-t border-zinc-700 pt-5">
+                <h5 className="text-sm font-bold text-emerald-400 font-mono mb-2">PROMPT_PLAN.md + AGENTS.md</h5>
+                <p className="text-xs text-zinc-400">Step-by-step prompts with TDD checkboxes and acceptance criteria</p>
               </div>
             </div>
           </div>
@@ -427,9 +349,9 @@ export default function LandingPage() {
         {/* Output Preview Section */}
         <div id="what-you-get" className="max-w-7xl mx-auto px-6 py-24">
           <div className="text-center mb-12">
-            <h2 className="text-2xs font-mono text-[#a1a1aa] mb-2 uppercase tracking-widest">What You Get</h2>
+            <h2 className="text-2xs font-mono text-zinc-400 mb-2 uppercase tracking-widest">What You Get</h2>
             <h3 className="text-3xl font-bold text-white tracking-tight mb-4">Four documents. See exactly what&apos;s inside.</h3>
-            <p className="text-lg text-[#a1a1aa] max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
               Real output from VibeScaffold for a Photo Captioner app
             </p>
           </div>
@@ -447,7 +369,7 @@ export default function LandingPage() {
                 }`}
               >
                 <div className="font-mono text-sm whitespace-nowrap">{tab.label}</div>
-                <div className={`text-xs mt-1 ${activeTab === tab.id ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                <div className={`text-xs mt-1 ${activeTab === tab.id ? 'text-zinc-400' : 'text-zinc-500'}`}>
                   {tab.description}
                 </div>
               </button>
@@ -489,7 +411,7 @@ export default function LandingPage() {
             <a
               href="/samples/PHOTO_CAPTIONER_SAMPLES.zip"
               onClick={() => analytics.trackSampleDownload()}
-              className="inline-flex items-center gap-2 px-6 py-3 border border-zinc-700 text-white font-medium hover:border-accent hover:text-accent transition-all text-sm"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-zinc-700 text-white font-semibold uppercase tracking-wide hover:border-accent hover:text-accent transition-all text-sm"
             >
               <Download className="w-4 h-4" />
               Download Sample Pack (ZIP)
@@ -500,6 +422,17 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Divider */}
+        <div className="w-full border-t border-zinc-800"></div>
+
+        {/* Social Proof Stats */}
+        <div className="max-w-7xl mx-auto px-6 py-24">
+          <StatsGrid />
+        </div>
+
+        {/* Divider */}
+        <div className="w-full border-t border-zinc-800"></div>
+
         {/* Demo Video Section */}
         <div className="max-w-4xl mx-auto px-6 py-24">
           <div className="relative bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden">
@@ -509,7 +442,7 @@ export default function LandingPage() {
                 <div className="w-2 h-2 bg-zinc-700"></div>
                 <div className="w-2 h-2 bg-zinc-700"></div>
               </div>
-              <div className="text-2xs font-mono text-[#a1a1aa] uppercase tracking-widest">demo.mov</div>
+              <div className="text-2xs font-mono text-zinc-400 uppercase tracking-widest">demo.mov</div>
             </div>
             <div className="relative w-full" style={{ paddingBottom: '49.64%' }}>
               <iframe
@@ -528,7 +461,7 @@ export default function LandingPage() {
              <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">
                Stop debugging AI-generated spaghetti.
              </h2>
-             <p className="text-zinc-400 mb-8">
+             <p className="text-lg text-zinc-400 mb-8">
                Generate the spec first. Ship the whole thing.
              </p>
              <Link
