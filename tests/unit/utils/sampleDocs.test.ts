@@ -27,10 +27,10 @@ describe("Sample Docs Utility", () => {
     });
 
     it("should contain key one-pager sections", () => {
-      expect(sampleDocs.onePager).toContain("Executive Summary");
-      expect(sampleDocs.onePager).toContain("Problem Statement");
-      expect(sampleDocs.onePager).toContain("Target Audience");
-      expect(sampleDocs.onePager).toContain("Value Proposition");
+      expect(sampleDocs.onePager).toContain("## Executive Summary");
+      expect(sampleDocs.onePager).toContain("## Problem Statement");
+      expect(sampleDocs.onePager).toContain("## Target Audience");
+      expect(sampleDocs.onePager).toContain("## Value Proposition");
     });
   });
 

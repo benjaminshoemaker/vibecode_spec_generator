@@ -1,40 +1,33 @@
 // Sample documents for quick testing and development
 export const sampleDocs = {
-  onePager: `# Photo Captioner — One‑Pager
+  onePager: `# One-Pager — Photo Captioner App
 
-Purpose
--------
+## Executive Summary
 A lightweight mobile app that generates engaging captions for photos to help casual social sharers craft on‑point, shareable text quickly. The MVP focuses on speed, simplicity, and high‑quality caption suggestions that users can copy and paste into their preferred social apps.
 
-Problem
--------
+## Problem Statement
 Social media users often struggle to find short, engaging captions for photos. They want quick, creative text without spending time thinking of the right tone or wording. This leads to friction and lost opportunities to post consistently.
 
-Target audience
----------------
+## Target Audience
 - Primary: Casual social sharers — everyday users who post photos on social platforms (friends, family, lifestyle posts).
 - Goals: Post frequently with minimal friction, make photos more engaging, sound natural/fun without effort.
 - Skill level: Non‑technical, expects simple, fast mobile experiences.
 - Platforms they post to: Instagram, Facebook, TikTok, Snapchat, Twitter/X — but the app itself is a mobile companion (iOS/Android) used to generate copy that users paste into these apps.
 
-Ideal customer profile
-----------------------
+## Ideal Customer Profile
 - Age 16–45, frequent smartphone photo takers
 - Posts several times a week, seeks quick social polish
 - Values speed and simplicity over advanced customization
 - Willing to use a small companion app to improve captions
 
-Value proposition
------------------
+## Value Proposition
 Deliver three high‑quality, tone‑matched caption suggestions for any photo in seconds so casual users can compose and post with less friction and more confidence.
 
-Platform
---------
+## Platform & Tech Recommendations
 - Native mobile app: iOS and Android (single codebase options like React Native or Flutter are acceptable for faster delivery; native Swift/Kotlin for best performance).
 - Backend service for caption generation (model inference + moderation), with optional on‑device capabilities for privacy/offline later.
 
-Core user flow (MVP)
---------------------
+## Core User Flow (MVP)
 1. Open app (no account required for MVP; optional opt‑in).
 2. Upload photo / take new photo (camera + photo library).
 3. Select tone from presets: Funny, Heartfelt, Witty.
@@ -43,16 +36,14 @@ Core user flow (MVP)
 6. User taps "Copy" on chosen caption (clipboard + toast confirmation).
 7. Optionally: quick "Share" icon to open the chosen social app (deep linking) — considered for Phase 2.
 
-Screens & micro‑interactions
-----------------------------
+## Screens & Micro-interactions
 - Launch / Home: camera and upload buttons, tone selector.
 - Generator / Result: thumbnail of the photo, list of 3 caption cards (text, copy button, small “like”/save icon for future phases).
 - Loading state: progress indicator, friendly message.
 - Error state: helpful retry message (e.g., "We couldn't generate captions for this image. Try another photo.")
 - Permissions: camera & photos permissions prompts with clear rationale.
 
-MVP feature list (required)
----------------------------
+## MVP Feature List (Required)
 - Photo upload (camera + gallery).
 - Caption generation: produce 3 suggestions per photo.
 - Tone presets: funny, heartfelt, witty.
@@ -60,38 +51,33 @@ MVP feature list (required)
 - Lightweight UX: fast feedback and minimal friction.
 - Basic safety filtering (block explicit / illegal content).
 
-Out of scope for MVP (but recommended for roadmap)
---------------------------------------------------
+## Out of Scope for MVP (But Recommended for Roadmap)
 - Account/sign‑in (optional history, favorites).
 - Hashtag and emoji suggestions.
 - Platform specific length presets.
 - Advanced editing UI or multi‑caption templates.
 - On‑device full model inference (future privacy option).
 
-Outputs & constraints
----------------------
+## Outputs & Constraints
 - Exactly 3 caption suggestions per photo.
 - Each caption labeled implicitly by tone or labeled generically (tone selector affects all suggestions).
 - Aim for generation latency < 3–5 seconds (server inference target).
 
-Data & privacy
---------------
+## Data & Privacy
 - Default: do not store images or captions longer than required for inference.
 - Transient image upload with short TTL; delete within X hours (configurable).
 - Explicit opt‑in for history/favorites if accounts are introduced.
 - Provide clear privacy copy during onboarding (what's uploaded, how it's used).
 - Comply with GDPR/CCPA requirements for user data deletion and export.
 
-Safety & moderation
--------------------
+## Safety & Moderation
 - Content moderation pipeline to block/flag:
   - Hate speech, explicit sexual content, violence, illegal activity.
   - Sensitive persons/face recognition concerns.
 - Image safety model to detect restricted content before captioning.
 - Rate limits and filters to reduce abuse.
 
-Technical architecture (high level)
------------------------------------
+## Technical Architecture (High Level)
 - Mobile clients (iOS/Android)
   - Simple UI, photo picker/camera, tone selector, network calls, clipboard support.
 - Backend API service
@@ -109,21 +95,18 @@ Technical architecture (high level)
   - CDN for static assets, object storage for transient images.
   - Monitoring, logging, and metrics pipeline.
 
-Integration & APIs
-------------------
+## Integration & APIs
 - Clipboard API on mobile for copy action.
 - Optional deep links / share sheet integration to open social apps.
 - Backend: REST/JSON endpoints for generate/moderate.
 - Analytics: event tracking for generate, copy, retry, errors.
 
-Performance & reliability targets
----------------------------------
+## Performance & Reliability Targets
 - Typical end‑to‑end latency: < 3–5s on 4G/Wi‑Fi.
 - 99% availability during core hours; graceful degradation (client‑side cached messages) if backend is unavailable.
 - Reasonable cost per inference (optimize batching, model size).
 
-Metrics & success criteria
---------------------------
+## Metrics & Success Criteria
 Initial KPIs (first 90 days after launch)
 - Conversion: % of users who generate at least one caption per session.
 - Engagement: average captions generated per user / week.
@@ -132,15 +115,13 @@ Initial KPIs (first 90 days after launch)
 - Latency + error rates: average generation time, % failed generations.
 - Qualitative: user feedback rating on caption helpfulness (in‑app NPS/quick thumbs up/down).
 
-Risks & mitigations
--------------------
+## Risks & Mitigations
 - Low relevance/quality of captions → iterate on prompts/models, collect anonymous feedback, A/B test tones and model variants.
 - Privacy concerns about image uploads → minimize storage, clear messaging, offline mode later.
 - Safety exposure (biased/inappropriate captions) → strong moderation, human review of flagged cases, model filters.
 - Cost of inference at scale → use model distillation, caching, and batching; tune quality/latency tradeoffs.
 
-Roadmap (high level)
---------------------
+## Roadmap (High Level)
 Phase 1 — MVP (8–12 weeks)
 - Core mobile UI, photo upload, tone selector, backend endpoints.
 - Server-side caption generation pipeline returning 3 suggestions.
@@ -156,8 +137,7 @@ Phase 3 — Privacy & Scale (ongoing)
 - Advanced personalization and hashtag/emoji suggestions.
 - Monetization experiments (premium features, coins, or subscriptions).
 
-Team & dependencies
--------------------
+## Team & Dependencies
 - Product manager / designer for UX flows and copy.
 - Mobile engineers (iOS + Android or cross‑platform).
 - ML engineer(s) for model selection, prompts, and inference pipeline.
@@ -165,15 +145,13 @@ Team & dependencies
 - QA & moderation resources.
 - Legal / privacy advisor for compliance.
 
-Next steps (immediate)
-----------------------
+## Next Steps (Immediate)
 1. Validate assumptions with a 1‑week research spike: prototype prompt pipeline using sample images and candidate captioning models; measure quality and latency.
 2. Design mockups for core screens (upload → tone → results → copy).
 3. Build a technical proof of concept (one backend inference endpoint + simple Android/iOS client).
 4. Run small closed beta with internal users to gather quality and UX feedback.
 
-Appendix: Minimal API contract (example)
----------------------------------------
+## Appendix: Minimal API Contract (Example)
 - POST /generate
   - Body: { image: base64 | presignedUrl, tone: "funny"|"heartfelt"|"witty", options: {num_suggestions:3} }
   - Response: { suggestions: [{ id, text, safety_flags }], processing_time_ms }
@@ -181,14 +159,12 @@ Appendix: Minimal API contract (example)
   - Body: { image, text }
   - Response: { safe: boolean, issues: [] }
 
-Assumptions
------------
+## Assumptions
 - Users prefer copying to clipboard over deep sharing for MVP.
 - Three suggestions per photo is a sweet spot for choice without overwhelm.
 - Casual users will prioritize speed and simplicity over deep customization.
 
-Contact / Ownership
--------------------
+## Contact / Ownership
 Product owner: [TBD]  
 Lead engineering: [TBD]  
 ML lead: [TBD]
@@ -848,15 +824,12 @@ F) Acceptance test cases (examples)
 - Rapidly submit >5 generates in 60s — ensure 429 after the 5th.
 - Call /generate without token — 401 returned.`,
 
-  promptPlan: `Prompt Plan — Photo Captioner (MVP)
-==================================
+  promptPlan: `# Prompt Plan — Photo Captioner (MVP)
 
-Purpose
--------
+## Purpose
 This Prompt Plan is a step-by-step, test-driven plan to implement the Photo Captioner MVP described in the provided devSpec. The plan breaks the work into incremental stages and small, verifiable steps. Each step includes a code-generation LLM prompt (text block) that instructs an LLM agent to implement that exact piece of functionality with tests. After each prompt, a todo checklist captures the deliverables and changes the prompt should produce.
 
-Guiding principles
-------------------
+## Guiding Principles
 - TDD-first: every implemented piece must come with unit tests (Jest) and appropriate mocks.
 - Small increments: implement one service/route/component at a time so manual verification is easy.
 - Integration points mocked in unit tests; integration tests use lightweight local or test doubles.
@@ -864,15 +837,13 @@ Guiding principles
 - Keep to devSpec requirements: Node 18+, TypeScript, Fastify, Sharp, Firebase Auth verification, GCS presigned uploads, Google Vision SafeSearch, OpenAI gpt-5-nano, Redis rate limiting, Cloud Run/Docker, Expo React Native client.
 - Provide manual setup steps where infrastructure is required (GCP, Firebase, Redis, Secret Manager).
 
-How to use this plan
---------------------
+## How to Use This Plan
 - Work prompts in order. Each prompt is executable by a code-generation LLM that writes code and tests.
 - Run tests locally after each step. Tests are designed to be fast using mocks.
 - For steps that require cloud resources, perform the listed manual setup tasks before running integration tests; unit tests should still run without cloud access using mocks.
 - Mark the todo checkboxes after verifying the outputs.
 
-Overall stage breakdown
------------------------
+## Overall Stage Breakdown
 Stage A — Project and infra scaffolding (repo, packages, infra manual steps)  
 Stage B — Core backend primitives & auth (Firebase verification, storage presign)  
 Stage C — Media processing & safety (image processing, Vision SafeSearch)  
@@ -881,12 +852,10 @@ Stage E — Orchestration endpoint (/generate) with rate limiting and logging
 Stage F — Admin flows & Firestore flagged-events  
 Stage G — Client (Expo) + integration testing + CI/CD + deployment
 
-Prompt list
------------
+## Prompt List
 Each numbered prompt below is a separate code-tagged prompt for a code-generation LLM. After each code block is a todo checklist.
 
-Prompt 0 — Repo scaffolding and toolchain (backend)
----------------------------------------------------
+### Prompt 0 — Repo Scaffolding and Toolchain (Backend)
 Goal: Create the backend repository skeleton, package.json, TypeScript configs, lint, jest config, basic Fastify server, and an initial test to verify test harness. Provide Dockerfile skeleton and workspace structure consistent with devSpec.
 
 Code-generation prompt:
@@ -942,8 +911,7 @@ Todo checklist:
 - [ ] Add test/health.test.ts and ensure npm test passes locally
 - [ ] Add Dockerfile skeleton and README.md next steps
 
-Prompt 1 — Manual infrastructure & credentials checklist (manual)
----------------------------------------------------------------
+### Prompt 1 — Manual Infrastructure & Credentials Checklist (Manual)
 Goal: Provide explicit manual steps to create required cloud resources and secrets so later prompts can assume those exist (or provide mocks). This is a manual setup step; not code-generated.
 
 Manual-setup instructions (to be performed by developer before cloud integration tests):
@@ -1010,8 +978,7 @@ Todo checklist (manual):
 - [ ] Set up Firestore (native mode)
 - [ ] Create local .env with required variables for dev
 
-Prompt 2 — Auth service: Firebase token verification
----------------------------------------------------
+### Prompt 2 — Auth Service: Firebase Token Verification
 Goal: Implement auth service module to verify Firebase ID tokens; unit tests mock firebase-admin. Provide middleware for Fastify to verify Authorization header and attach uid to request.
 
 Code-generation prompt:
@@ -1047,8 +1014,7 @@ Todo checklist:
 - [ ] Add test/auth.test.ts mocking firebase-admin
 - [ ] Ensure npm test passes locally without Firebase credentials
 
-Prompt 3 — Storage service: GCS presign and canonical objectPath
----------------------------------------------------------------
+### Prompt 3 — Storage Service: GCS Presign and Canonical objectPath
 Goal: Implement GCS storage service for presigned uploads: generate presigned PUT URL, return objectPath (gs://...), and enforce content type validation. Provide unit tests with GCS mocked.
 
 Code-generation prompt:
@@ -1084,8 +1050,7 @@ Todo checklist:
 - [ ] Add unit tests mocking @google-cloud/storage
 - [ ] Ensure tests run without GCP credentials
 
-Prompt 4 — Presign endpoint route and integration test
-------------------------------------------------------
+### Prompt 4 — Presign Endpoint Route and Integration Test
 Goal: Add Fastify route POST /presign-upload using verifyFirebaseAuth plugin and storage service. Add integration test using Fastify instance and mocked storage service.
 
 Code-generation prompt:
@@ -1123,8 +1088,7 @@ Todo checklist:
 - [ ] Add integration tests test/presign.test.ts using supertest mocking storage
 - [ ] Validate JSON schema and error mapping
 
-Prompt 5 — Image processing service (sharp): strip EXIF, resize, re-encode
---------------------------------------------------------------------------
+### Prompt 5 — Image Processing Service (Sharp): Strip EXIF, Resize, Re-encode
 Goal: Implement image processing utilities that accept a Buffer/stream and return processed JPEG buffer with EXIF removed, longest side <= 1024 px, and recompressed. Provide unit tests using sample images in test/fixtures.
 
 Code-generation prompt:
@@ -1160,8 +1124,7 @@ Todo checklist:
 - [ ] Add unit tests test/imageProc.test.ts
 - [ ] Ensure tests pass locally
 
-Prompt 6 — Google Vision SafeSearch wrapper (mockable)
------------------------------------------------------
+### Prompt 6 — Google Vision SafeSearch Wrapper (Mockable)
 Goal: Implement Vision service wrapper that accepts image buffer and returns SafeSearchResult. Provide unit tests that mock @google-cloud/vision.
 
 Code-generation prompt:
@@ -1190,8 +1153,7 @@ Todo checklist:
 - [ ] Add unit tests test/vision.test.ts mocking @google-cloud/vision
 - [ ] Ensure tests assert detection and thresholds
 
-Prompt 7 — Rate limiting & concurrency service (Redis) with mocks
-----------------------------------------------------------------
+### Prompt 7 — Rate Limiting & Concurrency Service (Redis) with Mocks
 Goal: Implement Redis-based rate limiting helper functions (burst counter and inflight key) using ioredis, but ensure unit tests mock Redis or run against a local test Redis. Provide functions used by /generate.
 
 Code-generation prompt:
@@ -1222,8 +1184,7 @@ Todo checklist:
 - [ ] Add unit tests test/rateLimit.test.ts mocking ioredis
 - [ ] Document behavior in comments
 
-Prompt 8 — OpenAI wrapper: prompt builder, call, and strict JSON parsing with retry
----------------------------------------------------------------------------------
+### Prompt 8 — OpenAI Wrapper: Prompt Builder, Call, and Strict JSON Parsing with Retry
 Goal: Implement OpenAI wrapper that builds the system + user prompts per devSpec, calls gpt-5-nano with image URL, and enforces strict JSON output with a single retry on parse failure.
 
 Code-generation prompt:
@@ -1260,8 +1221,7 @@ Todo checklist:
 - [ ] Add unit tests test/openai.test.ts mocking OpenAI client
 - [ ] Ensure retry-on-parse logic tested
 
-Prompt 9 — OpenAI Moderation wrapper and caption regeneration logic
-------------------------------------------------------------------
+### Prompt 9 — OpenAI Moderation Wrapper and Caption Regeneration Logic
 Goal: Implement moderation wrapper and logic to re-generate flagged captions (single attempt per caption) and record moderation flags.
 
 Code-generation prompt:
@@ -1293,8 +1253,7 @@ Todo checklist:
 - [ ] Add unit tests test/moderation.test.ts mocking moderation responses and openai regeneration
 - [ ] Ensure sanitized captions match devSpec constraints
 
-Prompt 10 — /generate route orchestration (core flow) with integration tests
------------------------------------------------------------------------------
+### Prompt 10 — /generate Route Orchestration (Core Flow) with Integration Tests
 Goal: Implement /generate endpoint orchestrating the full server-side flow: auth, rate-limit, storage validate/fetch, image processing, Vision SafeSearch, OpenAI call, moderation, response mapping, logging, and Redis concurrency behavior. Provide integration tests with dependencies mocked.
 
 Code-generation prompt:
@@ -1349,8 +1308,7 @@ Todo checklist:
 - [ ] Add integration tests test/generate.integration.test.ts mocking services
 - [ ] Ensure finally block always calls releaseInFlight
 
-Prompt 11 — Firestore moderation_flags writer & admin endpoints
---------------------------------------------------------------
+### Prompt 11 — Firestore moderation_flags Writer & Admin Endpoints
 Goal: Implement Firestore writer for flagged events and admin endpoints to list flags and manage whitelist/ban. Tests must mock Firestore.
 
 Code-generation prompt:
@@ -1382,8 +1340,7 @@ Todo checklist:
 - [ ] Add tests test/moderationStore.test.ts and test/admin.test.ts mocking Firestore
 - [ ] Ensure admin endpoints are only accessible to admin UID in tests
 
-Prompt 12 — Dockerfile finalization, Docker Compose for local dependencies
-------------------------------------------------------------------------
+### Prompt 12 — Dockerfile Finalization, Docker Compose for Local Dependencies
 Goal: Finalize the Dockerfile suitable for Cloud Run and create a docker-compose.yml for local development (Fastify app + Redis). Provide tests to ensure container builds.
 
 Code-generation prompt:
@@ -1414,8 +1371,7 @@ Todo checklist:
 - [ ] Add CI workflow skeleton .github/workflows/build.yml
 - [ ] Add scripts/local-build.sh and README instructions
 
-Prompt 13 — Backend CI: GitHub Actions full workflow
----------------------------------------------------
+### Prompt 13 — Backend CI: GitHub Actions Full Workflow
 Goal: Provide a complete CI GitHub Actions workflow that lints, tests, builds, and (optionally) builds and pushes Docker images when secrets are present. Include steps to run unit tests with cached node modules.
 
 Code-generation prompt:
@@ -1449,8 +1405,7 @@ Todo checklist:
 - [ ] Document optional docker-build job requiring secrets
 - [ ] Ensure workflow uses node 18 and caches dependencies
 
-Prompt 14 — Expo React Native client skeleton with Auth and Upload flow (client scaffolding)
-------------------------------------------------------------------------------------------
+### Prompt 14 — Expo React Native Client Skeleton with Auth and Upload Flow (Client Scaffolding)
 Goal: Create an Expo TypeScript app skeleton with Firebase passwordless auth (magic link) flow, image picker, image compression/resizing (client-side best effort), and UI screens for upload and tone selection. Include unit tests or e2e guidance.
 
 Code-generation prompt:
@@ -1490,8 +1445,7 @@ Todo checklist:
 - [ ] Implement presign-upload and direct PUT logic and /generate call
 - [ ] Add README instructions for Firebase config and running the app
 
-Prompt 15 — Client integration tests + manual acceptance steps
---------------------------------------------------------------
+### Prompt 15 — Client Integration Tests + Manual Acceptance Steps
 Goal: Provide automated tests where feasible and a clear manual QA plan for the mobile flows that require cloud resources.
 
 Code-generation prompt:
@@ -1522,8 +1476,7 @@ Todo checklist:
 - [ ] Provide manual QA checklist in client/README
 - [ ] Ensure instructions for running tests locally
 
-Prompt 16 — End-to-end test harness & local emulation guidance
---------------------------------------------------------------
+### Prompt 16 — End-to-end Test Harness & Local Emulation Guidance
 Goal: Describe and provide scripts for running e2e tests locally with emulators and mocks for OpenAI and Vision; provide a sample Playwright or simple node e2e script to exercise endpoints.
 
 Code-generation prompt:
@@ -1556,8 +1509,7 @@ Todo checklist:
 - [ ] Add scripts to start local emulators and run Node-based e2e checks
 - [ ] Document how to run e2e locally in README
 
-Prompt 17 — Observability: logging, Cloud Logging hooks, and error reporting
-----------------------------------------------------------------------------
+### Prompt 17 — Observability: Logging, Cloud Logging Hooks, and Error Reporting
 Goal: Add structured logging helpers and ensure request tracing (X-Request-ID). Provide integration tests verifying logs are produced (local capture).
 
 Code-generation prompt:
@@ -1584,8 +1536,7 @@ Todo checklist:
 - [ ] Replace console.log usage with logger in services
 - [ ] Add test capturing logs to assert presence of request_id
 
-Prompt 18 — Deployment: Terraform skeleton & Cloud Run Docker deploy instructions
--------------------------------------------------------------------------------
+### Prompt 18 — Deployment: Terraform Skeleton & Cloud Run Docker Deploy Instructions
 Goal: Provide a Terraform skeleton and instructions to deploy the service to Cloud Run with relevant IAM roles and Secret Manager integration.
 
 Code-generation prompt:
@@ -1621,8 +1572,7 @@ Todo checklist:
 - [ ] Add deploy.sh with build/push/deploy steps and comments about service account
 - [ ] Document IAM roles and Service Account permissions
 
-Prompt 19 — Final QA, acceptance tests, and release checklist
-------------------------------------------------------------
+### Prompt 19 — Final QA, Acceptance Tests, and Release Checklist
 Goal: Produce the final test and release checklist to move from staging to production. Include acceptance test definitions and monitoring rules.
 
 Code-generation prompt:
@@ -1657,8 +1607,7 @@ Todo checklist:
 - [ ] Document monitoring & alert rules
 - [ ] Add scripts/release/run_acceptance.sh
 
-Prompt 20 — Wrap-up prompt: Verify wiring, remove mocks, and production readiness runbook
---------------------------------------------------------------------------------------
+### Prompt 20 — Wrap-up Prompt: Verify Wiring, Remove Mocks, and Production Readiness Runbook
 Goal: Final step to remove dev-only mocks, run all tests, and produce a production runbook for operations and incident handling.
 
 Code-generation prompt:
@@ -1688,8 +1637,7 @@ Todo checklist:
 - [ ] Run tests locally and note any remaining TODOs
 - [ ] Provide final summary of files and tests
 
-Closing notes and recommended execution order
--------------------------------------------
+## Closing Notes and Recommended Execution Order
 Work through prompts 0 → 20 in order. For each prompt:
 - Feed the code-generation LLM the code block content.
 - Review generated code and tests.

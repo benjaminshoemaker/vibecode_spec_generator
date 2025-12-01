@@ -6,14 +6,14 @@ describe("parseSpecMetadata", () => {
   describe("with sample documents", () => {
     it("should extract app name from one-pager title", () => {
       const result = parseSpecMetadata(sampleDocs.onePager, null);
-      expect(result.appName).toBe("Parent Time Tracking App");
+      expect(result.appName).toBe("Photo Captioner App");
     });
 
     it("should extract problem statement (truncated to 150 chars)", () => {
       const result = parseSpecMetadata(sampleDocs.onePager, null);
       expect(result.problem).not.toBeNull();
       expect(result.problem!.length).toBeLessThanOrEqual(150);
-      expect(result.problem).toContain("Parents need");
+      expect(result.problem).toContain("Social media users");
     });
 
     it("should extract ideal user from target audience section", () => {
@@ -49,7 +49,7 @@ describe("parseSpecMetadata", () => {
 
     it("should handle both documents together", () => {
       const result = parseSpecMetadata(sampleDocs.onePager, sampleDocs.devSpec);
-      expect(result.appName).toBe("Parent Time Tracking App");
+      expect(result.appName).toBe("Photo Captioner App");
       expect(result.techStack.length).toBeGreaterThan(0);
     });
   });
@@ -66,7 +66,7 @@ describe("parseSpecMetadata", () => {
 
     it("should handle null dev spec", () => {
       const result = parseSpecMetadata(sampleDocs.onePager, null);
-      expect(result.appName).toBe("Parent Time Tracking App");
+      expect(result.appName).toBe("Photo Captioner App");
       expect(result.techStack).toEqual([]);
       expect(result.integrationCount).toBe(0);
       expect(result.complexityTier).toBe("moderate");
