@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { WizardState, StepData, Message } from "./types";
 import { analytics } from "./utils/analytics";
+import { useEffect, useState } from "react";
 
 const initialStepData: StepData = {
   chatHistory: [],
@@ -106,3 +107,25 @@ export const useWizardStore = create<WizardState>()(
     }
   )
 );
+
+// Hook to check if store has hydrated from localStorage
+export const useHasHydrated = () => {
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    const unsubFinishHydration = useWizardStore.persist.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+
+    // Check if already hydrated
+    if (useWizardStore.persist.hasHydrated()) {
+      setHasHydrated(true);
+    }
+
+    return () => {
+      unsubFinishHydration();
+    };
+  }, []);
+
+  return hasHydrated;
+};

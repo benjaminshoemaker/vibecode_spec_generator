@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, X, AlertTriangle, Check, Download } from 'lucide-react';
+import { Terminal, Layers, Command, Cpu, GitBranch, ArrowRight, ChevronDown, AlertTriangle, Check, Download } from 'lucide-react';
 import Link from 'next/link';
 import Footer from "./components/Footer";
 import StatsGrid from "./components/StatsGrid";
@@ -189,32 +189,21 @@ export default function LandingPage() {
                 For anyone using AI coding tools
               </div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] mb-10">
-                Sound familiar?
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] mb-6">
+                Is your vibe-coded project stuck?
                 <span className={`${cursorVisible ? 'opacity-100' : 'opacity-0'} ml-1 text-accent`}>_</span>
               </h1>
 
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-lg text-zinc-400 leading-relaxed">You described your app, AI built something... but not quite right</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-lg text-zinc-400 leading-relaxed">You&apos;re 47 prompts deep and it keeps breaking things it already fixed</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-lg text-zinc-400 leading-relaxed">You don&apos;t know if you&apos;re 80% done or 98% done</p>
-                </div>
-              </div>
+              <p className="text-xl text-zinc-400 max-w-xl leading-relaxed mb-6">
+                Vibe coding tools made it easy to start - but they skip the planning, and you pay for it at 80%.
+              </p>
 
-              <div className="border-l-2 border-accent pl-6 py-2 mb-10">
-                <p className="text-xl text-white font-semibold">The problem isn&apos;t the AI. It&apos;s the spec.</p>
+              <div className="border-l-2 border-accent pl-6 py-2 mb-8">
+                <p className="text-xl text-white font-semibold">They made it easy to start. Nobody made it easy to finish.</p>
               </div>
 
               <p className="text-lg text-zinc-400 max-w-xl leading-relaxed mb-10">
-                VibeScaffold generates the structure your AI coding tools need to finish what they start - clear specs, persistent context, and defined acceptance criteria.
+                VibeScaffold generates the spec your AI tools need to get from 80% to shipped - clear requirements, persistent context, and defined acceptance criteria.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">

@@ -5,6 +5,7 @@ import { Message } from "@/app/types";
 import { Terminal, ArrowRight } from 'lucide-react';
 import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { spikelog } from "@/app/utils/spikelog";
+import { useHasHydrated } from "@/app/store";
 
 interface ChatInterfaceProps {
   systemPrompt: string;
@@ -13,6 +14,7 @@ interface ChatInterfaceProps {
   documentInputs?: Record<string, string>;
   initialGreeting?: string;
   stepName?: string;
+  placeholder?: string;
 }
 
 export default function ChatInterface({
@@ -22,10 +24,12 @@ export default function ChatInterface({
   documentInputs,
   initialGreeting,
   stepName,
+  placeholder,
 }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const hasHydrated = useHasHydrated();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -73,18 +77,38 @@ export default function ChatInterface({
   }, [messages]);
 
   useEffect(() => {
+    if (!hasHydrated) return; // Avoid wiping persisted chat before hydration completes
     onMessagesChange(messages);
-  }, [messages, onMessagesChange]);
+  }, [messages, onMessagesChange, hasHydrated]);
 
+  // Initialize messages after hydration completes
   useEffect(() => {
-    if (initialGreeting && initialMessages.length === 0 && messages.length === 0) {
+    if (!hasHydrated) return;
+
+    // Only initialize if messages haven't been set yet
+    if (messages.length > 0) return;
+
+    if (initialMessages.length > 0) {
+      // Restore persisted messages
+      setMessages(initialMessages);
+    } else if (initialGreeting) {
+      // Show greeting for fresh sessions
       setMessages([{
         id: Date.now().toString(),
         role: "assistant",
         content: initialGreeting,
       }]);
     }
-  }, [initialGreeting, initialMessages.length]);
+  }, [hasHydrated, initialMessages, initialGreeting]);
+
+  // Auto-focus input on mount
+  useEffect(() => {
+    // Small delay to ensure DOM is ready and any transitions complete
+    const timer = setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,7 +291,7 @@ export default function ChatInterface({
             <div className={`text-2xs font-mono uppercase tracking-wider mb-1 ${
               message.role === "user" ? "text-accent" : "text-[#a1a1aa]"
             }`}>
-              {message.role === "user" ? "You" : "System"}
+              {message.role === "user" ? "You" : "Vibe Scaffold Agent"}
             </div>
 
             <div className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
@@ -289,7 +313,7 @@ export default function ChatInterface({
         {isLoading && lastMessage?.role === "user" && (
           <div className="flex flex-col max-w-[90%] self-start items-start">
             <div className="text-2xs font-mono uppercase tracking-wider mb-1 text-[#a1a1aa]">
-              System
+              Vibe Scaffold Agent
             </div>
             <div className="bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa] px-4 py-3 text-sm leading-relaxed">
               <span
@@ -320,7 +344,7 @@ export default function ChatInterface({
                     handleSubmit(e);
                   }
                 }}
-                placeholder="Describe your requirements..."
+                placeholder={placeholder || "Describe your requirements..."}
                 className="w-full bg-transparent text-sm font-mono text-white focus:outline-none resize-none placeholder:text-[#a1a1aa] leading-5 overflow-y-auto py-3"
                 rows={1}
                 disabled={isLoading}
