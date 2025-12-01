@@ -52,7 +52,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       // Type a message
       await user.type(textarea, "Hello AI");
@@ -78,7 +78,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       // Type a message
       await user.type(textarea, "Test message");
@@ -105,7 +105,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       await user.type(textarea, "Message 1");
       await user.keyboard("{Enter}");
@@ -125,7 +125,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea2 = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea2 = screen.getByPlaceholderText("Describe your requirements...");
       await user.type(textarea2, "Message 2");
       await user.keyboard("{Enter}");
 
@@ -145,7 +145,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       await user.type(textarea, "Test message");
       await user.keyboard("{Enter}");
@@ -167,7 +167,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       // Try to submit empty message
       await user.click(textarea);
@@ -188,7 +188,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       await user.type(textarea, "   ");
       await user.keyboard("{Enter}");
@@ -208,7 +208,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       // Submit first message
       await user.type(textarea, "First message");
@@ -246,7 +246,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Type your ideas here...");
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
 
       await user.type(textarea, "Test message");
       await user.keyboard("{Enter}");
