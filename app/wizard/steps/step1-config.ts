@@ -16,7 +16,7 @@ The user will provide an initial description of their app. Evaluate that, and th
   generateButtonText: "Generate One-Pager",
   approveButtonText: "Approve Draft & Save",
   documentInputs: [], // No previous documents for step 1
-  initialGreeting: "What are you building?\n\nJust give me a rough idea to start. For example:\n• A mobile app that tracks my workouts\n• A Chrome extension that blocks distracting sites\n• A dashboard for tracking sales metrics\n\nI'll ask follow-up questions from there.",
+  initialGreeting: "What are you building?\n\nSomething like \"an app that tracks my workouts\" or \"a Chrome extension for blocking distracting sites\" is a great starting point.\n\nI'll ask follow-up questions from there. Most people finish in 5-10 minutes.",
   generationPrompt: "Now that we've wrapped up the brainstorming process, can you compile our findings into a clean, comprehensive one-pager? Include the problem, audience, ideal customer, platform, and flow information, such that we could start talking with product & engineering leadership about how this could be built.",
   inputPlaceholder: "e.g., An app that helps people write captions for their photos...",
 };

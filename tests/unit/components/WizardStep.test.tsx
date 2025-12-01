@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { StepConfig } from "@/app/types";
 
@@ -92,12 +92,16 @@ describe("WizardStep - Analytics Tracking", () => {
 
       // Add a chat message first (required for generation)
       const { updateStepChat } = useWizardStore.getState();
-      updateStepChat("onePager", [
-        { id: "1", role: "user", content: "Test message" },
-      ]);
+      await act(async () => {
+        updateStepChat("onePager", [
+          { id: "1", role: "user", content: "Test message" },
+        ]);
+      });
 
       // Trigger generation via custom event
-      window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
 
       await waitFor(
         () => {
@@ -129,12 +133,16 @@ describe("WizardStep - Analytics Tracking", () => {
 
       // Add a chat message first
       const { updateStepChat } = useWizardStore.getState();
-      updateStepChat("onePager", [
-        { id: "1", role: "user", content: "Test message" },
-      ]);
+      await act(async () => {
+        updateStepChat("onePager", [
+          { id: "1", role: "user", content: "Test message" },
+        ]);
+      });
 
       // Trigger generation
-      window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
 
       await waitFor(
         () => {
@@ -165,11 +173,15 @@ describe("WizardStep - Analytics Tracking", () => {
       );
 
       const { updateStepChat } = useWizardStore.getState();
-      updateStepChat("devSpec", [
-        { id: "1", role: "user", content: "Test message" },
-      ]);
+      await act(async () => {
+        updateStepChat("devSpec", [
+          { id: "1", role: "user", content: "Test message" },
+        ]);
+      });
 
-      window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
 
       await waitFor(
         () => {
@@ -194,12 +206,16 @@ describe("WizardStep - Analytics Tracking", () => {
       );
 
       const { updateStepChat } = useWizardStore.getState();
-      updateStepChat("onePager", [
-        { id: "1", role: "user", content: "Test message" },
-      ]);
+      await act(async () => {
+        updateStepChat("onePager", [
+          { id: "1", role: "user", content: "Test message" },
+        ]);
+      });
 
       // First generation
-      window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
 
       await waitFor(
         () => {
@@ -211,7 +227,9 @@ describe("WizardStep - Analytics Tracking", () => {
       vi.clearAllMocks();
 
       // Second generation (regenerate)
-      window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
 
       await waitFor(
         () => {
@@ -242,11 +260,15 @@ describe("WizardStep - Analytics Tracking", () => {
       );
 
       const { updateStepChat } = useWizardStore.getState();
-      updateStepChat("onePager", [
-        { id: "1", role: "user", content: "Test message" },
-      ]);
+      await act(async () => {
+        updateStepChat("onePager", [
+          { id: "1", role: "user", content: "Test message" },
+        ]);
+      });
 
-      window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
 
       await waitFor(
         () => {
@@ -277,11 +299,15 @@ describe("WizardStep - Analytics Tracking", () => {
       );
 
       const { updateStepChat } = useWizardStore.getState();
-      updateStepChat("onePager", [
-        { id: "1", role: "user", content: "Test message" },
-      ]);
+      await act(async () => {
+        updateStepChat("onePager", [
+          { id: "1", role: "user", content: "Test message" },
+        ]);
+      });
 
-      window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
 
       await waitFor(
         () => {
@@ -292,6 +318,100 @@ describe("WizardStep - Analytics Tracking", () => {
         },
         { timeout: 3000 }
       );
+    });
+  });
+
+  describe("UI behaviors", () => {
+    it("keeps the previous document visible while regenerating and replaces it when done", async () => {
+      const mockOnApprove = vi.fn();
+      const encoder = new TextEncoder();
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url) => {
+        if (url === "/api/generate-doc") {
+          const read = vi
+            .fn()
+            .mockResolvedValueOnce({
+              done: false,
+              value: encoder.encode("# New Doc"),
+            })
+            .mockResolvedValueOnce({
+              done: true,
+              value: undefined,
+            });
+
+          return Promise.resolve({
+            ok: true,
+            body: { getReader: () => ({ read }) },
+          } as any);
+        }
+
+        return Promise.resolve({
+          ok: true,
+          body: { getReader: () => ({ read: vi.fn().mockResolvedValue({ done: true, value: undefined }) }) },
+        } as any);
+      });
+
+      const store = useWizardStore.getState();
+      await act(async () => {
+        store.updateStepDoc("onePager", "# Old Doc");
+      });
+      await act(async () => {
+        store.updateStepChat("onePager", [{ id: "u1", role: "user", content: "Regenerate" }]);
+      });
+
+      render(
+        <WizardStep
+          config={mockConfig}
+          stepKey="onePager"
+          onApproveAndNext={mockOnApprove}
+        />
+      );
+
+      expect(screen.getByText("Old Doc")).toBeInTheDocument();
+
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText("New Doc")).toBeInTheDocument();
+      });
+    });
+
+    it("shows an error message when generation fails", async () => {
+      const mockOnApprove = vi.fn();
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url) => {
+        if (url === "/api/generate-doc") {
+          return Promise.reject(new Error("boom"));
+        }
+
+        return Promise.resolve({
+          ok: true,
+          body: { getReader: () => ({ read: vi.fn().mockResolvedValue({ done: true, value: undefined }) }) },
+        } as any);
+      });
+
+      const store = useWizardStore.getState();
+      await act(async () => {
+        store.updateStepChat("onePager", [{ id: "u1", role: "user", content: "Generate please" }]);
+      });
+
+      render(
+        <WizardStep
+          config={mockConfig}
+          stepKey="onePager"
+          onApproveAndNext={mockOnApprove}
+        />
+      );
+
+      await act(async () => {
+        window.dispatchEvent(new CustomEvent("triggerGenerate"));
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/ERROR: boom/i)).toBeInTheDocument();
+      });
     });
   });
 });

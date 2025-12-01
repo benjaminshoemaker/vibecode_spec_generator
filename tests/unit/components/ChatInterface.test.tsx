@@ -4,18 +4,29 @@ import userEvent from "@testing-library/user-event";
 import ChatInterface from "@/app/wizard/components/ChatInterface";
 import { analytics } from "@/app/utils/analytics";
 
+vi.mock("@/app/utils/analytics", () => {
+  const trackChatMessage = vi.fn();
+  const getOrCreateClientId = vi.fn(() => "client-123");
+  return {
+    analytics: {
+      trackChatMessage,
+    },
+    getOrCreateClientId,
+  };
+});
+
+vi.mock("@/app/utils/spikelog", () => ({
+  spikelog: {
+    trackChatMessage: vi.fn(),
+    trackStreamingFallback: vi.fn(),
+  },
+}));
+
 let hydrationFlag = true;
 const useHasHydratedMock = vi.fn(() => hydrationFlag);
 
 vi.mock("@/app/store", () => ({
   useHasHydrated: () => useHasHydratedMock(),
-}));
-
-// Mock the analytics module
-vi.mock("@/app/utils/analytics", () => ({
-  analytics: {
-    trackChatMessage: vi.fn(),
-  },
 }));
 
 // Mock fetch API
@@ -28,23 +39,39 @@ describe("ChatInterface - Analytics Tracking", () => {
     vi.clearAllMocks();
     hydrationFlag = true;
 
+    const encoder = new TextEncoder();
+
     // Setup default fetch mock
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: true,
-      body: {
-        getReader: () => ({
-          read: vi.fn()
-            .mockResolvedValueOnce({
-              done: false,
-              value: new TextEncoder().encode("Hello"),
-            })
-            .mockResolvedValueOnce({
-              done: true,
-              value: undefined,
+    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url) => {
+      if (url === "/api/chat") {
+        const read = vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: encoder.encode("Hello"),
+          })
+          .mockResolvedValueOnce({
+            done: true,
+            value: undefined,
+          });
+
+        return Promise.resolve({
+          ok: true,
+          clone: () => ({ text: () => Promise.resolve("Hello") }),
+          body: {
+            getReader: () => ({
+              read,
             }),
-        }),
-      },
-    } as any);
+          },
+        } as any);
+      }
+
+      return Promise.resolve({
+        ok: true,
+        text: () => Promise.resolve(""),
+        json: () => Promise.resolve({}),
+      } as any);
+    });
   });
 
   describe("Chat message submission tracking", () => {
@@ -232,6 +259,117 @@ describe("ChatInterface - Analytics Tracking", () => {
 
       await waitFor(() => {
         expect(analytics.trackChatMessage).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
+
+  describe("Streaming behavior", () => {
+    it("streams assistant chunks incrementally", async () => {
+      const user = userEvent.setup();
+      const encoder = new TextEncoder();
+
+      let resolveFirst: (() => void) | undefined;
+      let resolveSecond: (() => void) | undefined;
+
+      const read = vi
+        .fn()
+        .mockReturnValueOnce(
+          new Promise((resolve) => {
+            resolveFirst = () =>
+              resolve({
+                done: false,
+                value: encoder.encode("Chunk A "),
+              });
+          })
+        )
+        .mockReturnValueOnce(
+          new Promise((resolve) => {
+            resolveSecond = () =>
+              resolve({
+                done: true,
+                value: encoder.encode("Chunk B"),
+              });
+          })
+        );
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url) => {
+        if (url === "/api/chat") {
+          return Promise.resolve({
+            ok: true,
+            clone: () => ({ text: () => Promise.resolve("Chunk A Chunk B") }),
+            body: {
+              getReader: () => ({ read }),
+            },
+          } as any);
+        }
+
+        return Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve(""),
+          json: () => Promise.resolve({}),
+        } as any);
+      });
+
+      render(
+        <ChatInterface
+          systemPrompt="Test prompt"
+          initialMessages={[]}
+          onMessagesChange={mockOnMessagesChange}
+          stepName="ONE_PAGER"
+        />
+      );
+
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      await user.type(textarea, "Start streaming");
+      await user.keyboard("{Enter}");
+
+      resolveFirst?.();
+
+      await waitFor(() => {
+        expect(screen.getByText(/Chunk A/)).toBeInTheDocument();
+      });
+
+      resolveSecond?.();
+
+      await waitFor(() => {
+        expect(screen.getByText("Chunk A Chunk B")).toBeInTheDocument();
+      });
+    });
+
+    it("falls back to full text when no response body is available", async () => {
+      const user = userEvent.setup();
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url) => {
+        if (url === "/api/chat") {
+          return Promise.resolve({
+            ok: true,
+            body: null,
+            clone: () => ({ text: () => Promise.resolve("Fallback content") }),
+          } as any);
+        }
+
+        return Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve(""),
+          json: () => Promise.resolve({}),
+        } as any);
+      });
+
+      render(
+        <ChatInterface
+          systemPrompt="Test prompt"
+          initialMessages={[]}
+          onMessagesChange={mockOnMessagesChange}
+          stepName="DEV_SPEC"
+        />
+      );
+
+      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      await user.type(textarea, "Trigger fallback");
+      await user.keyboard("{Enter}");
+
+      await waitFor(() => {
+        expect(screen.getByText("Fallback content")).toBeInTheDocument();
       });
     });
   });
