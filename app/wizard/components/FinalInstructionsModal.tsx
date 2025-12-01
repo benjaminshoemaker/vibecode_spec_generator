@@ -67,7 +67,7 @@ export function FinalInstructionsModal({
       <div className="bg-zinc-950 border border-zinc-800 shadow-2xl max-w-4xl w-full overflow-hidden max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-8 py-5 border-b border-zinc-800">
           <div>
-            <div className="text-[10px] font-mono uppercase tracking-widest text-accent">Wizard complete</div>
+            <div className="text-2xs font-mono uppercase tracking-widest text-accent">Wizard complete</div>
             <div className="text-xl font-bold text-white tracking-tight">Hand off to your AI coding agent</div>
           </div>
           <button
@@ -163,7 +163,7 @@ export function FinalInstructionsModal({
           <div className="pt-4 mt-6 border-t border-zinc-800/50">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#a1a1aa]">Stay in the loop</span>
+              <span className="text-2xs font-mono uppercase tracking-widest text-[#a1a1aa]">Stay in the loop</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

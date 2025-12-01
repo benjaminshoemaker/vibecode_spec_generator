@@ -264,7 +264,7 @@ export default function ChatInterface({
             key={message.id}
             className={`flex flex-col max-w-[90%] ${message.role === "user" ? "self-end items-end" : "self-start items-start"}`}
           >
-            <div className={`text-[10px] font-mono uppercase tracking-wider mb-1 ${
+            <div className={`text-2xs font-mono uppercase tracking-wider mb-1 ${
               message.role === "user" ? "text-accent" : "text-[#a1a1aa]"
             }`}>
               {message.role === "user" ? "You" : "System"}
@@ -288,7 +288,7 @@ export default function ChatInterface({
 
         {isLoading && lastMessage?.role === "user" && (
           <div className="flex flex-col max-w-[90%] self-start items-start">
-            <div className="text-[10px] font-mono uppercase tracking-wider mb-1 text-[#a1a1aa]">
+            <div className="text-2xs font-mono uppercase tracking-wider mb-1 text-[#a1a1aa]">
               System
             </div>
             <div className="bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa] px-4 py-3 text-sm leading-relaxed">
@@ -304,10 +304,10 @@ export default function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="p-5 bg-zinc-950 border-t border-zinc-800">
+      <div className="p-6 bg-zinc-950 border-t border-zinc-800">
         <form onSubmit={handleSubmit} className="relative flex gap-3 bg-zinc-900 border border-zinc-700 pl-4 pr-1 py-1 focus-within:border-accent focus-within:shadow-[0_0_0_3px_rgba(245,158,11,0.15)] transition-all min-h-[48px]">
           <div className="flex items-center">
-            <span className="text-accent font-mono text-[13px] select-none">$</span>
+            <span className="text-accent font-mono text-sm select-none">$</span>
           </div>
           <div className="flex-1 flex items-center">
              <textarea
@@ -321,7 +321,7 @@ export default function ChatInterface({
                   }
                 }}
                 placeholder="Describe your requirements..."
-                className="w-full bg-transparent text-[13px] font-mono text-white focus:outline-none resize-none placeholder:text-[#a1a1aa] leading-5 overflow-y-auto py-3"
+                className="w-full bg-transparent text-sm font-mono text-white focus:outline-none resize-none placeholder:text-[#a1a1aa] leading-5 overflow-y-auto py-3"
                 rows={1}
                 disabled={isLoading}
                 style={{ maxHeight: '200px' }}

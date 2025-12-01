@@ -261,7 +261,7 @@ export default function WizardPage() {
       </header>
 
       {/* Main Layout */}
-      <div className="flex-1 max-w-[1800px] mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
+      <div className="flex-1 max-w-[1800px] mx-auto w-full p-6 grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
         
         {/* Left Column: Interactive Wizard Area */}
         <div className="flex flex-col lg:min-h-[600px]">
@@ -279,13 +279,13 @@ export default function WizardPage() {
 
           {/* Action Card - Order 1 on mobile, Order 2 on desktop */}
           <div className="bg-zinc-900 border border-zinc-800 p-6 lg:sticky lg:top-20 order-1 lg:order-2">
-            <h3 className="text-[10px] font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">=ACTIONS</h3>
+            <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">=ACTIONS</h3>
 
             {isDevelopment && (
               <button
                 onClick={() => handleLoadDemoStep(currentStepKey, currentStep - 1)}
                 disabled={isDemoGenerating}
-                className="w-full mb-2 py-2 px-4 bg-amber-600 hover:bg-amber-500 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:bg-amber-800 disabled:cursor-not-allowed"
+                className="w-full mb-3 py-2.5 px-4 bg-amber-600 hover:bg-amber-500 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isDemoGenerating && (
                   <div className="w-3 h-3 border-2 border-amber-400 border-t-zinc-900 rounded-full animate-spin"></div>
@@ -299,7 +299,7 @@ export default function WizardPage() {
                 window.dispatchEvent(new CustomEvent('triggerGenerate'));
               }}
               disabled={steps[currentStepKey].chatHistory.length === 0 || isGenerating}
-              className="w-full mb-3 py-3 px-4 bg-accent hover:bg-accent-light text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:bg-zinc-800 disabled:text-[#a1a1aa] disabled:cursor-not-allowed hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(245,158,11,0.15)]"
+              className="w-full mb-3 py-3 px-4 bg-accent hover:bg-accent-light text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(245,158,11,0.15)]"
             >
               {isGenerating && (
                 <div className="w-3 h-3 border-2 border-amber-400 border-t-zinc-900 rounded-full animate-spin"></div>
@@ -310,7 +310,7 @@ export default function WizardPage() {
             <button
               onClick={handleApproveAndNext}
               disabled={!steps[currentStepKey].generatedDoc}
-              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 hover:border-accent hover:text-accent text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mb-3 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 hover:border-accent hover:text-accent text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {currentStep === 4 ? "FINALIZE" : "APPROVE & NEXT"}
             </button>
@@ -320,7 +320,7 @@ export default function WizardPage() {
             <button
               onClick={handleDownloadAll}
               disabled={!Object.values(steps).some(step => step.generatedDoc !== null)}
-              className="w-full py-2 px-4 text-[#a1a1aa] hover:text-accent text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-30"
+              className="w-full py-2.5 px-4 text-[#a1a1aa] hover:text-accent text-xs font-mono transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Download className="w-3 h-3" />
               DOWNLOAD_ALL.ZIP
@@ -329,7 +329,7 @@ export default function WizardPage() {
 
           {/* Progress Card - Order 2 on mobile, Order 1 on desktop */}
           <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-1">
-            <h3 className="text-[10px] font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">=SEQUENCE</h3>
+            <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">=SEQUENCE</h3>
 
             <div className="space-y-px bg-zinc-800 border border-zinc-800">
                {stepNames.map((name, index) => {

@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        '2xs': ['0.625rem', { lineHeight: '1rem' }], // 10px
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

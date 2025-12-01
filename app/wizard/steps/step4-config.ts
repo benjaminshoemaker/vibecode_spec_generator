@@ -13,10 +13,10 @@ export const step4Config: StepConfig = {
   generationPrompt: `Using the information in the prompt_plan & spec attached here, write a minimal AGENTS.md file to include in the repository so that agents like Codex & Claude Code can interact well. Make sure it includes a description of what each file is (prompt_plan.md, spec.md, idea.md, idea_one_pager.md), as well as what will live in /designs/. Include the following section verbatim:
 
 ## Repository docs
-- 'ONE_PAGER.md' — Captures Problem, Audience, Platform, Core Flow, MVP Features; Non‑Goals optional. 
-- 'DEV_SPEC.md' — Minimal functional and technical specification consistent with prior docs, including a concise **Definition of Done**. 
-- 'PROMPT_PLAN.md' — Agent‑Ready Planner with per‑step prompts, expected artifacts, tests, rollback notes, idempotency notes, and a TODO checklist using Markdown checkboxes. This file drives the agent workflow.  
-- 'AGENTS.md' — This file. 
+- 'ONE_PAGER.md' - Captures Problem, Audience, Platform, Core Flow, MVP Features; Non-Goals optional.
+- 'DEV_SPEC.md' - Minimal functional and technical specification consistent with prior docs, including a concise **Definition of Done**.
+- 'PROMPT_PLAN.md' - Agent-Ready Planner with per-step prompts, expected artifacts, tests, rollback notes, idempotency notes, and a TODO checklist using Markdown checkboxes. This file drives the agent workflow.
+- 'AGENTS.md' - This file. 
 
 ### Agent responsibility
 - After completing any coding, refactor, or test step, **immediately update the corresponding TODO checklist item in 'prompt_plan.md'**.  
@@ -53,7 +53,7 @@ export const step4Config: StepConfig = {
 
 ## Testing policy (non‑negotiable)
 - Tests **MUST** cover the functionality being implemented.
-- **NEVER** ignore the output of the system or the tests — logs and messages often contain **CRITICAL** information.
+- **NEVER** ignore the output of the system or the tests - logs and messages often contain **CRITICAL** information.
 - **TEST OUTPUT MUST BE PRISTINE TO PASS.**
 - If logs are **supposed** to contain errors, capture and test it.
 - **NO EXCEPTIONS POLICY:** Under no circumstances should you mark any test type as "not applicable". Every project, regardless of size or complexity, **MUST** have unit tests, integration tests, **AND** end‑to‑end tests. If you believe a test type doesn't apply, you need the human to say exactly **"I AUTHORIZE YOU TO SKIP WRITING TESTS THIS TIME"**.

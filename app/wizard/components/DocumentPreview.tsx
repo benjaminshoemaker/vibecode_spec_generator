@@ -28,7 +28,7 @@ export default function DocumentPreview({
         <div className="flex">
           <button
             onClick={() => setViewMode("rendered")}
-            className={`flex items-center gap-2 px-5 py-3 text-[11px] font-mono uppercase tracking-wider border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-5 py-3 text-2xs font-mono uppercase tracking-wider border-b-2 transition-all ${
               viewMode === "rendered"
                 ? "text-accent border-accent"
                 : "text-[#a1a1aa] border-transparent hover:text-[#e4e4e7]"
@@ -39,7 +39,7 @@ export default function DocumentPreview({
           </button>
           <button
             onClick={() => setViewMode("raw")}
-            className={`flex items-center gap-2 px-5 py-3 text-[11px] font-mono uppercase tracking-wider border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-5 py-3 text-2xs font-mono uppercase tracking-wider border-b-2 transition-all ${
               viewMode === "raw"
                 ? "text-accent border-accent"
                 : "text-[#a1a1aa] border-transparent hover:text-[#e4e4e7]"
@@ -65,11 +65,11 @@ export default function DocumentPreview({
         className="flex-1 overflow-y-auto custom-scrollbar bg-zinc-800 border-t border-zinc-800"
       >
         {viewMode === "raw" ? (
-          <div className="p-8 font-mono text-[13px] leading-relaxed text-[#e4e4e7] whitespace-pre-wrap">
+          <div className="p-4 md:p-8 font-mono text-sm leading-relaxed text-[#e4e4e7] whitespace-pre-wrap">
             {content}
           </div>
         ) : (
-          <div className="p-8 lg:p-12 max-w-5xl mx-auto">
+          <div className="p-4 md:p-8 lg:p-12 max-w-5xl mx-auto">
             <article className="prose prose-invert max-w-none">
               <ReactMarkdown>
                 {content}
