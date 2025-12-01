@@ -291,7 +291,7 @@ export default function ChatInterface({
             <div className={`text-2xs font-mono uppercase tracking-wider mb-1 ${
               message.role === "user" ? "text-accent" : "text-[#a1a1aa]"
             }`}>
-              {message.role === "user" ? "You" : "Vibe Scaffold Agent"}
+              {message.role === "user" ? "You" : "Vibe Scaffold Assistant"}
             </div>
 
             <div className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
@@ -313,7 +313,7 @@ export default function ChatInterface({
         {isLoading && lastMessage?.role === "user" && (
           <div className="flex flex-col max-w-[90%] self-start items-start">
             <div className="text-2xs font-mono uppercase tracking-wider mb-1 text-[#a1a1aa]">
-              Vibe Scaffold Agent
+              Vibe Scaffold Assistant
             </div>
             <div className="bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa] px-4 py-3 text-sm leading-relaxed">
               <span
