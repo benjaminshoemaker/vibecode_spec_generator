@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const stepKeyMap = ["onePager", "devSpec", "checklist", "agentsMd"] as const;
 const stepLabels = ["One Pager", "Dev Spec", "Prompt Plan", "AGENTS.md"];
-const stepQuestions = ["~10-15", "~20", "1", "0"];
+const stepQuestions = ["~10-15", "~20", "0-1", "0-1"];
 
 // Expected questions per step (used for asymptotic calculation)
 const expectedQuestions = [12, 20, 1, 0];
