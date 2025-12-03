@@ -63,8 +63,8 @@ export function FinalInstructionsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-      <div className="bg-zinc-950 border border-zinc-800 shadow-2xl max-w-4xl w-full overflow-hidden max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4 animate-backdropEnter">
+      <div className="bg-zinc-950 border border-zinc-800 shadow-2xl max-w-4xl w-full overflow-hidden max-h-[90vh] overflow-y-auto animate-modalEnter">
         <div className="flex items-center justify-between px-8 py-5 border-b border-zinc-800">
           <div>
             <div className="text-2xs font-mono uppercase tracking-widest text-accent">Wizard complete</div>
@@ -89,7 +89,7 @@ export function FinalInstructionsModal({
                 Download all documents (zip)
                 <button
                   onClick={onDownloadAll}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent text-zinc-950 text-xs font-bold uppercase tracking-wide hover:bg-accent-light transition-colors"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent text-zinc-950 text-xs font-bold uppercase tracking-wide hover:bg-accent-light transition-all duration-200 active:scale-[0.98] active:translate-y-px"
                 >
                   <Download className="w-4 h-4" />
                   Download
@@ -194,7 +194,7 @@ export function FinalInstructionsModal({
                     <button
                       type="submit"
                       disabled={subscribeStatus === "loading" || !email.trim()}
-                      className="px-3 py-1.5 bg-accent hover:bg-accent-light text-zinc-950 text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 bg-accent hover:bg-accent-light text-zinc-950 text-xs font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] active:translate-y-px"
                     >
                       {subscribeStatus === "loading" ? "..." : "Subscribe"}
                     </button>
@@ -243,7 +243,7 @@ export function FinalInstructionsModal({
         <div className="px-8 py-4 border-t border-zinc-800 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-mono font-semibold text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-accent hover:text-accent transition-colors"
+            className="px-4 py-2 text-sm font-mono font-semibold text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-accent hover:text-accent transition-all duration-200 active:scale-[0.98] active:translate-y-px"
           >
             Back to wizard
           </button>

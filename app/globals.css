@@ -172,3 +172,77 @@ body {
 .card-hover-accent:hover::after {
   opacity: 1;
 }
+
+/* Entry animations for wizard page */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes backdropEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeSlideUp {
+  animation: fadeSlideUp 0.4s ease-out forwards;
+}
+
+.animate-fadeSlideIn {
+  animation: fadeSlideIn 0.4s ease-out forwards;
+}
+
+.animate-modalEnter {
+  animation: modalEnter 0.3s ease-out forwards;
+}
+
+.animate-backdropEnter {
+  animation: backdropEnter 0.2s ease-out forwards;
+}
+
+/* Staggered animation delays */
+.animate-delay-100 { animation-delay: 100ms; opacity: 0; }
+.animate-delay-150 { animation-delay: 150ms; opacity: 0; }
+.animate-delay-200 { animation-delay: 200ms; opacity: 0; }
+.animate-delay-250 { animation-delay: 250ms; opacity: 0; }
+.animate-delay-300 { animation-delay: 300ms; opacity: 0; }
+.animate-delay-350 { animation-delay: 350ms; opacity: 0; }
+.animate-delay-400 { animation-delay: 400ms; opacity: 0; }
+
+/* Slide animation for loading bar */
+@keyframes slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}

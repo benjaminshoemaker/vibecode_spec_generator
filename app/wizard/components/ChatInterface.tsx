@@ -329,7 +329,7 @@ export default function ChatInterface({
 
       {/* Input Area */}
       <div className="p-6 bg-zinc-950 border-t border-zinc-800">
-        <form onSubmit={handleSubmit} className="relative flex gap-3 bg-zinc-900 border border-zinc-700 pl-4 pr-1 py-1 focus-within:border-accent focus-within:shadow-[0_0_0_3px_rgba(245,158,11,0.15)] transition-all min-h-[48px]">
+        <form onSubmit={handleSubmit} className="relative flex gap-3 bg-zinc-900 border border-zinc-700 pl-4 pr-1 py-1 focus-within:border-zinc-500 focus-within:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] transition-all duration-200 min-h-[48px]">
           <div className="flex items-center">
             <span className="text-accent font-mono text-sm select-none">$</span>
           </div>
@@ -356,7 +356,7 @@ export default function ChatInterface({
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="w-10 h-10 bg-accent hover:bg-accent-light disabled:bg-zinc-800 flex items-center justify-center transition-colors flex-shrink-0"
+              className="w-10 h-10 bg-accent hover:bg-accent-light disabled:bg-zinc-800 flex items-center justify-center transition-all duration-200 flex-shrink-0 active:scale-[0.95]"
             >
               <ArrowRight className="w-4 h-4 text-zinc-950" />
             </button>

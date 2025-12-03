@@ -153,7 +153,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
           </div>
           <button
             onClick={() => setShowExampleModal(true)}
-            className="text-xs text-accent hover:text-accent-light font-mono mt-2 inline-flex items-center gap-1"
+            className="text-xs text-accent hover:text-accent-light font-mono mt-2 inline-flex items-center gap-1 transition-all duration-200"
           >
             See example output →
           </button>
@@ -177,7 +177,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       {isGenerating && !stepData.generatedDoc && (
         <div id="preview-box" className="border-t border-zinc-800 bg-zinc-950 p-8">
           <div className="flex flex-col items-center justify-center py-16">
-            <Loader2 className="w-12 h-12 text-accent animate-spin mb-6" />
+            <Loader2 className="w-12 h-12 text-white animate-spin mb-6" />
             <div className="text-sm font-mono font-bold text-white mb-2 tracking-widest">
                GENERATING_ASSETS...
             </div>
@@ -186,7 +186,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
             </div>
 
             <div className="w-64 h-1 bg-zinc-800 mt-8 overflow-hidden">
-               <div className="h-full bg-accent w-1/2 animate-[slide_1s_linear_infinite]"></div>
+               <div className="h-full bg-zinc-400 w-1/2 animate-[slide_1s_linear_infinite]"></div>
             </div>
           </div>
         </div>
@@ -209,11 +209,11 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       )}
 
       {showExampleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-zinc-900 border border-zinc-800 max-w-3xl w-full max-h-[80vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-backdropEnter">
+          <div className="bg-zinc-900 border border-zinc-800 max-w-3xl w-full max-h-[80vh] flex flex-col animate-modalEnter shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
               <div>
-                <div className="text-2xs font-mono text-accent uppercase tracking-widest mb-1">Example Output</div>
+                <div className="text-2xs font-mono text-zinc-500 uppercase tracking-widest mb-1">Example Output</div>
                 <div className="text-lg font-bold text-white">{config.stepName}</div>
               </div>
               <button
