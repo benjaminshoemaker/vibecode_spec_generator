@@ -148,11 +148,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
       {/* Chat Box */}
       <div className="flex flex-col flex-1 min-h-[400px]">
         <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-950">
-          <div className="text-2xs font-mono text-accent uppercase tracking-widest mb-1">Current Module: Step 0{stepKey === 'onePager' ? '1' : stepKey === 'devSpec' ? '2' : stepKey === 'checklist' ? '3' : '4'}</div>
-          <div className="text-lg font-bold text-white tracking-tight">
-            {config.stepName}
-          </div>
-          <div className="text-sm text-[#a1a1aa] mt-1">
+          <div className="text-sm text-[#a1a1aa]">
             {config.userInstructions}
           </div>
           <button
