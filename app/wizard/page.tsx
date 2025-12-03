@@ -11,6 +11,7 @@ import { sampleDocs } from "./utils/sampleDocs";
 import { canAccessStep } from "./utils/stepAccess";
 import JSZip from "jszip";
 import Footer from "../components/Footer";
+import WizardProgress from "./components/WizardProgress";
 import { Terminal, ChevronRight, Check, Download, RotateCcw, FileJson, X } from 'lucide-react';
 import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { parseSpecMetadata } from "@/app/utils/parseSpecMetadata";
@@ -273,11 +274,14 @@ export default function WizardPage() {
         </div>
       </header>
 
+      {/* Progress Indicator */}
+      <WizardProgress />
+
       {/* Main Layout */}
       <div className="flex-1 max-w-[1800px] mx-auto w-full p-6 grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
         
         {/* Left Column: Interactive Wizard Area */}
-        <div className="flex flex-col h-[calc(100vh-104px)]">
+        <div className="flex flex-col h-[calc(100vh-180px)]">
           <div className="flex-1 bg-zinc-900 border border-zinc-800 overflow-hidden flex flex-col shadow-xl">
              <WizardStep
                 config={currentConfig}
@@ -344,7 +348,7 @@ export default function WizardPage() {
 
           {/* Progress Card - Order 2 on mobile, Order 3 on desktop */}
           <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-3">
-            <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">SEQUENCE</h3>
+            <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">GENERATED DOCUMENTS</h3>
 
             <div className="space-y-px bg-zinc-800 border border-zinc-800">
                {stepNames.map((name, index) => {
@@ -357,7 +361,7 @@ export default function WizardPage() {
                 return (
                   <div key={name} className={`relative flex items-center justify-between p-3 transition-all ${
                     isActive
-                      ? 'bg-zinc-800 border-l-2 border-accent'
+                      ? 'bg-zinc-800 border-l-2 border-white'
                       : isLocked
                         ? 'bg-zinc-900 border-l-2 border-transparent opacity-70'
                         : 'bg-zinc-900 hover:bg-zinc-800/50 border-l-2 border-transparent'
@@ -372,9 +376,9 @@ export default function WizardPage() {
                     >
                       <div className={`font-mono text-xs ${
                         isCompleted
-                          ? 'text-emerald-500'
+                          ? 'text-white'
                           : isActive
-                            ? 'text-accent'
+                            ? 'text-white'
                             : isLocked
                               ? 'text-zinc-700'
                               : 'text-[#a1a1aa]'
@@ -382,7 +386,7 @@ export default function WizardPage() {
                         {isCompleted ? '[✓]' : `[0${index + 1}]`}
                       </div>
                       <span className={`text-xs font-bold font-mono tracking-wide ${
-                        isActive ? 'text-white' : isLocked ? 'text-zinc-600' : 'text-[#a1a1aa]'
+                        (isActive || isCompleted) ? 'text-white' : isLocked ? 'text-zinc-600' : 'text-[#a1a1aa]'
                       }`}>
                         {name}
                       </span>
@@ -391,7 +395,7 @@ export default function WizardPage() {
                     {hasDocument && (
                       <button
                         onClick={() => handleDownload(stepKey, name)}
-                        className="text-[#a1a1aa] hover:text-accent transition-all"
+                        className="text-accent hover:text-accent-light transition-all"
                         title="Download"
                       >
                         <Download className="w-4 h-4" />

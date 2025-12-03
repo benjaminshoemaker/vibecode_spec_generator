@@ -130,6 +130,16 @@ body {
   50% { opacity: 0.40; }
 }
 
+/* Shimmer animation for progress bar */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
 /* Card hover accent corner */
 .card-hover-accent {
   position: relative;
