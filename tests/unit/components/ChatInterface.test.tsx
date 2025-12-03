@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ChatInterface from "@/app/wizard/components/ChatInterface";
 import { analytics } from "@/app/utils/analytics";
+import { spikelog } from "@/app/utils/spikelog";
 
 vi.mock("@/app/utils/analytics", () => {
   const trackChatMessage = vi.fn();
@@ -18,6 +19,7 @@ vi.mock("@/app/utils/analytics", () => {
 vi.mock("@/app/utils/spikelog", () => ({
   spikelog: {
     trackChatMessage: vi.fn(),
+    trackChatResponseTime: vi.fn(),
     trackStreamingFallback: vi.fn(),
   },
 }));
@@ -87,7 +89,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       // Type a message
       await user.type(textarea, "Hello AI");
@@ -113,7 +115,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       // Type a message
       await user.type(textarea, "Test message");
@@ -140,7 +142,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       await user.type(textarea, "Message 1");
       await user.keyboard("{Enter}");
@@ -160,7 +162,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea2 = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea2 = screen.getByPlaceholderText("Describe your idea...");
       await user.type(textarea2, "Message 2");
       await user.keyboard("{Enter}");
 
@@ -180,7 +182,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       await user.type(textarea, "Test message");
       await user.keyboard("{Enter}");
@@ -202,7 +204,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       // Try to submit empty message
       await user.click(textarea);
@@ -223,7 +225,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       await user.type(textarea, "   ");
       await user.keyboard("{Enter}");
@@ -243,7 +245,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       // Submit first message
       await user.type(textarea, "First message");
@@ -259,6 +261,34 @@ describe("ChatInterface - Analytics Tracking", () => {
 
       await waitFor(() => {
         expect(analytics.trackChatMessage).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it("tracks chat response time when the assistant replies", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <ChatInterface
+          systemPrompt="Test prompt"
+          initialMessages={[]}
+          onMessagesChange={mockOnMessagesChange}
+          stepName="ONE_PAGER"
+        />
+      );
+
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
+      await user.type(textarea, "Measure response time");
+      await user.keyboard("{Enter}");
+
+      await waitFor(() => {
+        expect(spikelog.trackChatResponseTime).toHaveBeenCalledTimes(1);
+        expect(spikelog.trackChatResponseTime).toHaveBeenCalledWith(
+          "ONE_PAGER",
+          expect.any(Number)
+        );
+        const duration =
+          (spikelog.trackChatResponseTime as ReturnType<typeof vi.fn>).mock.calls[0][1];
+        expect(duration).toBeGreaterThanOrEqual(0);
       });
     });
   });
@@ -319,7 +349,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
       await user.type(textarea, "Start streaming");
       await user.keyboard("{Enter}");
 
@@ -364,7 +394,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
       await user.type(textarea, "Trigger fallback");
       await user.keyboard("{Enter}");
 
@@ -392,7 +422,7 @@ describe("ChatInterface - Analytics Tracking", () => {
         />
       );
 
-      const textarea = screen.getByPlaceholderText("Describe your requirements...");
+      const textarea = screen.getByPlaceholderText("Describe your idea...");
 
       await user.type(textarea, "Test message");
       await user.keyboard("{Enter}");

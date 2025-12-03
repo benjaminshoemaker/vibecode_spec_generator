@@ -42,7 +42,7 @@ describe("ChatInterface streaming", () => {
       />
     );
 
-    const textarea = screen.getByPlaceholderText("Describe your requirements...");
+    const textarea = screen.getByPlaceholderText("Describe your idea...");
     await user.type(textarea, "Hi{enter}");
 
     await waitFor(() =>
@@ -77,7 +77,7 @@ describe("ChatInterface streaming", () => {
       />
     );
 
-    const textarea = screen.getByPlaceholderText("Describe your requirements...");
+    const textarea = screen.getByPlaceholderText("Describe your idea...");
     await user.type(textarea, "Hi{enter}");
 
     await waitFor(() =>

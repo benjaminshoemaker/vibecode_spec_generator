@@ -45,16 +45,18 @@ function getApiKey(): string | null {
  * - Server-side: sends directly to Spikelog API
  * - Client-side: sends to /api/spikelog which forwards to Spikelog
  */
+function getEnvironmentTag(): "prod" | "dev" {
+  return process.env.NODE_ENV === "production" ? "prod" : "dev";
+}
+
 async function sendMetric(
   chart: string,
   value: number,
   tags?: Record<string, string | number | boolean>
 ): Promise<void> {
   try {
-    const body: Record<string, unknown> = { chart, value };
-    if (tags && Object.keys(tags).length > 0) {
-      body.tags = tags;
-    }
+    const mergedTags = { env: getEnvironmentTag(), ...(tags ?? {}) };
+    const body: Record<string, unknown> = { chart, value, tags: mergedTags };
 
     if (isServer()) {
       // Server-side: send directly to Spikelog
@@ -287,14 +289,22 @@ function trackChatMessage(stepName: string): void {
 }
 
 /**
- * #14: Regeneration Attempts
+ * #14: Chat Response Time
+ * Measures submit-to-first-answer latency per step
+ */
+function trackChatResponseTime(stepName: string, durationMs: number): void {
+  track("Chat Response Time", durationMs, { step_name: stepName });
+}
+
+/**
+ * #15: Regeneration Attempts
  */
 function trackRegeneration(stepName: string): void {
   track("Regeneration Attempts", 1, { step_name: stepName });
 }
 
 /**
- * #15: Email Subscriptions
+ * #16: Email Subscriptions
  */
 function trackEmailSubscription(success: boolean): void {
   track("Email Subscriptions", success ? 1 : 0, { success });
@@ -323,8 +333,9 @@ export const spikelog = {
   trackApiError, // #10, #11
   trackGenerationResult, // #12
   trackChatMessage, // #13
-  trackRegeneration, // #14
-  trackEmailSubscription, // #15
+  trackChatResponseTime, // #14
+  trackRegeneration, // #15
+  trackEmailSubscription, // #16
 };
 
 export default spikelog;
