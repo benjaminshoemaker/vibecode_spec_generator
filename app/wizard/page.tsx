@@ -298,12 +298,12 @@ export default function WizardPage() {
           <div className="bg-zinc-900 border border-zinc-800 p-6 order-3 lg:order-1 animate-fadeSlideUp animate-delay-200">
             <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">EXAMPLE OUTPUT</h3>
 
-            <div className="relative max-h-[200px] overflow-hidden">
+            <div className="relative max-h-[120px] overflow-hidden">
               <pre className="font-mono text-xs text-zinc-400 whitespace-pre-wrap leading-relaxed">
                 {(currentStepKey === 'onePager' ? sampleDocs.onePager :
                   currentStepKey === 'devSpec' ? sampleDocs.devSpec :
                   currentStepKey === 'checklist' ? sampleDocs.promptPlan :
-                  sampleDocs.agentsMd).split('\n').slice(0, 15).join('\n')}
+                  sampleDocs.agentsMd).split('\n').slice(0, 8).join('\n')}
               </pre>
               {/* Fade gradient */}
               <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-zinc-900 to-transparent pointer-events-none"></div>
