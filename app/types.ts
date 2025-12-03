@@ -40,4 +40,5 @@ export interface StepConfig {
   initialGreeting?: string;
   generationPrompt?: string;
   inputPlaceholder?: string;
+  quickStartSuggestions?: string[];
 }

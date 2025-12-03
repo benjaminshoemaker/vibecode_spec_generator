@@ -140,6 +140,13 @@ body {
   animation: shimmer 2s linear infinite;
 }
 
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 1.5s linear infinite;
+}
+
 /* Card hover accent corner */
 .card-hover-accent {
   position: relative;

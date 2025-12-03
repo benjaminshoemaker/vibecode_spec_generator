@@ -169,6 +169,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
             initialGreeting={config.initialGreeting}
             stepName={config.stepName}
             placeholder={config.inputPlaceholder}
+            quickStartSuggestions={config.quickStartSuggestions}
           />
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Message } from "@/app/types";
-import { Terminal, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { spikelog } from "@/app/utils/spikelog";
 import { useHasHydrated } from "@/app/store";
@@ -15,6 +15,7 @@ interface ChatInterfaceProps {
   initialGreeting?: string;
   stepName?: string;
   placeholder?: string;
+  quickStartSuggestions?: string[];
 }
 
 export default function ChatInterface({
@@ -25,6 +26,7 @@ export default function ChatInterface({
   initialGreeting,
   stepName,
   placeholder,
+  quickStartSuggestions,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -125,6 +127,17 @@ export default function ChatInterface({
     setInput("");
     setIsLoading(true);
 
+    const responseStartTime = performance.now();
+    let hasTrackedResponseTime = false;
+    const trackChatResponseTime = () => {
+      if (hasTrackedResponseTime || !stepName) return;
+      hasTrackedResponseTime = true;
+      spikelog.trackChatResponseTime(
+        stepName,
+        Math.max(0, Math.round(performance.now() - responseStartTime))
+      );
+    };
+
     // Track chat message submission
     if (stepName) {
       analytics.trackChatMessage(stepName);
@@ -171,6 +184,7 @@ export default function ChatInterface({
           fallbackText ||
           "No response received. Please check your API key and try again.";
         updateAssistantMessage(assistantId, content);
+        trackChatResponseTime();
         // Log assistant message to database
         logChatMessage("assistant", content);
       } catch (err) {
@@ -211,6 +225,7 @@ export default function ChatInterface({
         const fallbackText = await responseClone.text();
         if (fallbackText) {
           updateAssistantMessage(assistantMessageId, fallbackText);
+          trackChatResponseTime();
           // Log assistant message to database
           logChatMessage("assistant", fallbackText);
         } else {
@@ -230,6 +245,7 @@ export default function ChatInterface({
           const chunk = decoder.decode(value, { stream: !done });
           accumulatedText += chunk;
           chunkCount += chunk.length;
+          trackChatResponseTime();
           updateAssistantMessage(assistantMessageId, accumulatedText);
         }
         if (done) {
@@ -237,6 +253,7 @@ export default function ChatInterface({
           if (finalChunk) {
             accumulatedText += finalChunk;
             chunkCount += finalChunk.length;
+            trackChatResponseTime();
             updateAssistantMessage(assistantMessageId, accumulatedText);
           }
 
@@ -245,12 +262,14 @@ export default function ChatInterface({
             const fallbackText = await responseClone.text().catch(() => "");
             if (fallbackText) {
               updateAssistantMessage(assistantMessageId, fallbackText);
+              trackChatResponseTime();
               // Log assistant message to database
               logChatMessage("assistant", fallbackText);
             } else {
               await runNonStreamingFallback(assistantMessageId, "empty_stream");
             }
           } else {
+            trackChatResponseTime();
             // Log assistant message to database after streaming completes
             logChatMessage("assistant", accumulatedText);
           }
@@ -277,9 +296,81 @@ export default function ChatInterface({
       {/* Chat History */}
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
-            <Terminal className="w-12 h-12 text-zinc-600 mb-4" />
-            <div className="text-sm font-mono text-zinc-500">TERMINAL SESSION READY</div>
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <svg width="100" height="100" viewBox="0 0 120 120" fill="none" className="mb-4 opacity-70">
+              {/* Layer 1 - Input layer (top) */}
+              <circle cx="25" cy="20" r="4" fill="#52525b" stroke="#71717a" strokeWidth="1"/>
+              <circle cx="45" cy="15" r="3" fill="#52525b" stroke="#71717a" strokeWidth="1"/>
+              <circle cx="60" cy="18" r="4" fill="#52525b" stroke="#71717a" strokeWidth="1"/>
+              <circle cx="75" cy="15" r="3" fill="#52525b" stroke="#71717a" strokeWidth="1"/>
+              <circle cx="95" cy="20" r="4" fill="#52525b" stroke="#71717a" strokeWidth="1"/>
+
+              {/* Layer 2 - Hidden layer 1 */}
+              <circle cx="30" cy="40" r="4" fill="#71717a" stroke="#a1a1aa" strokeWidth="1"/>
+              <circle cx="50" cy="38" r="5" fill="#71717a" stroke="#a1a1aa" strokeWidth="1"/>
+              <circle cx="70" cy="38" r="5" fill="#71717a" stroke="#a1a1aa" strokeWidth="1"/>
+              <circle cx="90" cy="40" r="4" fill="#71717a" stroke="#a1a1aa" strokeWidth="1"/>
+
+              {/* Layer 3 - Hidden layer 2 (center, active) */}
+              <circle cx="40" cy="58" r="5" fill="#a1a1aa" stroke="#d4d4d8" strokeWidth="1"/>
+              <circle cx="60" cy="55" r="7" fill="#f59e0b" stroke="#fbbf24" strokeWidth="2">
+                <animate attributeName="r" values="7;8;7" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="80" cy="58" r="5" fill="#a1a1aa" stroke="#d4d4d8" strokeWidth="1"/>
+
+              {/* Connections - Layer 1 to 2 */}
+              <g stroke="#52525b" strokeWidth="0.5" opacity="0.8">
+                <line x1="25" y1="20" x2="30" y2="40"/>
+                <line x1="25" y1="20" x2="50" y2="38"/>
+                <line x1="45" y1="15" x2="30" y2="40"/>
+                <line x1="45" y1="15" x2="50" y2="38"/>
+                <line x1="60" y1="18" x2="50" y2="38"/>
+                <line x1="60" y1="18" x2="70" y2="38"/>
+                <line x1="75" y1="15" x2="70" y2="38"/>
+                <line x1="75" y1="15" x2="90" y2="40"/>
+                <line x1="95" y1="20" x2="70" y2="38"/>
+                <line x1="95" y1="20" x2="90" y2="40"/>
+              </g>
+
+              {/* Connections - Layer 2 to 3 */}
+              <g stroke="#71717a" strokeWidth="0.75">
+                <line x1="30" y1="40" x2="40" y2="58"/>
+                <line x1="30" y1="40" x2="60" y2="55"/>
+                <line x1="50" y1="38" x2="40" y2="58"/>
+                <line x1="50" y1="38" x2="60" y2="55"/>
+                <line x1="70" y1="38" x2="60" y2="55"/>
+                <line x1="70" y1="38" x2="80" y2="58"/>
+                <line x1="90" y1="40" x2="60" y2="55"/>
+                <line x1="90" y1="40" x2="80" y2="58"/>
+              </g>
+
+              {/* Active signal pulse */}
+              <line x1="50" y1="38" x2="60" y2="55" stroke="#f59e0b" strokeWidth="2" opacity="0.8">
+                <animate attributeName="opacity" values="0.4;1;0.4" dur="0.8s" repeatCount="indefinite"/>
+              </line>
+              <line x1="70" y1="38" x2="60" y2="55" stroke="#f59e0b" strokeWidth="2" opacity="0.8">
+                <animate attributeName="opacity" values="0.4;1;0.4" dur="0.8s" repeatCount="indefinite" begin="0.2s"/>
+              </line>
+
+              {/* Output: document blocks */}
+              <rect x="30" y="80" width="18" height="22" fill="#3f3f46" stroke="#52525b" strokeWidth="1"/>
+              <rect x="51" y="80" width="18" height="22" fill="#3f3f46" stroke="#52525b" strokeWidth="1"/>
+              <rect x="72" y="80" width="18" height="22" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1"/>
+              {/* Doc lines */}
+              <line x1="34" y1="86" x2="44" y2="86" stroke="#71717a" strokeWidth="1"/>
+              <line x1="34" y1="90" x2="42" y2="90" stroke="#71717a" strokeWidth="1"/>
+              <line x1="55" y1="86" x2="65" y2="86" stroke="#71717a" strokeWidth="1"/>
+              <line x1="55" y1="90" x2="63" y2="90" stroke="#71717a" strokeWidth="1"/>
+              <line x1="76" y1="86" x2="86" y2="86" stroke="#fbbf24" strokeWidth="1"/>
+              <line x1="76" y1="90" x2="84" y2="90" stroke="#fbbf24" strokeWidth="1"/>
+
+              {/* Flow arrow */}
+              <path d="M60 65 L60 78" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="3,2">
+                <animate attributeName="stroke-dashoffset" values="0;-10" dur="0.5s" repeatCount="indefinite"/>
+              </path>
+              <path d="M55 73 L60 78 L65 73" fill="none" stroke="#f59e0b" strokeWidth="1.5"/>
+            </svg>
+            <div className="text-sm font-mono text-zinc-500 opacity-50">Ready to bring your idea to life.</div>
           </div>
         )}
         
@@ -301,10 +392,12 @@ export default function ChatInterface({
             }`}>
               {message.content}
               {message.role === "assistant" && isAssistantPending === message.id && (
-                <span
-                  className="ml-1 inline-block w-[6px] h-4 bg-accent animate-pulse align-bottom rounded-sm opacity-80"
-                  aria-label="Assistant is typing"
-                />
+                <span className="ml-2 inline-flex items-center gap-2 text-accent">
+                  <svg className="w-4 h-4 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                    <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                  </svg>
+                </span>
               )}
             </div>
           </div>
@@ -316,10 +409,13 @@ export default function ChatInterface({
               Vibe Scaffold Assistant
             </div>
             <div className="bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa] px-4 py-3 text-sm leading-relaxed">
-              <span
-                className="inline-block w-[6px] h-4 bg-accent animate-pulse align-bottom rounded-sm opacity-80"
-                aria-label="Waiting for response"
-              />
+              <div className="flex items-center gap-3 text-accent">
+                <svg className="w-5 h-5 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                  <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                </svg>
+                <span className="font-mono text-sm">Processing request...</span>
+              </div>
             </div>
           </div>
         )}
@@ -329,6 +425,27 @@ export default function ChatInterface({
 
       {/* Input Area */}
       <div className="p-6 bg-zinc-950 border-t border-zinc-800">
+        {messages.length <= 1 && quickStartSuggestions && quickStartSuggestions.length > 0 && (
+          <div className="mb-4">
+            <div className="text-xs font-mono uppercase tracking-wider text-[#a1a1aa] mb-3 flex items-center gap-2">
+              <span className="text-accent">›</span>
+              Quick start suggestions
+            </div>
+            <div className="flex flex-col gap-2">
+              {quickStartSuggestions.map((text, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setInput(text)}
+                  className="text-left px-4 py-3 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm text-[#a1a1aa] hover:text-[#e4e4e7] transition-all group"
+                >
+                  <span className="font-mono text-zinc-700 group-hover:text-accent mr-3">{String(i + 1).padStart(2, '0')}</span>
+                  {text}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="relative flex gap-3 bg-zinc-900 border border-zinc-700 pl-4 pr-1 py-1 focus-within:border-zinc-500 focus-within:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] transition-all duration-200 min-h-[48px]">
           <div className="flex items-center">
             <span className="text-accent font-mono text-sm select-none">$</span>
@@ -344,7 +461,7 @@ export default function ChatInterface({
                     handleSubmit(e);
                   }
                 }}
-                placeholder={placeholder || "Describe your requirements..."}
+                placeholder={placeholder || "Describe your idea..."}
                 className="w-full bg-transparent text-sm font-mono text-white focus:outline-none resize-none placeholder:text-[#a1a1aa] leading-5 overflow-y-auto py-3"
                 rows={1}
                 disabled={isLoading}
