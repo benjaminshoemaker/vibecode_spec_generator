@@ -203,7 +203,7 @@ export default function LandingPage() {
               </div>
 
               <p className="text-lg text-zinc-400 max-w-xl leading-relaxed mb-10">
-                VibeScaffold generates the spec your AI tools need to get from 80% to shipped - clear requirements, persistent context, and defined acceptance criteria.
+                VibeScaffold generates the spec your AI tools need to get all the way to shipped - clear requirements, persistent context, and defined acceptance criteria.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
