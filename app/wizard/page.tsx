@@ -221,12 +221,12 @@ export default function WizardPage() {
       <div className="relative z-10 flex flex-col min-h-screen">
 
       {/* Header */}
-      <header className="bg-zinc-950 border-b border-zinc-800 h-14 sticky top-0 z-30 px-6 flex items-center justify-between">
+      <header className="bg-zinc-950 border-b border-zinc-800 h-14 sticky top-0 z-30 px-6 flex items-center justify-between animate-fadeSlideUp">
         <div className="flex items-center gap-3">
            <div className="w-[18px] h-[18px] bg-accent flex items-center justify-center">
               <div className="w-2 h-2 bg-zinc-950"></div>
            </div>
-           <span className="font-mono text-sm font-bold text-white tracking-tight">VIBE_SCAFFOLD <span className="text-[#a1a1aa]">// WIZARD</span></span>
+           <span className="font-mono text-sm font-bold text-white tracking-tight">VIBE_SCAFFOLD <span className="text-zinc-600 mx-1">›</span> <span className="text-zinc-400 font-medium">WIZARD</span></span>
         </div>
         
         <div className="flex gap-4">
@@ -281,7 +281,7 @@ export default function WizardPage() {
       <div className="flex-1 max-w-[1800px] mx-auto w-full p-6 grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
         
         {/* Left Column: Interactive Wizard Area */}
-        <div className="flex flex-col h-[calc(100vh-180px)]">
+        <div className="flex flex-col h-[calc(100vh-180px)] animate-fadeSlideUp animate-delay-150">
           <div className="flex-1 bg-zinc-900 border border-zinc-800 overflow-hidden flex flex-col shadow-xl">
              <WizardStep
                 config={currentConfig}
@@ -295,7 +295,7 @@ export default function WizardPage() {
         <aside className="space-y-6 flex flex-col">
 
           {/* Example Output Panel */}
-          <div className="bg-zinc-900 border border-zinc-800 p-6 order-3 lg:order-1">
+          <div className="bg-zinc-900 border border-zinc-800 p-6 order-3 lg:order-1 animate-fadeSlideUp animate-delay-200">
             <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">EXAMPLE OUTPUT</h3>
 
             <div className="relative max-h-[200px] overflow-hidden">
@@ -311,14 +311,14 @@ export default function WizardPage() {
 
             <button
               onClick={() => setShowExampleModal(true)}
-              className="text-xs text-accent hover:text-accent-light font-mono mt-3 inline-flex items-center gap-1"
+              className="text-xs text-accent hover:text-accent-light font-mono mt-3 inline-flex items-center gap-1 transition-all duration-200"
             >
               See full example →
             </button>
           </div>
 
           {/* Action Card - Order 1 on mobile, Order 2 on desktop */}
-          <div className="bg-zinc-900 border border-zinc-800 p-6 lg:sticky lg:top-20 order-1 lg:order-2">
+          <div className="bg-zinc-900 border border-zinc-800 p-6 lg:sticky lg:top-20 order-1 lg:order-2 animate-fadeSlideUp animate-delay-250">
             <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">ACTIONS</h3>
 
             <button
@@ -329,7 +329,7 @@ export default function WizardPage() {
                 isGenerating ||
                 (currentStepKey !== 'checklist' && currentStepKey !== 'agentsMd' && !steps[currentStepKey].chatHistory.some(msg => msg.role === 'user'))
               }
-              className="w-full mb-3 py-3 px-4 bg-accent hover:bg-accent-light text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(245,158,11,0.15)]"
+              className="w-full mb-3 py-3 px-4 bg-accent hover:bg-accent-light text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(245,158,11,0.15)] active:scale-[0.98] active:translate-y-px"
             >
               {isGenerating && (
                 <div className="w-3 h-3 border-2 border-amber-400 border-t-zinc-900 rounded-full animate-spin"></div>
@@ -340,14 +340,14 @@ export default function WizardPage() {
             <button
               onClick={handleApproveAndNext}
               disabled={!steps[currentStepKey].generatedDoc}
-              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 hover:border-accent hover:text-accent text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 hover:border-accent hover:text-accent text-xs font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] active:translate-y-px"
             >
               {currentStep === 4 ? "FINALIZE" : "APPROVE & NEXT"}
             </button>
           </div>
 
           {/* Progress Card - Order 2 on mobile, Order 3 on desktop */}
-          <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-3">
+          <div className="bg-zinc-900 border border-zinc-800 p-6 order-2 lg:order-3 animate-fadeSlideUp animate-delay-300">
             <h3 className="text-2xs font-mono font-bold text-[#a1a1aa] uppercase tracking-widest mb-4">GENERATED DOCUMENTS</h3>
 
             <div className="space-y-px bg-zinc-800 border border-zinc-800">
@@ -431,11 +431,11 @@ export default function WizardPage() {
 
       {/* Example Output Modal */}
       {showExampleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-zinc-900 border border-zinc-800 max-w-3xl w-full max-h-[80vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-backdropEnter">
+          <div className="bg-zinc-900 border border-zinc-800 max-w-3xl w-full max-h-[80vh] flex flex-col animate-modalEnter shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
               <div>
-                <div className="text-2xs font-mono text-accent uppercase tracking-widest mb-1">Example Output</div>
+                <div className="text-2xs font-mono text-zinc-500 uppercase tracking-widest mb-1">Example Output</div>
                 <div className="text-lg font-bold text-white">{currentConfig.stepName}</div>
               </div>
               <button

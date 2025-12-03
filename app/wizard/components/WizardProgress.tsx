@@ -71,7 +71,7 @@ export default function WizardProgress() {
   };
 
   return (
-    <div className="bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/60 sticky top-14 z-20">
+    <div className="bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/60 sticky top-14 z-20 animate-fadeSlideUp animate-delay-100">
       <div className="max-w-[1800px] mx-auto px-6 py-4">
         {/* Step Counter Label */}
         <div className="flex items-center gap-3 mb-3">
