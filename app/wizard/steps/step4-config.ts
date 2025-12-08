@@ -8,7 +8,7 @@ export const step4Config: StepConfig = {
   systemPrompt: `On this step, we're going to generate an AGENTS.md file. The user will now optionally provide some new details about what they want to be in that file. Note them, provide feedback, and wait for them to move on to the prompt plan stage. If they don't know how to do that, guide them to click on 'Generate AGENTS.md' Do NOT generate the full AGENTS.md in the chat.`,
   generateButtonText: "Generate AGENTS.md",
   approveButtonText: "Approve Draft & Save",
-  documentInputs: ["devSpec"], // References all previous steps
+  documentInputs: ["devSpec", "checklist"], // References all previous steps
   initialGreeting: "For this step, I don't need any new information. If you have any tweaks or changes you'd like to make or suggest, feel free to provide them now. When you're ready, click 'Generate AGENTS.md'",
   generationPrompt: `Using the information in the prompt_plan & spec attached here, write a minimal AGENTS.md file to include in the repository so that agents like Codex & Claude Code can interact well. Make sure it includes a description of what each file is (prompt_plan.md, spec.md, idea.md, idea_one_pager.md), as well as what will live in /designs/. Include the following section verbatim:
 
