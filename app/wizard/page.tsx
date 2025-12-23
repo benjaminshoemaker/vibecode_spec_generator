@@ -27,7 +27,7 @@ const stepConfigs: StepConfig[] = [
 ];
 
 const stepKeyMap = ["onePager", "devSpec", "checklist", "agentsMd"] as const;
-const stepNames = ["ONE_PAGER", "DEV_SPEC", "PROMPT_PLAN", "AGENTS"];
+const stepNames = ["ONE_PAGER", "DEV_SPEC", "PROMPT_PLAN", "AGENTS_MD"];
 
 export default function WizardPage() {
   const { currentStep, setCurrentStep, steps, isGenerating, resetWizard, updateStepDoc, approveStep } = useWizardStore();
