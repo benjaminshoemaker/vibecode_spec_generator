@@ -11,6 +11,16 @@ vi.mock("@/app/utils/analytics", () => ({
   },
 }));
 
+vi.mock("@/app/wizard/components/ChatInterface", () => ({
+  __esModule: true,
+  default: () => <div data-testid="chat-interface" />,
+}));
+
+vi.mock("@/app/wizard/components/ChatInterfaceWithOptions", () => ({
+  __esModule: true,
+  default: () => <div data-testid="chat-interface-with-options" />,
+}));
+
 import WizardStep from "@/app/wizard/components/WizardStep";
 import { useWizardStore } from "@/app/store";
 import { analytics } from "@/app/utils/analytics";
@@ -75,6 +85,25 @@ describe("WizardStep - Analytics Tracking", () => {
           }),
         },
       } as any);
+    });
+  });
+
+  describe("Multiple choice options integration", () => {
+    it("should render ChatInterfaceWithOptions for step 1 (onePager)", () => {
+      render(
+        <WizardStep config={mockConfig} stepKey="onePager" onApproveAndNext={vi.fn()} />
+      );
+      expect(
+        screen.getByTestId("chat-interface-with-options")
+      ).toBeInTheDocument();
+    });
+
+    it("should render ChatInterface for non-step-1 steps", () => {
+      const devSpecConfig: StepConfig = { ...mockConfig, stepName: "DEV_SPEC" };
+      render(
+        <WizardStep config={devSpecConfig} stepKey="devSpec" onApproveAndNext={vi.fn()} />
+      );
+      expect(screen.getByTestId("chat-interface")).toBeInTheDocument();
     });
   });
 
