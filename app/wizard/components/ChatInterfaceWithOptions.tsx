@@ -1,14 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowRight } from "lucide-react";
 
 import { Message } from "@/app/types";
 import { analytics, getOrCreateClientId } from "@/app/utils/analytics";
 import { spikelog } from "@/app/utils/spikelog";
 import { useHasHydrated } from "@/app/store";
-import { QuestionOptionsWidget } from "./QuestionOptionsWidget";
-import { getQuestionInstances } from "@/app/wizard/utils/questionInstances";
+import { OptionsModal, type OptionsModalItem } from "./OptionsModal";
+import { extractQuestionLines } from "@/app/wizard/utils/questionInstances";
+import { questionOptionsSchema } from "@/app/schemas/questionOptions";
+import { summarizeConversation } from "@/app/hooks/useQuestionOptions";
+import { formatSelectionsAsMessage } from "@/app/wizard/utils/selectionFormat";
 
 interface ChatInterfaceWithOptionsProps {
   systemPrompt: string;
@@ -75,32 +78,14 @@ export default function ChatInterfaceWithOptions({
   const lastMessage = messages[messages.length - 1];
   const isAssistantPending =
     isLoading && lastMessage?.role === "assistant" ? lastMessage.id : null;
-  const [dismissedInstanceIds, setDismissedInstanceIds] = useState<Set<string>>(
-    () => new Set()
-  );
-
-  const questionInstances = useMemo(
-    () =>
-      getQuestionInstances(messages, {
-        cap: 5,
-        pendingAssistantMessageId: isAssistantPending,
-        dismissedInstanceIds,
-      }),
-    [dismissedInstanceIds, isAssistantPending, messages]
-  );
-
-  const questionInstancesByMessageId = useMemo(() => {
-    const map = new Map<string, typeof questionInstances>();
-    for (const instance of questionInstances) {
-      const existing = map.get(instance.messageId);
-      if (existing) {
-        existing.push(instance);
-      } else {
-        map.set(instance.messageId, [instance]);
-      }
-    }
-    return map;
-  }, [questionInstances]);
+  const dismissedAssistantIdsRef = useRef<Set<string>>(new Set());
+  const optionsAbortRef = useRef<AbortController | null>(null);
+  const [optionsModalState, setOptionsModalState] = useState<{
+    assistantMessageId: string;
+    questions: string[];
+    optionsByQuestion: string[][];
+    items: OptionsModalItem[];
+  } | null>(null);
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -309,6 +294,62 @@ export default function ChatInterfaceWithOptions({
               trackChatResponseTime();
               logChatMessage("assistant", accumulatedText);
             }
+
+            // Batched options modal: only attempt after the assistant has fully finished streaming.
+            try {
+              const assistantText = accumulatedText;
+              const questions = extractQuestionLines(assistantText);
+              if (
+                questions.length > 0 &&
+                !dismissedAssistantIdsRef.current.has(assistantMessageId)
+              ) {
+                optionsAbortRef.current?.abort();
+                const controller = new AbortController();
+                optionsAbortRef.current = controller;
+
+                const conversationSummary = summarizeConversation([
+                  ...requestMessages,
+                  { id: assistantMessageId, role: "assistant", content: assistantText },
+                ]);
+
+                const optionResults = await Promise.all(
+                  questions.map(async (questionText) => {
+                    const res = await fetch("/api/generate-options", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ questionText, conversationSummary }),
+                      signal: controller.signal,
+                    });
+                    if (!res.ok) {
+                      throw new Error("Failed to generate options");
+                    }
+                    const text = await res.text();
+                    return questionOptionsSchema.parse(JSON.parse(text));
+                  })
+                );
+
+                if (controller.signal.aborted) break;
+
+                const items: OptionsModalItem[] = optionResults.map(
+                  (result, idx) => ({
+                    question: questions[idx] ?? `Question ${idx + 1}?`,
+                    options: result.options,
+                    recommendedIndex: result.recommendedIndex,
+                    confidence: result.confidence,
+                  })
+                );
+
+                setOptionsModalState({
+                  assistantMessageId,
+                  questions,
+                  optionsByQuestion: optionResults.map((r) => r.options),
+                  items,
+                });
+              }
+            } catch {
+              // Ignore failures; user can type manually.
+            }
+
             break;
           }
         }
@@ -340,82 +381,82 @@ export default function ChatInterfaceWithOptions({
 
   return (
     <div className="flex flex-col h-full bg-zinc-950">
+      <OptionsModal
+        open={!!optionsModalState}
+        title="Answer these questions"
+        items={optionsModalState?.items ?? []}
+        onClose={() => {
+          if (optionsModalState) {
+            dismissedAssistantIdsRef.current.add(optionsModalState.assistantMessageId);
+          }
+          setOptionsModalState(null);
+          textareaRef.current?.focus();
+        }}
+        onSubmit={(selectedIndices) => {
+          if (!optionsModalState) return;
+
+          const messageText = formatSelectionsAsMessage({
+            questions: optionsModalState.questions,
+            optionsByQuestion: optionsModalState.optionsByQuestion,
+            selectedIndices,
+          });
+
+          dismissedAssistantIdsRef.current.add(optionsModalState.assistantMessageId);
+          setOptionsModalState(null);
+          if (!messageText) {
+            textareaRef.current?.focus();
+            return;
+          }
+          void sendUserMessage(messageText);
+        }}
+      />
+
       <div
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-6 flex flex-col gap-6"
       >
-        {messages.map((message) => {
-          const messageInstances = questionInstancesByMessageId.get(message.id) ?? [];
-          return (
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex flex-col max-w-[90%] ${
+              message.role === "user"
+                ? "self-end items-end"
+                : "self-start items-start"
+            }`}
+          >
             <div
-              key={message.id}
-              className={`flex flex-col max-w-[90%] ${
-                message.role === "user"
-                  ? "self-end items-end"
-                  : "self-start items-start"
+              className={`text-2xs font-mono uppercase tracking-wider mb-1 ${
+                message.role === "user" ? "text-accent" : "text-[#a1a1aa]"
               }`}
             >
-              <div
-                className={`text-2xs font-mono uppercase tracking-wider mb-1 ${
-                  message.role === "user" ? "text-accent" : "text-[#a1a1aa]"
-                }`}
-              >
-                {message.role === "user" ? "You" : "Vibe Scaffold Assistant"}
-              </div>
-
-              <div
-                className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap w-full ${
-                  message.role === "user"
-                    ? "bg-accent-glow border border-accent/30 text-[#e4e4e7]"
-                    : "bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa]"
-                }`}
-              >
-                {message.content}
-                {message.role === "assistant" &&
-                  isAssistantPending === message.id && (
-                    <span className="ml-2 inline-flex items-center gap-2 text-accent">
-                      <svg
-                        className="w-4 h-4 animate-spin-slow"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
-                        <path
-                          d="M12 2a10 10 0 0 1 10 10"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </span>
-                  )}
-              </div>
-
-              {message.role === "assistant" && messageInstances.length > 0 ? (
-                <div className="w-full">
-                  {messageInstances.map((instance) => (
-                    <QuestionOptionsWidget
-                      key={instance.id}
-                      id={instance.id}
-                      enabled={!isLoading}
-                      questionText={instance.questionText}
-                      conversationSummary={instance.conversationSummary}
-                      onSelect={(option) => {
-                        setDismissedInstanceIds((prev) => {
-                          const next = new Set(prev);
-                          next.add(instance.id);
-                          return next;
-                        });
-                        void sendUserMessage(option);
-                      }}
-                      onTypeOwn={() => textareaRef.current?.focus()}
-                    />
-                  ))}
-                </div>
-              ) : null}
+              {message.role === "user" ? "You" : "Vibe Scaffold Assistant"}
             </div>
-          );
-        })}
+
+            <div
+              className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap w-full ${
+                message.role === "user"
+                  ? "bg-accent-glow border border-accent/30 text-[#e4e4e7]"
+                  : "bg-zinc-800 border-l-2 border-zinc-700 text-[#a1a1aa]"
+              }`}
+            >
+              {message.content}
+              {message.role === "assistant" && isAssistantPending === message.id && (
+                <span className="ml-2 inline-flex items-center gap-2 text-accent">
+                  <svg
+                    className="w-4 h-4 animate-spin-slow"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                    <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                  </svg>
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
 
         {isLoading && lastMessage?.role === "user" && (
           <div className="flex flex-col max-w-[90%] self-start items-start">
