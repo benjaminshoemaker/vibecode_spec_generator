@@ -50,6 +50,10 @@ export function OptionsModal({
 
   if (!open) return null;
 
+  const hasAnySelection = selectedIndices.some(
+    (idx) => typeof idx === "number"
+  );
+
   return (
     <div
       role="dialog"
@@ -142,6 +146,7 @@ export function OptionsModal({
             <button
               type="button"
               onClick={() => onSubmit(selectedIndices)}
+              disabled={!hasAnySelection}
               className="px-4 py-2 bg-white text-zinc-950 text-sm font-mono hover:bg-zinc-200 transition-colors"
             >
               Submit
@@ -152,4 +157,3 @@ export function OptionsModal({
     </div>
   );
 }
-
