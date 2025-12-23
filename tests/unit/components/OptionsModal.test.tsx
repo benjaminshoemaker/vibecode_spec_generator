@@ -159,5 +159,30 @@ describe("OptionsModal", () => {
     // Assert
     expect(onSubmit).toHaveBeenCalledWith([1, 0]);
   });
-});
 
+  it("should disable submit when nothing is selected", () => {
+    // Arrange
+    render(
+      <OptionsModal
+        open={true}
+        title="Answer these questions"
+        items={[
+          {
+            question: "What platform are you targeting?",
+            options: ["Web app", "Mobile app", "Desktop app"],
+            recommendedIndex: null,
+            confidence: "weak",
+          },
+        ]}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Act
+    const submit = screen.getByRole("button", { name: /submit/i });
+
+    // Assert
+    expect(submit).toBeDisabled();
+  });
+});
