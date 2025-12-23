@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { StepConfig, Message } from "@/app/types";
 import { useWizardStore } from "@/app/store";
 import ChatInterface from "./ChatInterface";
+import ChatInterfaceWithOptions from "./ChatInterfaceWithOptions";
 import DocumentPreview from "./DocumentPreview";
 import { Terminal, Loader2, X } from 'lucide-react';
 import { analytics } from "@/app/utils/analytics";
@@ -20,6 +21,7 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
   const { steps, isGenerating, setIsGenerating, updateStepChat, updateStepDoc, approveStep, resetCounter } =
     useWizardStore();
   const stepData = steps[stepKey];
+  const enableMultipleChoice = stepKey === "onePager";
 
   const [error, setError] = useState<string | null>(null);
   const [showExampleModal, setShowExampleModal] = useState(false);
@@ -160,17 +162,31 @@ export default function WizardStep({ config, stepKey, onApproveAndNext }: Wizard
         </div>
 
         <div className="flex-1 overflow-hidden bg-zinc-950">
-          <ChatInterface
-            key={`${stepKey}-${resetCounter}`}
-            systemPrompt={config.systemPrompt}
-            initialMessages={stepData.chatHistory}
-            onMessagesChange={handleMessagesChange}
-            documentInputs={documentInputsForChat}
-            initialGreeting={config.initialGreeting}
-            stepName={config.stepName}
-            placeholder={config.inputPlaceholder}
-            quickStartSuggestions={config.quickStartSuggestions}
-          />
+          {enableMultipleChoice ? (
+            <ChatInterfaceWithOptions
+              key={`${stepKey}-${resetCounter}`}
+              systemPrompt={config.systemPrompt}
+              initialMessages={stepData.chatHistory}
+              onMessagesChange={handleMessagesChange}
+              documentInputs={documentInputsForChat}
+              initialGreeting={config.initialGreeting}
+              stepName={config.stepName}
+              placeholder={config.inputPlaceholder}
+              quickStartSuggestions={config.quickStartSuggestions}
+            />
+          ) : (
+            <ChatInterface
+              key={`${stepKey}-${resetCounter}`}
+              systemPrompt={config.systemPrompt}
+              initialMessages={stepData.chatHistory}
+              onMessagesChange={handleMessagesChange}
+              documentInputs={documentInputsForChat}
+              initialGreeting={config.initialGreeting}
+              stepName={config.stepName}
+              placeholder={config.inputPlaceholder}
+              quickStartSuggestions={config.quickStartSuggestions}
+            />
+          )}
         </div>
       </div>
 
