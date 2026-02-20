@@ -1,7 +1,6 @@
-import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
-
 import { questionOptionsSchema } from "@/app/schemas/questionOptions";
+import { getOptionsModel } from "@/app/utils/ai-provider";
 
 export const runtime = "edge";
 
@@ -28,9 +27,6 @@ export async function POST(req: Request) {
       return new Response("questionText is required", { status: 400 });
     }
 
-    const modelName =
-      process.env.OPENAI_OPTIONS_MODEL || process.env.OPENAI_MODEL || "gpt-4o";
-
     const prompt = [
       "CONVERSATION SUMMARY:",
       typeof conversationSummary === "string" && conversationSummary.trim().length > 0
@@ -42,7 +38,7 @@ export async function POST(req: Request) {
     ].join("\n");
 
     const result = streamObject({
-      model: openai(modelName),
+      model: getOptionsModel(),
       system: systemPrompt,
       prompt,
       schema: questionOptionsSchema,

@@ -1,6 +1,6 @@
-import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { spikelog } from "@/app/utils/spikelog";
+import { getModel } from "@/app/utils/ai-provider";
 
 export const runtime = "edge";
 
@@ -71,10 +71,10 @@ Please generate the ${stepName} document now in markdown format:`;
     console.log("-".repeat(80) + "\n");
 
     const modelName = process.env.OPENAI_MODEL || "gpt-4o";
-    console.log(`🔧 Using model: ${modelName}\n`);
+    console.log(`🔧 Using model: ${modelName} (provider: ${process.env.AI_PROVIDER || "openai"})\n`);
 
     const result = streamText({
-      model: openai(modelName),
+      model: getModel(modelName),
       prompt: generationPrompt,
     });
 
