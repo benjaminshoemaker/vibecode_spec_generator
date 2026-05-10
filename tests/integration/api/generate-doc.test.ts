@@ -8,9 +8,13 @@ vi.mock("ai", () => ({
   })),
 }));
 
-vi.mock("@ai-sdk/openai", () => ({
-  openai: vi.fn(() => "mocked-openai-model"),
-}));
+vi.mock("@ai-sdk/openai", () => {
+  const mockOpenaiFn = vi.fn((modelName) => "mocked-openai-model-" + modelName);
+  return {
+    openai: mockOpenaiFn,
+    createOpenAI: vi.fn(() => mockOpenaiFn),
+  };
+});
 
 describe("Generate Doc API Route", () => {
   beforeEach(() => {
@@ -422,7 +426,7 @@ describe("Generate Doc API Route", () => {
       await POST(req);
 
       expect(streamText).toHaveBeenCalledWith({
-        model: "mocked-openai-model",
+        model: "mocked-openai-model-gpt-4o",
         prompt: expect.any(String),
       });
 

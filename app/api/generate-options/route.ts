@@ -1,4 +1,4 @@
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 
 import { questionOptionsSchema } from "@/app/schemas/questionOptions";
@@ -40,6 +40,11 @@ export async function POST(req: Request) {
       "QUESTION:",
       questionText.trim(),
     ].join("\n");
+
+    const openai = createOpenAI({
+      apiKey: process.env.OPENAI_OPTIONS_API_KEY || process.env.OPENAI_API_KEY,
+      baseURL: process.env.OPENAI_OPTIONS_BASE_URL || process.env.OPENAI_BASE_URL || undefined,
+    });
 
     const result = streamObject({
       model: openai(modelName),

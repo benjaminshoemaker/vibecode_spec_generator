@@ -1,4 +1,4 @@
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { spikelog } from "@/app/utils/spikelog";
 
@@ -72,6 +72,11 @@ Please generate the ${stepName} document now in markdown format:`;
 
     const modelName = process.env.OPENAI_MODEL || "gpt-4o";
     console.log(`🔧 Using model: ${modelName}\n`);
+
+    const openai = createOpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      baseURL: process.env.OPENAI_BASE_URL || undefined,
+    });
 
     const result = streamText({
       model: openai(modelName),
