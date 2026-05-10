@@ -11,9 +11,13 @@ vi.mock("ai", () => ({
   })),
 }));
 
-vi.mock("@ai-sdk/openai", () => ({
-  openai: vi.fn(() => "mocked-openai-model"),
-}));
+vi.mock("@ai-sdk/openai", () => {
+  const mockOpenaiFn = vi.fn((modelName) => "mocked-openai-model-" + modelName);
+  return {
+    openai: mockOpenaiFn,
+    createOpenAI: vi.fn(() => mockOpenaiFn),
+  };
+});
 
 describe("Chat API Route", () => {
   beforeEach(() => {
