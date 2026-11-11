@@ -5,9 +5,22 @@
 
 Live at **[vibescaffold.dev](https://vibescaffold.dev/)**.
 
-A Next.js application with a multi-step wizard interface that uses AI-powered chat to gather requirements and generate comprehensive technical specification documents.
+Vibe Scaffold asks questions about an app idea and turns the answers into
+four documents: a product brief, technical spec, implementation plan,
+and instructions for a coding agent.
 
-Stop getting "close but not quite right" results from AI coding tools. Vibe Scaffold gives you a structured, step-by-step process to capture your vision and generate documentation that AI agents understand and can execute on iteratively. The app helps you refine your idea, turn it into full technical architecture, and create a step-by-step development plan. 
+Each step uses the documents from the earlier steps. You review and approve
+one before moving to the next, then download the files to use in your
+coding tool.
+
+## The approach
+
+The workflow puts decisions about the product ahead of implementation.
+That adds some work up front. Whether it's worth doing depends on how
+much you already know about what you want to build.
+
+The output is still a draft. Review the requirements and technical choices
+before asking an agent to build from them.
 
 ## Quick Start
 
